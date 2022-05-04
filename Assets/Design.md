@@ -96,10 +96,25 @@
     - Mini Boss
     - Treasure room
 
+- Mobs randomly spawn periodically
 - Infinite, can find treasure rooms
-- Die, lose a percent of materials for that run
+- Instead of dealing with infinite spanning dungeons, just find exit and spawn new one. Perhaps with more modifiers.
+- <del> Die, lose a percent of materials for that run. 
+- Finish the level you have to get so far down into the dungeon and once you get to a threshold you fight a boss to unlock the next area. 
+    - Each level has increasingly hard mobs (They do more damage, higher spawn rate)
+    - Be able to chill at the lowest level as long as you want. 
 - I like this idea, maybe you have a chance to find special mobs that drop special loot. Like shiny mobs/mini bosses
 
+
+- Features
+    - Treasure rooms
+        - Surrounded by a bunch of enemies
+    - Boss's/Special mobs
+
+### Multiplayer
+- Transfer characters to host world. Can't be able to play higher areas though otherwise the better player could just farm for them.
+    - One way to fix that would be to make the mats useless for that level, or just not drop them. But then what would be the point of joining. 
+- 
 ---
 
 ## Ideas
@@ -124,3 +139,4 @@
 - Tap Titans but as a rouge like?
  - This direction is interesting. 
 
+- Mini map
