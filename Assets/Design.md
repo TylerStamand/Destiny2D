@@ -114,7 +114,6 @@
 ### Multiplayer
 - Transfer characters to host world. Can't be able to play higher areas though otherwise the better player could just farm for them.
     - One way to fix that would be to make the mats useless for that level, or just not drop them. But then what would be the point of joining. 
-- 
 ---
 
 ## Ideas
@@ -140,3 +139,29 @@
  - This direction is interesting. 
 
 - Mini map
+
+---
+
+## Mechanics
+
+### Weapons
+    - Stats
+        - Damage
+    - Abilities / Modifiers
+    - Combine(Infuse) weapons to upgrade to a new tier
+        - takes stats from weapon of choice
+        - New tier adds a percent modifier to the base stats
+    - Tiers
+        - 1-5 White
+            - Basic percent bonuses
+        - 6-10 Green
+            - Better percent bonuses
+            - Modifier
+        - 11-15 Blue
+            - 2 Modifiers
+        - 16-20 Purple
+            - 2 Modifiers
+            - Special Ability
+        - 21-INF Orange  
+            - Ascended Version
+            - Something cool that makes it stand out
