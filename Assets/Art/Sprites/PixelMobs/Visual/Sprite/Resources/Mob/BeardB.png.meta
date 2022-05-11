@@ -50,6 +50,7 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
@@ -93,6 +94,7 @@ TextureImporter:
   textureFormatSet: 0
   ignorePngGamma: 0
   applyGammaDecoding: 1
+  swizzle: 50462976
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -330,7 +332,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Beard_4: 21300008
+      Beard_7: 21300014
       Beard_3: 21300006
       Beard_2: 21300004
       Beard_8: 21300016
@@ -338,11 +340,10 @@ TextureImporter:
       Beard_5: 21300010
       Beard_6: 21300012
       Beard_0: 21300000
-      Beard_7: 21300014
       Beard_1: 21300002
+      Beard_4: 21300008
   spritePackingTag: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
