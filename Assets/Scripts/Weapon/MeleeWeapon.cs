@@ -1,24 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 using DG.Tweening;
-public class MeleeWeapon : MonoBehaviour
+public class MeleeWeapon : NetworkBehaviour
 {
     SpriteRenderer spriteRenderer;
 
     void Awake() {
+        Debug.Log("Awake");
+        
+    }
+
+    [ClientRpc]
+    public void AttackClientRpc(Vector2 Direction) {
+            spriteRenderer.enabled = true;
+            transform.parent.eulerAngles = GetAngleFromDirection(Direction);
+            transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete += 
+                () => {
+                    transform.parent.eulerAngles = GetAngleFromDirection(Direction);
+                    spriteRenderer.enabled = false;
+                };
+    
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("Network Spawn");
         spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.enabled = false;
-    }
-    public void Attack(Vector2 Direction) {
-        spriteRenderer.enabled = true;
-        transform.parent.eulerAngles = GetAngleFromDirection(Direction);
-        transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete += 
-            () => {
-                transform.parent.eulerAngles = GetAngleFromDirection(Direction);
-                spriteRenderer.enabled = false;
-            };
-        
     }
 
     Vector3 GetAngleFromDirection(Vector3 Direction) {
@@ -41,4 +51,6 @@ public class MeleeWeapon : MonoBehaviour
         }
         return eulerAngles;
     }
+
+
 }
