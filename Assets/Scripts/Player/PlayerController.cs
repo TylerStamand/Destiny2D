@@ -23,11 +23,13 @@ public class PlayerController : NetworkBehaviour {
     NetworkVariable<Vector2> moveInput;
     Vector2 oldMoveInput;
 
+    NetworkVariable<int> health; 
   
     void Awake() {
         direction = new Vector2(0, -1);
         moveInput = new NetworkVariable<Vector2>();
-        
+        health = new NetworkVariable<int>();
+        health.Value = 5;
     }
 
     void Update() {
@@ -92,7 +94,19 @@ public class PlayerController : NetworkBehaviour {
        
     }
 
+
+
     
+    [ServerRpc(RequireOwnership = false)] 
+    public void TakeDamageServerRpc(ulong playerID, int damage) {
+        //NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[playerID];
+        //PlayerController playerController = netObj.GetComponent<PlayerController>();
+        // if(playerController != null) {
+        // }
+            health.Value -= damage;
+            Debug.Log("Object " + NetworkObjectId);
+            Debug.Log("Health: " + health.Value);
+    }
 
     [ServerRpc]
     void AttackServerRpc(Vector2 Direction) {
@@ -140,15 +154,13 @@ public class PlayerController : NetworkBehaviour {
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[itemNetID];
         weapon = netObj.gameObject.GetComponent<MeleeWeapon>();
         weapon.transform.localPosition = Vector2.zero;
-        Debug.Log("Equip client weapon for " + itemNetID );
-        Debug.Log(weapon.transform.position);
+        
     }
 
     [ClientRpc]
     void InitializePlayerClientRpc(ulong weaponHolderID) {
         weaponSlot = NetworkManager.SpawnManager.SpawnedObjects[weaponHolderID].gameObject;
         weaponSlot.transform.localPosition = Vector2.zero;
-        Debug.Log("Equip client weapon slot for " + weaponHolderID);
-        Debug.Log(weaponSlot.transform.position);
+      
     }
 }

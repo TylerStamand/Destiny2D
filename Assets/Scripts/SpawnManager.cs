@@ -6,6 +6,8 @@ using Unity.Netcode;
 public class SpawnManager : NetworkBehaviour
 {
 
+    
+
     [field: SerializeField] public List<GameObject> Spawns {get; private set;}
 
     public static SpawnManager Instance;

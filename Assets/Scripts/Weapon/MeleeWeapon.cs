@@ -7,10 +7,12 @@ public class MeleeWeapon : NetworkBehaviour
 {
     public GameObject Parent {get; private set;}
     SpriteRenderer spriteRenderer;
-
+    new Collider2D collider;
     void Awake() {
-        Debug.Log("Awake");
-        
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        collider = GetComponent<Collider2D>();
+        spriteRenderer.enabled = false;
+        collider.enabled = false;
     }
 
     [ClientRpc]
@@ -22,20 +24,24 @@ public class MeleeWeapon : NetworkBehaviour
 
     public void Attack(Vector2 Direction) {
         spriteRenderer.enabled = true;
-        Debug.Log("Local Player");
-
+        collider.enabled = true;
         transform.parent.eulerAngles = GetAngleFromDirection(Direction);
         transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete += 
             () => {
                 transform.parent.eulerAngles = GetAngleFromDirection(Direction);
                 spriteRenderer.enabled = false;
+                collider.enabled = false;
             };
     
     }
 
     void OnCollisionEnter2D(Collision2D collision) {
         if(IsServer) {
-            Debug.Log(collision.gameObject.name);
+
+            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+            if(player != null) {
+                player.TakeDamageServerRpc(player.NetworkObjectId, 1);
+            }
         }
     }
 
@@ -46,9 +52,8 @@ public class MeleeWeapon : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        Debug.Log("Network Spawn");
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.enabled = false;
+      
+        
     }
 
     Vector3 GetAngleFromDirection(Vector3 Direction) {
