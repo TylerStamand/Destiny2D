@@ -10,7 +10,9 @@ public class PlayerController : NetworkBehaviour {
     [SerializeField] float topSpeed;
     [SerializeField] MeleeWeapon weaponPrefab;
     [SerializeField] GameObject weaponSlot;
-    [SerializeField] NetworkBehaviour networkParentPrefab; 
+    [SerializeField] NetworkObject networkParentPrefab; 
+ 
+
     new Rigidbody2D rigidbody;
     Animator animator;
 
@@ -21,13 +23,16 @@ public class PlayerController : NetworkBehaviour {
     NetworkVariable<Vector2> moveInput;
     Vector2 oldMoveInput;
 
+  
     void Awake() {
         direction = new Vector2(0, -1);
         moveInput = new NetworkVariable<Vector2>();
+        
     }
 
     void Update() {
         if(IsLocalPlayer) {
+            
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 AttackServerRpc(direction);
@@ -39,13 +44,20 @@ public class PlayerController : NetworkBehaviour {
     {
         rigidbody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        
-
+    
         rigidbody.gravityScale = 0;
-        if(IsLocalPlayer) {
-            InitializePlayerServerRpc();
-            EquipWeaponServerRpc(NetworkManager.Singleton.LocalClientId);
+
+        if (IsServer)
+        {
+            GameObject spawnPoint = SpawnManager.Instance.GetSpawnLocation();
+            SetSpawnClientRpc(spawnPoint.transform.position, new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } });
         }
+    
+        if(IsLocalPlayer) {
+            InitializePlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+            EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId);
+        }
+        
         
     }
 
@@ -80,6 +92,7 @@ public class PlayerController : NetworkBehaviour {
        
     }
 
+    
 
     [ServerRpc]
     void AttackServerRpc(Vector2 Direction) {
@@ -92,41 +105,50 @@ public class PlayerController : NetworkBehaviour {
     }
 
     [ServerRpc]
-    void InitializePlayerServerRpc() {
+    void InitializePlayerServerRpc(ulong clientID) {
         GameObject weaponHolder = Instantiate(networkParentPrefab.gameObject);
         NetworkObject networkObject = weaponHolder.GetComponent<NetworkObject>();
-        networkObject.Spawn();
+        networkObject.SpawnAsPlayerObject(clientID);
 
         weaponHolder.transform.SetParent(transform);
-        weaponHolder.transform.localPosition = Vector2.zero;
+    
 
         InitializePlayerClientRpc(networkObject.NetworkObjectId);
     }
 
     [ServerRpc]
-    void EquipWeaponServerRpc(ulong netID) {
+    void EquipWeaponServerRpc(ulong parentNetID, ulong clientID) {
 
         MeleeWeapon weapon = Instantiate(weaponPrefab);
-        weapon.NetworkObject.Spawn();
+        weapon.NetworkObject.SpawnAsPlayerObject(clientID);
 
+        weapon.SetParentClientRpc(parentNetID);
         weapon.transform.SetParent(weaponSlot.transform);
-        weapon.transform.localPosition = Vector2.zero;
         
-        //Desyncs until moved in inspector
         
         weaponID = weapon.NetworkObjectId;
 
         EquipWeaponClientRpc(weaponID);
+    }
+    [ClientRpc]
+    void SetSpawnClientRpc(Vector2 position, ClientRpcParams rpcParams) {
+        transform.position = position;
     }
 
     [ClientRpc]
     void EquipWeaponClientRpc(ulong itemNetID ) {
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[itemNetID];
         weapon = netObj.gameObject.GetComponent<MeleeWeapon>();
+        weapon.transform.localPosition = Vector2.zero;
+        Debug.Log("Equip client weapon for " + itemNetID );
+        Debug.Log(weapon.transform.position);
     }
 
     [ClientRpc]
     void InitializePlayerClientRpc(ulong weaponHolderID) {
         weaponSlot = NetworkManager.SpawnManager.SpawnedObjects[weaponHolderID].gameObject;
+        weaponSlot.transform.localPosition = Vector2.zero;
+        Debug.Log("Equip client weapon slot for " + weaponHolderID);
+        Debug.Log(weaponSlot.transform.position);
     }
 }

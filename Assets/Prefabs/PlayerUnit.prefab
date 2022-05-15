@@ -187,7 +187,7 @@ MonoBehaviour:
   topSpeed: 1
   weaponPrefab: {fileID: 2452918427145112933, guid: 41d48f1abbd8ee64fba8ecdb18573a73, type: 3}
   weaponSlot: {fileID: 1266740444}
-  networkParentPrefab: {fileID: 4202420781456850680, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
+  networkParentPrefab: {fileID: 2330175289291369772, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
 --- !u!61 &2181443973947071276
 BoxCollider2D:
   m_ObjectHideFlags: 0
