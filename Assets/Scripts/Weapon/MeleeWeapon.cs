@@ -9,7 +9,7 @@ public class MeleeWeapon : NetworkBehaviour
     SpriteRenderer spriteRenderer;
     new Collider2D collider;
     void Awake() {
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         collider = GetComponent<Collider2D>();
         spriteRenderer.enabled = false;
         collider.enabled = false;
@@ -35,10 +35,10 @@ public class MeleeWeapon : NetworkBehaviour
     
     }
 
-    void OnCollisionEnter2D(Collision2D collision) {
+    void OnTriggerEnter2D(Collider2D collider) {
         if(IsServer) {
 
-            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+            PlayerControllerServer player = collider.gameObject.GetComponent<PlayerControllerServer>();
             if(player != null) {
                 player.TakeDamageServerRpc(player.NetworkObjectId, 1);
             }
