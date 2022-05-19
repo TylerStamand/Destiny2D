@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
-
+using Unity.Netcode.Components;
 [DefaultExecutionOrder(1)]
 public class PlayerControllerClient : NetworkBehaviour {
 
@@ -33,7 +33,7 @@ public class PlayerControllerClient : NetworkBehaviour {
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        if(!IsOwner || !IsClient) {
+        if(!IsClient) {
             enabled = false;
             return;
         } 
@@ -41,7 +41,6 @@ public class PlayerControllerClient : NetworkBehaviour {
         if (IsLocalPlayer)
         {
             rigidbody.gravityScale = 0;
-
             //Server rpc calls delayed by a fraction of a second.
             StartCoroutine(Initialize());
             
@@ -71,6 +70,8 @@ public class PlayerControllerClient : NetworkBehaviour {
             moveInput.x = horizontal;
             moveInput.y = vertical;
           
+            playerControllerServer.UpdateAnimatorMovementServerRpc(moveInput);
+
             if (horizontal != 0 || vertical != 0)
             {
                 direction = moveInput;
@@ -85,10 +86,12 @@ public class PlayerControllerClient : NetworkBehaviour {
             rigidbody.velocity = transform.right * movement.x + transform.up * movement.y;
 
 
-            animator.SetFloat("X", moveInput.x);
-            animator.SetFloat("Y", moveInput.y);
-
         }
+
+
+        //Until blend tree bug for network animator is fixed, this needs to run on all clients       
+        animator.SetFloat("X", playerControllerServer.AnimatorMovement.Value.x);
+        animator.SetFloat("Y", playerControllerServer.AnimatorMovement.Value.y);
     }
 
     IEnumerator Initialize() {

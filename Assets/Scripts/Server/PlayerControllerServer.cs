@@ -10,12 +10,12 @@ public class PlayerControllerServer : NetworkBehaviour {
     [SerializeField] NetworkObject networkParentPrefab;
     [SerializeField] MeleeWeapon weaponPrefab;
 
+    public NetworkVariable<Vector2> AnimatorMovement {get; private set;} = new NetworkVariable<Vector2>();
 
     PlayerControllerClient playerControllerClient;
     MeleeWeapon weapon;
     GameObject weaponSlot;
     NetworkVariable<int> health = new NetworkVariable<int>();
-
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
     }
@@ -43,6 +43,11 @@ public class PlayerControllerServer : NetworkBehaviour {
         health.Value -= damage;
         Debug.Log("Object " + NetworkObjectId);
         Debug.Log("Health: " + health.Value);
+    }
+    
+    [ServerRpc]
+    public void UpdateAnimatorMovementServerRpc(Vector2 movement) {
+        AnimatorMovement.Value = movement;
     }
 
     [ServerRpc]
