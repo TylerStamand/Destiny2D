@@ -74,7 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Damage>k__BackingField: 1
-  coolDown: 1
+  coolDown: 0.5
   lastUseTime:
     m_InternalValue: 0
 --- !u!114 &5037702262825400186

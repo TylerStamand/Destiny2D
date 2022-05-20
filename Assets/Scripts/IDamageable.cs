@@ -5,6 +5,6 @@ using Unity.Netcode;
 
 public interface IDamageable
 {
-    [ServerRpc]
+
     void TakeDamageServerRpc(float damage);
 }

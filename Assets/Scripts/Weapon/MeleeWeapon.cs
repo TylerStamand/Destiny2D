@@ -54,7 +54,7 @@ public class MeleeWeapon : NetworkBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D collider) {
-        if(IsClient) {
+        if(IsServer) {
 
             IDamageable damageable = collider.gameObject.GetComponent<IDamageable>();
             if(damageable != null) {
