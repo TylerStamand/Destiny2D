@@ -57,7 +57,7 @@ public class PlayerControllerClient : NetworkBehaviour {
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                playerControllerServer.AttackServerRpc(direction);
+                weapon.AttackServerRpc(direction);
             }
         }
     }

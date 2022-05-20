@@ -32,7 +32,7 @@ public class SpawnManager : NetworkBehaviour
     public GameObject GetSpawnLocation()
     {
         
-        return Spawns[++spawnNumber] ;
+        return Spawns[++spawnNumber%Spawns.Count] ;
     }
 
 

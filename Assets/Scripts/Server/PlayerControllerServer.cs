@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 
 [DefaultExecutionOrder(0)]
-public class PlayerControllerServer : NetworkBehaviour {
+public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
 
     [SerializeField] NetworkObject networkParentPrefab;
@@ -15,7 +15,7 @@ public class PlayerControllerServer : NetworkBehaviour {
     PlayerControllerClient playerControllerClient;
     MeleeWeapon weapon;
     GameObject weaponSlot;
-    NetworkVariable<int> health = new NetworkVariable<int>();
+    NetworkVariable<float> health = new NetworkVariable<float>();
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
     }
@@ -37,7 +37,7 @@ public class PlayerControllerServer : NetworkBehaviour {
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void TakeDamageServerRpc(ulong playerID, int damage)
+    public void TakeDamageServerRpc(float damage)
     {
      
         health.Value -= damage;
@@ -50,11 +50,11 @@ public class PlayerControllerServer : NetworkBehaviour {
         AnimatorMovement.Value = movement;
     }
 
-    [ServerRpc]
-    public void AttackServerRpc(Vector2 Direction)
-    {
-        weapon.AttackClientRpc(Direction);
-    }
+    // [ServerRpc]
+    // public void AttackServerRpc(Vector2 Direction)
+    // {
+    //     weapon.AttackClientRpc(Direction);
+    // }
 
 
     [ServerRpc]
