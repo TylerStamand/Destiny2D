@@ -452,7 +452,7 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      SlimeSmaller_10: 21300020
+      SlimeSmaller_11: 21300022
       SlimeSmaller_2: 21300004
       SlimeSmaller_9: 21300018
       SlimeSmaller_5: 21300010
@@ -465,7 +465,7 @@ TextureImporter:
       SlimeSmaller_0: 21300000
       SlimeSmaller_3: 21300006
       SlimeSmaller_13: 21300026
-      SlimeSmaller_11: 21300022
+      SlimeSmaller_10: 21300020
   spritePackingTag: 
   pSDRemoveMatte: 0
   userData: 

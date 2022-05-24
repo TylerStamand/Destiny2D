@@ -11,9 +11,9 @@ TagManager:
   - 
   - Water
   - UI
+  - Player
   - 
-  - 
-  - 
+  - Drop
   - 
   - 
   - 
@@ -52,4 +52,7 @@ TagManager:
     locked: 0
   - name: Character
     uniqueID: 3339480131
+    locked: 0
+  - name: Drop
+    uniqueID: 3792156071
     locked: 0

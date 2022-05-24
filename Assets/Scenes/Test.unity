@@ -936,7 +936,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 0000000021c8ceb2436c0cc753ec9d7c819439e9
+  m_ApplyToSortingLayers: 0000000021c8ceb2436c0cc753ec9d7c819439e9a7b507e2
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -1133,6 +1133,11 @@ MonoBehaviour:
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
       Prefab: {fileID: 2330175289291369775, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 2743749930614452560, guid: bb7829ca19a89664595c4eb910f63502, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
@@ -1917,11 +1922,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053041, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.16
+      value: 1.31
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053041, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.89
+      value: 0.16
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053041, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1962,6 +1967,38 @@ PrefabInstance:
     - target: {fileID: 3233376406552053046, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 647893058
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: Drops.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: Drops.Array.data[0]
+      value: 
+      objectReference: {fileID: 2743749930614452562, guid: bb7829ca19a89664595c4eb910f63502, type: 3}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: xDropForce.MaxValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: xDropForce.MinValue
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: yDropForce.MaxValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: yDropForce.MinValue
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: numberOfDrops.MaxValue
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: numberOfDrops.MinValue
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_AddedGameObjects: []

@@ -1,11 +1,34 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using DG.Tweening;
+using Random = System.Random;
+using Sirenix.OdinInspector;
+
+[Serializable]
+public struct MaxMinInt {
+    public int MaxValue;
+    public int MinValue;
+}
+
+[Serializable]
+public struct MaxMinFloat {
+    public float MaxValue;
+    public float MinValue;
+}
+
 public class Enemy : NetworkBehaviour, IDamageable {
 
     [field: SerializeField] public NetworkVariable<float> Health {get; private set;} = new NetworkVariable<float>();
     
+
+    [Header("Drops")]
+    [SerializeField] MaxMinFloat yDropForce;
+    [SerializeField] MaxMinFloat xDropForce;
+    [SerializeField] MaxMinInt numberOfDrops;
+    [SerializeField] List<DropServer> Drops;
+
     [Header("Animation")]
     [SerializeField] float damageAnimationSpeed = .1f;
 
@@ -28,18 +51,41 @@ public class Enemy : NetworkBehaviour, IDamageable {
         Debug.Log(gameObject.name + " health " + Health.Value);
 
         if(Health.Value <= 0) {
-            NetworkObject.Despawn();
+            Die();
             return;
         }
 
         TakeDamageAnimationClientRpc();
     }
 
+
     [ClientRpc]
     void TakeDamageAnimationClientRpc() {
         Sequence damageSequence = DOTween.Sequence();
         damageSequence.Append(spriteRenderer.DOFade(.1f, damageAnimationSpeed))
            .Append(spriteRenderer.DOFade(1, damageAnimationSpeed)).SetLoops(2);
+    }
+
+    void Die() {
+
+        //Drops
+        Random random = new Random();
+        int dropNumber = random.Next(numberOfDrops.MinValue, numberOfDrops.MaxValue + 1);
+        for(int i = 0; i < dropNumber; i++) {
+            int dropListIndex = random.Next(0, Drops.Count);
+            DropServer dropPrefab = Drops[dropListIndex];
+            DropServer drop = Instantiate(dropPrefab, transform.position, Quaternion.identity);
+            
+            Vector2 dropForce = new Vector2((float)random.NextDouble() * (xDropForce.MaxValue - xDropForce.MinValue) + xDropForce.MinValue, (float)random.NextDouble() * (yDropForce.MaxValue - yDropForce.MinValue) + yDropForce.MinValue);
+            drop.SetDropForce(dropForce);
+
+            drop.NetworkObject.Spawn();
+        }
+
+        
+        NetworkObject.Despawn();
+
+
     }
 
   
