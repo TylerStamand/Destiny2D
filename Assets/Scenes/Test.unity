@@ -1980,4 +1980,6 @@ MonoBehaviour:
     MinValue: 0
   Drops: []
   damageAnimationSpeed: 0.1
+  moveSpeed: 1
   alertRadius: 2.89
+  stopDistance: 1.5
