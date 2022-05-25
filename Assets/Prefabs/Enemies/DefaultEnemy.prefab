@@ -103,6 +103,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Health>k__BackingField:
     m_InternalValue: 5
+  yDropForce:
+    MaxValue: 5
+    MinValue: 1
+  xDropForce:
+    MaxValue: 5
+    MinValue: -5
+  numberOfDrops:
+    MaxValue: 4
+    MinValue: 1
+  Drops:
+  - {fileID: 2743749930614452562, guid: bb7829ca19a89664595c4eb910f63502, type: 3}
+  damageAnimationSpeed: 0.1
 --- !u!114 &3233376406552053046
 MonoBehaviour:
   m_ObjectHideFlags: 0

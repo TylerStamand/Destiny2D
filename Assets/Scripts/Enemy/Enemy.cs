@@ -4,19 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using DG.Tweening;
 using Random = System.Random;
-using Sirenix.OdinInspector;
 
-[Serializable]
-public struct MaxMinInt {
-    public int MaxValue;
-    public int MinValue;
-}
-
-[Serializable]
-public struct MaxMinFloat {
-    public float MaxValue;
-    public float MinValue;
-}
 
 public class Enemy : NetworkBehaviour, IDamageable {
 
@@ -24,16 +12,15 @@ public class Enemy : NetworkBehaviour, IDamageable {
     
 
     [Header("Drops")]
-    [SerializeField] MaxMinFloat yDropForce;
-    [SerializeField] MaxMinFloat xDropForce;
-    [SerializeField] MaxMinInt numberOfDrops;
+    
+    [SerializeField] MinMaxInt numberOfDrops;
     [SerializeField] List<DropServer> Drops;
 
     [Header("Animation")]
     [SerializeField] float damageAnimationSpeed = .1f;
 
-    Animator animator;
-    SpriteRenderer spriteRenderer;
+    protected Animator animator;
+    protected SpriteRenderer spriteRenderer;
     
 
     void Awake() {
@@ -75,10 +62,6 @@ public class Enemy : NetworkBehaviour, IDamageable {
             int dropListIndex = random.Next(0, Drops.Count);
             DropServer dropPrefab = Drops[dropListIndex];
             DropServer drop = Instantiate(dropPrefab, transform.position, Quaternion.identity);
-            
-            Vector2 dropForce = new Vector2((float)random.NextDouble() * (xDropForce.MaxValue - xDropForce.MinValue) + xDropForce.MinValue, (float)random.NextDouble() * (yDropForce.MaxValue - yDropForce.MinValue) + yDropForce.MinValue);
-            drop.SetDropForce(dropForce);
-
             drop.NetworkObject.Spawn();
         }
 

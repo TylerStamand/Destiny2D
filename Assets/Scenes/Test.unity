@@ -1896,29 +1896,13 @@ PrefabInstance:
     serializedVersion: 2
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3233376406552053040, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: m_Color.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053040, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: m_Color.b
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053040, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: m_Color.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053040, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: m_Color.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053040, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
     - target: {fileID: 3233376406552053041, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_RootOrder
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3233376406552053041, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053041, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1968,38 +1952,32 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 647893058
       objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: Drops.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: Drops.Array.data[0]
-      value: 
-      objectReference: {fileID: 2743749930614452562, guid: bb7829ca19a89664595c4eb910f63502, type: 3}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: xDropForce.MaxValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: xDropForce.MinValue
-      value: -5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: yDropForce.MaxValue
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: yDropForce.MinValue
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: numberOfDrops.MaxValue
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
-      propertyPath: numberOfDrops.MinValue
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3233376406552053047, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+--- !u!1 &3233376404873569757 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3233376406552053045, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+  m_PrefabInstance: {fileID: 3233376404873569756}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3233376404873569758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233376404873569757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac17f75d54676645b31b3d43022bd6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField:
+    m_InternalValue: 5
+  numberOfDrops:
+    MaxValue: 0
+    MinValue: 0
+  Drops: []
+  damageAnimationSpeed: 0.1
+  alertRadius: 2.89
