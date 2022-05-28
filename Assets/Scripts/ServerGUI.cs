@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
-public class ServerGUI : MonoBehaviour
-{
-    void OnGUI()
-    {
+public class ServerGUI : MonoBehaviour {
+    void OnGUI() {
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer)
-        {
+        if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer) {
             StartButtons();
         }
-        else
-        {
+        else {
             StatusLabels();
 
             //SubmitNewPosition();
@@ -21,15 +17,13 @@ public class ServerGUI : MonoBehaviour
         GUILayout.EndArea();
     }
 
-    static void StartButtons()
-    {
+    static void StartButtons() {
         if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
         if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
         if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
     }
 
-    static void StatusLabels()
-    {
+    static void StatusLabels() {
         var mode = NetworkManager.Singleton.IsHost ?
             "Host" : NetworkManager.Singleton.IsServer ? "Server" : "Client";
 

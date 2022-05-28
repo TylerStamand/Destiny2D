@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public interface IDamageable
-{
+public interface IDamageable {
 
     void TakeDamageServerRpc(float damage);
 }

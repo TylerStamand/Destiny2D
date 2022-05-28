@@ -5,8 +5,7 @@ using Unity.Netcode;
 using System;
 
 [Serializable]
-public struct MinMaxInt
-{
+public struct MinMaxInt {
     public int MaxValue;
     public int MinValue;
 
@@ -17,13 +16,11 @@ public struct MinMaxInt
 }
 
 [Serializable]
-public struct MinMaxFloat
-{
+public struct MinMaxFloat {
     public float MaxValue;
     public float MinValue;
 
-    public MinMaxFloat(float minValue, float maxValue)
-    {
+    public MinMaxFloat(float minValue, float maxValue) {
         MaxValue = maxValue;
         MinValue = minValue;
     }
@@ -47,22 +44,22 @@ public class DropServer : NetworkBehaviour {
     void Awake() {
         initialY = transform.position.y;
         animationPlay = false;
-    
+
     }
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-        
+
         gameObject.layer = LayerMask.NameToLayer("NoPickUp");
-        
-        if(!IsServer) {
+
+        if (!IsServer) {
             enabled = false;
             return;
         }
 
         client = GetComponent<DropClient>();
 
-        if(TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
+        if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
             SetDropForce();
             rigidbody.AddForce(dropForce, ForceMode2D.Impulse);
         }
@@ -70,17 +67,15 @@ public class DropServer : NetworkBehaviour {
     }
 
     void Update() {
-        if(transform.position.y > initialY) {
+        if (transform.position.y > initialY) {
             initialY = transform.position.y;
         }
-
-        else if(initialY - yDropDistance >= transform.position.y) {
-            if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody))
-            {
+        else if (initialY - yDropDistance >= transform.position.y) {
+            if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
                 rigidbody.gravityScale = 0;
                 rigidbody.velocity = Vector2.zero;
-            }   
-            if(!animationPlay) {
+            }
+            if (!animationPlay) {
                 client.StartIdleAnimationClientRpc();
                 animationPlay = true;
             }
@@ -88,13 +83,13 @@ public class DropServer : NetworkBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D collider) {
-        
-        if(collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
+
+        if (collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
             PickUpAction();
             NetworkObject.Despawn();
         }
-        
-        
+
+
     }
 
     public void SetDropForce() {

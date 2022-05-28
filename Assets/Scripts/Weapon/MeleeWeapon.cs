@@ -4,14 +4,15 @@ using UnityEngine;
 using Unity.Netcode;
 using DG.Tweening;
 
-public class MeleeWeapon : NetworkBehaviour
-{
-    [field: SerializeField] public float Damage {get; private set;}
+
+
+public class MeleeWeapon : NetworkBehaviour {
+    [field: SerializeField] public float Damage { get; private set; }
     [SerializeField] float coolDown = 5;
-    
+
     public NetworkVariable<float> lastUseTime;
 
-    public GameObject Parent {get; private set;}
+    public GameObject Parent { get; private set; }
 
     SpriteRenderer spriteRenderer;
     new Collider2D collider;
@@ -25,69 +26,54 @@ public class MeleeWeapon : NetworkBehaviour
         lastUseTime.Value = 0;
     }
 
-    [ClientRpc]
-    public void SetParentClientRpc(ulong parentNetID) {
-        Parent = NetworkManager.SpawnManager.SpawnedObjects[parentNetID].gameObject;
-        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), Parent.GetComponent<Collider2D>());
-        Debug.Log(Parent.name + parentNetID);
-    }
-
-    [ServerRpc]
-    public void AttackServerRpc(Vector2 Direction) {
-        if(lastUseTime.Value + coolDown < Time.time) {
-            lastUseTime.Value = Time.time;
-            AttackClientRpc(Direction);
+    public override void OnNetworkDespawn() {
+        if(transform.parent != null) {
+            transform.parent.DOKill();
         }
     }
 
-    public void Attack(Vector2 Direction) {
-        spriteRenderer.enabled = true;
-        collider.enabled = true;
-        transform.parent.eulerAngles = GetAngleFromDirection(Direction);
-        transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete += 
-            () => {
-                transform.parent.eulerAngles = GetAngleFromDirection(Direction);
-                spriteRenderer.enabled = false;
-                collider.enabled = false;
-            };
-    
+    [ClientRpc]
+    public void SetParentClientRpc(ulong parentNetID) {
+        Debug.Log("SetParentClient " + NetworkManager.Singleton.LocalClientId);
+        Parent = NetworkManager.SpawnManager.SpawnedObjects[parentNetID].gameObject;
+        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), Parent.GetComponent<Collider2D>());
     }
 
+    [ServerRpc]
+    public void AttackServerRpc(Direction direction) {
+        if (lastUseTime.Value + coolDown < Time.time) {
+            lastUseTime.Value = Time.time;
+            AttackClientRpc(direction);
+        }
+    }
+
+    
+
     void OnTriggerEnter2D(Collider2D collider) {
-        if(IsServer) {
+        if (IsServer) {
 
             IDamageable damageable = collider.gameObject.GetComponent<IDamageable>();
-            if(damageable != null) {
+            if (damageable != null) {
                 damageable.TakeDamageServerRpc(Damage);
             }
         }
     }
 
     [ClientRpc]
-    public void AttackClientRpc(Vector2 Direction) {
-        Attack(Direction);
+    void AttackClientRpc(Direction direction) {
+        spriteRenderer.enabled = true;
+        collider.enabled = true;
+        transform.parent.eulerAngles = Utilities.GetAngleFromDirection(direction);
+        transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete +=
+            () => {
+                transform.parent.eulerAngles = Utilities.GetAngleFromDirection(direction);
+                spriteRenderer.enabled = false;
+                collider.enabled = false;
+            };
+
     }
 
-    Vector3 GetAngleFromDirection(Vector3 Direction) {
-        Vector3 eulerAngles = new Vector3();
-        if(Direction.x != 0) {
-            if(Direction.x > 0) {
-                eulerAngles.z = 180;
-            } else {
-                eulerAngles.z = 0;
-            }
-            // returns early for defaulting to x axis when both are non 0
-            return eulerAngles;
-        }
-        if(Direction.y != 0) {
-            if(Direction.y > 0) {
-                eulerAngles.z = -90;
-            } else {
-                eulerAngles.z = 90;
-            }
-        }
-        return eulerAngles;
-    }
+
 
 
 }

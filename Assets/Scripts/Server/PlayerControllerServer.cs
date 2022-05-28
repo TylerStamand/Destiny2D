@@ -7,10 +7,7 @@ using Unity.Netcode;
 public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
 
-    [SerializeField] NetworkObject networkParentPrefab;
-    [SerializeField] MeleeWeapon weaponPrefab;
-
-    public NetworkVariable<Vector2> AnimatorMovement {get; private set;} = new NetworkVariable<Vector2>();
+    public NetworkVariable<Vector2> AnimatorMovement { get; private set; } = new NetworkVariable<Vector2>();
 
     PlayerControllerClient playerControllerClient;
     MeleeWeapon weapon;
@@ -18,71 +15,38 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     NetworkVariable<float> health = new NetworkVariable<float>();
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
+        if(TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
+            rigidbody.gravityScale = 0;
+        }
     }
 
-    public override void OnNetworkSpawn()
-    {
+    public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-      
-        if(!IsServer) {
+
+        if (!IsServer) {
             enabled = false;
             return;
         }
 
         health.Value = 5;
-       
+
         GameObject spawnPoint = SpawnManager.Instance.GetSpawnLocation();
         playerControllerClient.SetSpawnClientRpc(spawnPoint.transform.position, new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } });
     }
 
 
     [ServerRpc(RequireOwnership = false)]
-    public void TakeDamageServerRpc(float damage)
-    {
-     
+    public void TakeDamageServerRpc(float damage) {
+
         health.Value -= damage;
         Debug.Log("Object " + NetworkObjectId);
         Debug.Log("Health: " + health.Value);
     }
-    
+
     [ServerRpc]
     public void UpdateAnimatorMovementServerRpc(Vector2 movement) {
         AnimatorMovement.Value = movement;
     }
 
-    // [ServerRpc]
-    // public void AttackServerRpc(Vector2 Direction)
-    // {
-    //     weapon.AttackClientRpc(Direction);
-    // }
 
-
-    [ServerRpc]
-    public void InitializePlayerServerRpc(ulong clientID)
-    {
-        weaponSlot = Instantiate(networkParentPrefab.gameObject);
-        NetworkObject networkObject = weaponSlot.GetComponent<NetworkObject>();
-        networkObject.SpawnAsPlayerObject(clientID);
-
-        weaponSlot.transform.SetParent(transform);
-
-
-        playerControllerClient.InitializePlayerClientRpc(networkObject.NetworkObjectId);
-    }
-
-    [ServerRpc]
-    public void EquipWeaponServerRpc(ulong parentNetID, ulong clientID)
-    {
-
-        weapon = Instantiate(weaponPrefab);
-        weapon.NetworkObject.SpawnAsPlayerObject(clientID);
-
-        weapon.SetParentClientRpc(parentNetID);
-        weapon.transform.SetParent(weaponSlot.transform);
-
-
-        ulong weaponID = weapon.NetworkObjectId;
-
-        playerControllerClient.EquipWeaponClientRpc(weaponID);
-    }
 }

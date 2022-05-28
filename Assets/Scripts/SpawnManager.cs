@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class SpawnManager : NetworkBehaviour
-{
+public class SpawnManager : NetworkBehaviour {
 
-    
 
-    [field: SerializeField] public List<GameObject> Spawns {get; private set;}
+
+    [field: SerializeField] public List<GameObject> Spawns { get; private set; }
 
     public static SpawnManager Instance;
 
@@ -16,7 +15,7 @@ public class SpawnManager : NetworkBehaviour
 
 
     void Awake() {
-        if(Instance == null) {
+        if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -26,13 +25,12 @@ public class SpawnManager : NetworkBehaviour
     }
 
 
-    
 
 
-    public GameObject GetSpawnLocation()
-    {
-        
-        return Spawns[++spawnNumber%Spawns.Count] ;
+
+    public GameObject GetSpawnLocation() {
+
+        return Spawns[++spawnNumber % Spawns.Count];
     }
 
 

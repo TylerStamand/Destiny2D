@@ -11,8 +11,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 
-public class RelayManger : MonoBehaviour
-{
+public class RelayManger : MonoBehaviour {
 
     [SerializeField] string environement = "production";
 
@@ -27,7 +26,7 @@ public class RelayManger : MonoBehaviour
 
 
     void Awake() {
-        if(Instance == null) {
+        if (Instance == null) {
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
@@ -42,10 +41,10 @@ public class RelayManger : MonoBehaviour
         Debug.Log($"Relay Server Starting with max connections {maxConnections}");
         InitializationOptions options = new InitializationOptions()
             .SetEnvironmentName(environement);
-        
+
         await UnityServices.InitializeAsync(options);
 
-        if(!AuthenticationService.Instance.IsSignedIn) {
+        if (!AuthenticationService.Instance.IsSignedIn) {
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
@@ -62,9 +61,9 @@ public class RelayManger : MonoBehaviour
 
         relayHostData.JoinCode = await Relay.Instance.GetJoinCodeAsync(relayHostData.AllocationID);
 
-        Transport.SetRelayServerData(relayHostData.IPv4Address, relayHostData.Port, 
-        relayHostData.AllocationIDBytes, relayHostData.Key, 
-        relayHostData.ConnectionData, relayHostData.ConnectionData); 
+        Transport.SetRelayServerData(relayHostData.IPv4Address, relayHostData.Port,
+        relayHostData.AllocationIDBytes, relayHostData.Key,
+        relayHostData.ConnectionData, relayHostData.ConnectionData);
 
         Debug.Log($"Relay Server generated a join code {relayHostData.JoinCode}");
         return relayHostData;
@@ -76,8 +75,7 @@ public class RelayManger : MonoBehaviour
 
         await UnityServices.InitializeAsync(options);
 
-        if (!AuthenticationService.Instance.IsSignedIn)
-        {
+        if (!AuthenticationService.Instance.IsSignedIn) {
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
@@ -94,7 +92,7 @@ public class RelayManger : MonoBehaviour
             JoinCode = joinCode
         };
 
-        Transport.SetRelayServerData(relayJoinData.IPv4Address, relayJoinData.Port, relayJoinData.AllocationIDBytes, 
+        Transport.SetRelayServerData(relayJoinData.IPv4Address, relayJoinData.Port, relayJoinData.AllocationIDBytes,
         relayJoinData.Key, relayJoinData.ConnectionData, relayJoinData.HostConnectionData);
 
         Debug.Log($"Client Joined game with join code {joinCode}");

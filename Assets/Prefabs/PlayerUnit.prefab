@@ -17,10 +17,11 @@ GameObject:
   - component: {fileID: 1846740205}
   - component: {fileID: 1846740207}
   - component: {fileID: 1846740219}
-  - component: {fileID: -2942726667227890786}
-  - component: {fileID: -1191211183428294558}
   - component: {fileID: 1601051452874884116}
   - component: {fileID: 8744850052681274501}
+  - component: {fileID: -5413379432232810642}
+  - component: {fileID: -4829901794372278007}
+  - component: {fileID: 6759024285813516604}
   m_Layer: 6
   m_Name: PlayerUnit
   m_TagString: Untagged
@@ -234,33 +235,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &-2942726667227890786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2181443973947071286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c257c978eab6944b88fb13d44365f0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveSpeed: 150
---- !u!114 &-1191211183428294558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2181443973947071286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96f5ed564ccb28e40aac926a61c931ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  networkParentPrefab: {fileID: 2330175289291369772, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
-  weaponPrefab: {fileID: 2452918427145112933, guid: 41d48f1abbd8ee64fba8ecdb18573a73, type: 3}
 --- !u!114 &1601051452874884116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,3 +260,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 1846740206}
+--- !u!114 &-5413379432232810642
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2181443973947071286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c257c978eab6944b88fb13d44365f0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 150
+--- !u!114 &-4829901794372278007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2181443973947071286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96f5ed564ccb28e40aac926a61c931ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6759024285813516604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2181443973947071286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cd76e1b7df1a9546a232e006ab57b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  networkParentPrefab: {fileID: 4237924938959069607, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
+  weaponPrefab: {fileID: 2452918427145112933, guid: 41d48f1abbd8ee64fba8ecdb18573a73, type: 3}
