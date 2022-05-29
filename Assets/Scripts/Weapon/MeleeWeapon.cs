@@ -63,13 +63,19 @@ public class MeleeWeapon : NetworkBehaviour {
     void AttackClientRpc(Direction direction) {
         spriteRenderer.enabled = true;
         collider.enabled = true;
-        transform.parent.eulerAngles = Utilities.GetAngleFromDirection(direction);
-        transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete +=
-            () => {
-                transform.parent.eulerAngles = Utilities.GetAngleFromDirection(direction);
-                spriteRenderer.enabled = false;
-                collider.enabled = false;
-            };
+
+        if(transform.parent != null) {
+            transform.parent.eulerAngles = Utilities.GetAngleFromDirection(direction);
+            transform.parent.DORotate(new Vector3(0, 0, transform.parent.eulerAngles.z + 179), .3f).onComplete +=
+                () => {
+                    transform.parent.eulerAngles = Utilities.GetAngleFromDirection(direction);
+                    spriteRenderer.enabled = false;
+                    collider.enabled = false;
+                };
+        }
+        else {
+            Debug.LogWarning("Weapon parent is not assigned, will not animate");
+        }
 
     }
 

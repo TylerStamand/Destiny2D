@@ -28,9 +28,6 @@ public class MeleeEnemy : Enemy {
         }
     }
 
-    
-
-    
 
     IEnumerator Initialize() {
         yield return new WaitForSeconds(.0001f);

@@ -61,7 +61,7 @@ public class WeaponHolder : NetworkBehaviour
         weaponSlot = Instantiate(networkParentPrefab.gameObject);
         NetworkObject networkObject = weaponSlot.GetComponent<NetworkObject>();
     
-        networkObject.Spawn();
+        networkObject.SpawnWithOwnership(clientID);
         
         
         weaponSlot.transform.parent = this.transform;
@@ -74,8 +74,8 @@ public class WeaponHolder : NetworkBehaviour
      
         weapon = Instantiate(weaponPrefab);
     
-        weapon.NetworkObject.Spawn();
-        
+        weapon.NetworkObject.SpawnWithOwnership(clientID);
+    
 
         weapon.SetParentClientRpc(parentNetID);
         if(weaponSlot != null) {
