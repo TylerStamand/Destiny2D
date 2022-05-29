@@ -8,8 +8,11 @@ public class WeaponHolder : NetworkBehaviour
     [SerializeField] NetworkObject networkParentPrefab;
     [SerializeField] MeleeWeapon weaponPrefab;
     
+    public bool Initialized {get; private set;}
+
     GameObject weaponSlot;
     MeleeWeapon weapon;
+
 
     
 
@@ -22,18 +25,17 @@ public class WeaponHolder : NetworkBehaviour
     }
 
     public override void OnNetworkDespawn() {
-        weapon.NetworkObject.Despawn();
-        weaponSlot.GetComponent<NetworkObject>().Despawn();
-    }
-
-    public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject) {
-        base.OnNetworkObjectParentChanged(parentNetworkObject);
-        Debug.Log("Parent Changed");
+        if(IsServer) {
+            weapon.NetworkObject.Despawn();
+            weaponSlot.GetComponent<NetworkObject>().Despawn();
+        }
+        base.OnNetworkDespawn();
     }
 
     IEnumerator Initialize() {
         yield return new WaitForSeconds(0.0001f);
         InitializeServerRpc(NetworkManager.Singleton.LocalClientId, IsLocalPlayer);
+        Initialized = true;
     }
 
 

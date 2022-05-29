@@ -27,7 +27,7 @@ public class MeleeWeapon : NetworkBehaviour {
     }
 
     public override void OnNetworkDespawn() {
-        if(transform.parent != null) {
+        if(IsClient && transform.parent != null) {
             transform.parent.DOKill();
         }
     }

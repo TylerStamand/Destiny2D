@@ -30,9 +30,14 @@ public class MeleeEnemy : Enemy {
 
     
 
+    
+
     IEnumerator Initialize() {
-        yield return new WaitForSeconds(.001f);
+        yield return new WaitForSeconds(.0001f);
         Debug.Log("Initializing Enemy");
+        while(!weaponHolder.Initialized) {
+            yield return null;
+        }
         weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId);
     }
 
