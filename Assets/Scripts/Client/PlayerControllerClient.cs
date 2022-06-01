@@ -32,7 +32,7 @@ public class PlayerControllerClient : NetworkBehaviour {
         direction = new Vector2(0, -1);
     }
 
-    //YOU CANT PUT SERVER RPC CALLS DIRECTLY HERE WITHOUT IT BEING ON THE SAME SCRIPT, SO STUPID
+
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
         if (!IsClient) {

@@ -298,4 +298,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkParentPrefab: {fileID: 4237924938959069607, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
-  weaponPrefab: {fileID: 2452918427145112933, guid: 41d48f1abbd8ee64fba8ecdb18573a73, type: 3}
+  weaponPrefab: {fileID: 7407448911527856426, guid: ff46cdb5977c8274eb21a67734b81a6d, type: 3}

@@ -6,12 +6,12 @@ using Unity.Netcode;
 public class WeaponHolder : NetworkBehaviour
 {
     [SerializeField] NetworkObject networkParentPrefab;
-    [SerializeField] MeleeWeapon weaponPrefab;
+    [SerializeField] Weapon weaponPrefab;
     
     public bool Initialized {get; private set;}
 
     GameObject weaponSlot;
-    MeleeWeapon weapon;
+    Weapon weapon;
 
 
     
@@ -50,7 +50,7 @@ public class WeaponHolder : NetworkBehaviour
     [ClientRpc]
     void EquipWeaponClientRpc(ulong itemNetID) {
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[itemNetID];
-        weapon = netObj.gameObject.GetComponent<MeleeWeapon>();
+        weapon = netObj.gameObject.GetComponent<Weapon>();
         weapon.transform.localPosition = Vector2.zero;
 
     }
@@ -74,10 +74,9 @@ public class WeaponHolder : NetworkBehaviour
      
         weapon = Instantiate(weaponPrefab);
     
+        weapon.ParentNetID = clientID;
         weapon.NetworkObject.SpawnWithOwnership(clientID);
-    
 
-        weapon.SetParentClientRpc(parentNetID);
         if(weaponSlot != null) {
             weapon.transform.SetParent(weaponSlot.transform);
         }

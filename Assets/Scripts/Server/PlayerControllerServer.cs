@@ -13,6 +13,8 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     MeleeWeapon weapon;
     GameObject weaponSlot;
     NetworkVariable<float> health = new NetworkVariable<float>();
+
+    
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
         if(TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
@@ -39,8 +41,6 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     public void TakeDamageServerRpc(float damage) {
 
         health.Value -= damage;
-        Debug.Log("Object " + NetworkObjectId);
-        Debug.Log("Health: " + health.Value);
     }
 
     [ServerRpc]
