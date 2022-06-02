@@ -11,11 +11,11 @@ public class Projectile : MonoBehaviour
     ulong parentID;
     bool isPlayerClient;
 
-    void OnCollisionEnter2D(Collision2D collision) {
-        if(collision.gameObject.TryGetComponent<IDamageable>(out IDamageable damageable)) {
+    void OnTriggerEnter2D(Collider2D collider) {
+        if(collider.gameObject.TryGetComponent<IDamageable>(out IDamageable damageable)) {
             
             //Checks if collided with the user of weapon, and returns early if so
-            if(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId == parentID) {
+            if(collider.gameObject.GetComponent<NetworkObject>().NetworkObjectId == parentID) {
                 return;
             }
 

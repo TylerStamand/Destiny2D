@@ -10,17 +10,32 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     public NetworkVariable<Vector2> AnimatorMovement { get; private set; } = new NetworkVariable<Vector2>();
 
     PlayerControllerClient playerControllerClient;
+
     MeleeWeapon weapon;
     GameObject weaponSlot;
+    new Rigidbody2D rigidbody;
+
     NetworkVariable<float> health = new NetworkVariable<float>();
 
+    Vector2 currentVelocity;
     
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
-        if(TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
-            rigidbody.gravityScale = 0;
-        }
+        rigidbody = GetComponent<Rigidbody2D>();
+        rigidbody.gravityScale = 0;
     }
+
+
+    // void OnCollisionEnter2D(Collision2D collision) {
+    //     currentVelocity = rigidbody.velocity;
+    // }
+
+    // void OnCollisionExit2D(Collision2D collision) {
+    //     if(collision.collider.attachedRigidbody == null) return;
+    //     if(collision.collider.attachedRigidbody.bodyType == RigidbodyType2D.Kinematic) {
+    //         rigidbody.velocity = currentVelocity;
+    //     }
+    // }
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();

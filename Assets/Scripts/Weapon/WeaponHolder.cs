@@ -74,7 +74,7 @@ public class WeaponHolder : NetworkBehaviour
      
         weapon = Instantiate(weaponPrefab);
     
-        weapon.ParentNetID = clientID;
+        weapon.ParentNetID = parentNetID;
         weapon.NetworkObject.SpawnWithOwnership(clientID);
 
         if(weaponSlot != null) {
