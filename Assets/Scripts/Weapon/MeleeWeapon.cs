@@ -33,7 +33,7 @@ public class MeleeWeapon : Weapon {
 
             IDamageable damageable = collider.gameObject.GetComponent<IDamageable>();
             if (damageable != null) {
-                damageable.TakeDamageServerRpc(Damage);
+                damageable.TakeDamageServerRpc(Damage.Value);
             }
         }
     }

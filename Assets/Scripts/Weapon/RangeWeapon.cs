@@ -9,7 +9,8 @@ public class RangeWeapon : Weapon
 
     [Header("Projectile")]
     [SerializeField] Projectile projectilePrefab;
-    [SerializeField] float projectileSpeed;
+    
+    NetworkVariable<float> projectileSpeed = new NetworkVariable<float>(1);
 
 
     SpriteRenderer spriteRenderer;
@@ -26,6 +27,12 @@ public class RangeWeapon : Weapon
         if (IsClient && transform.parent != null) {
             transform.parent.DOKill();
         }
+    }
+
+    [ServerRpc]
+    public override void InitializeServerRpc(WeaponStats weaponStats) {
+        base.InitializeServerRpc(weaponStats);
+        projectileSpeed.Value = weaponStats.ProjectileSpeed;
     }
 
 
@@ -46,6 +53,6 @@ public class RangeWeapon : Weapon
 
         Projectile projectile = Instantiate(projectilePrefab, transform.parent.position + transform.parent.transform.up, transform.parent.transform.rotation);
         
-        projectile.Initialize(projectileSpeed, Damage, ParentNetID, IsOwner);
+        projectile.Initialize(projectileSpeed.Value, Damage.Value, ParentNetID, IsOwner);
     }
 }

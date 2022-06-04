@@ -273,6 +273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 150
+  weaponData: {fileID: 11400000, guid: 067f53b0c0fb1c3419283927179f4479, type: 2}
 --- !u!114 &-4829901794372278007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,4 +299,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkParentPrefab: {fileID: 4237924938959069607, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
-  weaponPrefab: {fileID: 7407448911527856426, guid: ff46cdb5977c8274eb21a67734b81a6d, type: 3}

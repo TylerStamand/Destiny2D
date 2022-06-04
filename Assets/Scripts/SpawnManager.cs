@@ -22,6 +22,8 @@ public class SpawnManager : NetworkBehaviour {
         else {
             Destroy(gameObject);
         }
+
+
     }
 
 

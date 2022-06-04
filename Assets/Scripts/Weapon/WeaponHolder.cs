@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using Unity.Netcode;
 
 public class WeaponHolder : NetworkBehaviour
 {
     [SerializeField] NetworkObject networkParentPrefab;
-    [SerializeField] Weapon weaponPrefab;
     
     public bool Initialized {get; private set;}
 
@@ -70,12 +70,30 @@ public class WeaponHolder : NetworkBehaviour
     }
 
     [ServerRpc]
-    public void EquipWeaponServerRpc(ulong parentNetID, ulong clientID) {
-     
-        weapon = Instantiate(weaponPrefab);
+    public void EquipWeaponServerRpc(ulong parentNetID, ulong clientID,  string weaponDataName) {
+        WeaponData weaponData = ResourceSystem.Instance.GetWeaponData(weaponDataName);
+        
+        if(weaponData == null) {
+            Debug.LogError("Could not get Weapon Data");
+            return;
+        } 
+
+
+        weapon = Instantiate(weaponData.WeaponPrefab);
     
         weapon.ParentNetID = parentNetID;
+
+        WeaponStats weaponStats = new WeaponStats {
+            Damage = weaponData.Damage,
+            CoolDown = weaponData.CoolDown,
+            ProjectileSpeed = weaponData.ProjectileSpeed
+
+        };
+        
         weapon.NetworkObject.SpawnWithOwnership(clientID);
+
+        weapon.InitializeServerRpc(weaponStats);
+
 
         if(weaponSlot != null) {
             weapon.transform.SetParent(weaponSlot.transform);

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 
@@ -8,6 +9,7 @@ using Unity.Netcode.Components;
 public class PlayerControllerClient : NetworkBehaviour {
 
     [SerializeField] float moveSpeed;
+    [SerializeField] WeaponData weaponData;
 
     new Rigidbody2D rigidbody;
     Animator animator;
@@ -94,7 +96,7 @@ public class PlayerControllerClient : NetworkBehaviour {
         yield return new WaitForSeconds(.001f);
         if (!initialized) {
             Debug.Log("Initializing Player Weapon");
-            weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId);
+            weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId, weaponData.Name);
         }
     }
 

@@ -2,13 +2,16 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEditor;
 
 [RequireComponent(typeof(WeaponHolder))]
 public class MeleeEnemy : Enemy {
 
     [SerializeField] float moveSpeed = 1;
     [SerializeField] float alertRadius = 1;
-    [SerializeField] float stopDistance = 2;
+    [SerializeField] float stopDistance = 2;    
+
+    [SerializeField] WeaponData weaponData;
 
     WeaponHolder weaponHolder;
 
@@ -35,7 +38,7 @@ public class MeleeEnemy : Enemy {
         while(!weaponHolder.Initialized) {
             yield return null;
         }
-        weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId);
+        weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId, weaponData.Name);
     }
 
 

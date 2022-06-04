@@ -22,20 +22,9 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
         rigidbody = GetComponent<Rigidbody2D>();
-        rigidbody.gravityScale = 0;
+        
     }
 
-
-    // void OnCollisionEnter2D(Collision2D collision) {
-    //     currentVelocity = rigidbody.velocity;
-    // }
-
-    // void OnCollisionExit2D(Collision2D collision) {
-    //     if(collision.collider.attachedRigidbody == null) return;
-    //     if(collision.collider.attachedRigidbody.bodyType == RigidbodyType2D.Kinematic) {
-    //         rigidbody.velocity = currentVelocity;
-    //     }
-    // }
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();

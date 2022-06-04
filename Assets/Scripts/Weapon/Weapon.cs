@@ -5,16 +5,13 @@ using Unity.Netcode;
 
 public abstract class Weapon : NetworkBehaviour
 {
-    [field: SerializeField] public float Damage { get; private set; }
-    [SerializeField] protected float coolDown = 1;
-
-    public NetworkVariable<float> lastUseTime;
+    public NetworkVariable<float> Damage { get; private set; } = new NetworkVariable<float>(1);
+    protected NetworkVariable<float> coolDown = new NetworkVariable<float>(1);
+    protected NetworkVariable<float> lastUseTime = new NetworkVariable<float>(0);
     
     public ulong ParentNetID;
 
-    void Awake() {
-        lastUseTime.Value = 0;
-    }
+    bool initialized = false;
 
     void OnValidate() {
 
@@ -23,10 +20,23 @@ public abstract class Weapon : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public virtual void InitializeServerRpc(WeaponStats weaponStats) {
+        Debug.Log("Initialized Weapon");
+        Damage.Value = weaponStats.Damage;
+        coolDown.Value = weaponStats.CoolDown;
+        initialized = true;
+    }
+
 
     [ServerRpc]
     public virtual void AttackServerRpc(Direction direction) {
-        if (lastUseTime.Value + coolDown < Time.time) {
+        if(!initialized){
+            Debug.LogError("Weapon not initialized, please initialize before using weapon");
+            return;
+        }
+
+        if (lastUseTime.Value + coolDown.Value < Time.time) {
             lastUseTime.Value = Time.time;
             AttackClientRpc(direction);
         }
