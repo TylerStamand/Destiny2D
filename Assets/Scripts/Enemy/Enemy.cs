@@ -3,28 +3,38 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using DG.Tweening;
-using Random = System.Random;
+using Random = UnityEngine.Random;
 
+
+[System.Serializable]
+public struct DropStats {
+    [Range(0, 1)]
+    public float ChanceToDrop;
+    public DropServer DropPrefab;
+    public MinMaxInt AmountPossible;
+} 
 
 public class Enemy : NetworkBehaviour, IDamageable {
 
     [field: SerializeField] public NetworkVariable<float> Health { get; private set; } = new NetworkVariable<float>();
     
-    [Header("Drops")]
-
-    [SerializeField] MinMaxInt numberOfDrops;
-    [SerializeField] List<DropServer> Drops;
+    [SerializeField] List<DropStats> Drops;
 
     [Header("Animation")]
     [SerializeField] float damageAnimationSpeed = .1f;
 
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
-
+   
 
     protected virtual void Awake() {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
+
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -51,20 +61,29 @@ public class Enemy : NetworkBehaviour, IDamageable {
     }
 
     void Die() {
-
-        //Drops, add probability per drop instead of random amount
-        Random random = new Random();
-        int dropNumber = random.Next(numberOfDrops.MinValue, numberOfDrops.MaxValue + 1);
-        for (int i = 0; i < dropNumber; i++) {
-            int dropListIndex = random.Next(0, Drops.Count);
-            DropServer dropPrefab = Drops[dropListIndex];
-            DropServer drop = Instantiate(dropPrefab, transform.position, Quaternion.identity);
-            drop.NetworkObject.Spawn();
-        }
-
-
+        DropItems();
         NetworkObject.Despawn();
+    }
 
+
+    void DropItems() {
+       
+        
+        foreach(DropStats drop in Drops) {
+            float dropRoll = Random.Range(0,1);
+            if(dropRoll <= drop.ChanceToDrop) {
+                int numberToDrop = Random.Range(drop.AmountPossible.MinValue, drop.AmountPossible.MaxValue);
+                Debug.Log($"Max {drop.AmountPossible.MaxValue} Min: {drop.AmountPossible.MinValue} Dropped: {numberToDrop}");
+                for (int i = 0; i <= numberToDrop; i++) {
+                    DropServer dropPrefab = drop.DropPrefab; 
+                    DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
+                    dropInstance.NetworkObject.Spawn();
+                }
+            }
+
+        }
+        
+       
 
     }
 
