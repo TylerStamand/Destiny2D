@@ -49,9 +49,13 @@ public class WeaponHolder : NetworkBehaviour
 
     [ClientRpc]
     void EquipWeaponClientRpc(ulong itemNetID) {
+        
+
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[itemNetID];
         weapon = netObj.gameObject.GetComponent<Weapon>();
         weapon.transform.localPosition = Vector2.zero;
+        weapon.transform.localRotation = Quaternion.identity;
+        weapon.transform.localScale = Vector3.one;
 
     }
 
@@ -71,6 +75,10 @@ public class WeaponHolder : NetworkBehaviour
 
     [ServerRpc]
     public void EquipWeaponServerRpc(ulong parentNetID, ulong clientID,  string weaponDataName) {
+        if (weapon != null) {
+            weapon.NetworkObject.Despawn();
+        }
+
         WeaponData weaponData = ResourceSystem.Instance.GetWeaponData(weaponDataName);
         
         if(weaponData == null) {

@@ -52,7 +52,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
 
     void Die() {
 
-        //Drops
+        //Drops, add probability per drop instead of random amount
         Random random = new Random();
         int dropNumber = random.Next(numberOfDrops.MinValue, numberOfDrops.MaxValue + 1);
         for (int i = 0; i < dropNumber; i++) {

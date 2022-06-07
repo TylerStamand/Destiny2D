@@ -41,6 +41,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     }
 
 
+
     [ServerRpc(RequireOwnership = false)]
     public void TakeDamageServerRpc(float damage) {
 
@@ -51,6 +52,8 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     public void UpdateAnimatorMovementServerRpc(Vector2 movement) {
         AnimatorMovement.Value = movement;
     }
+
+    
 
 
 }

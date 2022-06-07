@@ -135,8 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9cefe46e14a44434682350647924d449, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  yDropDistance: 0.3
-  pickUpDelay: 3
 --- !u!114 &-7051349904860105553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 269528427
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
@@ -185,7 +183,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &-1421503910886645575
 CircleCollider2D:
   m_ObjectHideFlags: 0

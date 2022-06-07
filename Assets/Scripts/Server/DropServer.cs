@@ -26,22 +26,24 @@ public struct MinMaxFloat {
     }
 }
 
-
+[DefaultExecutionOrder(0)]
+[RequireComponent(typeof(DropClient))]
 public class DropServer : NetworkBehaviour {
 
-    static MinMaxFloat yDropForce = new MinMaxFloat(1, 5);
-    static MinMaxFloat xDropForce = new MinMaxFloat(-5, 5);
-    [SerializeField] float yDropDistance = 1;
-    [SerializeField] float pickUpDelay = 1;
+    static MinMaxFloat yDropForce = new MinMaxFloat(1, 3);
+    static MinMaxFloat xDropForce = new MinMaxFloat(-3, 3);
+    static float yDropDistance = .3f;
+    static float pickUpDelay = 3;
+    static float timeBeforeGravityEffect = 2;
 
     DropClient client;
     Vector2 dropForce = Vector2.zero;
+    float timeSpawned;
 
     float initialY;
-
     bool animationPlay;
 
-    void Awake() {
+    protected virtual void Awake() {
         initialY = transform.position.y;
         animationPlay = false;
 
@@ -56,6 +58,8 @@ public class DropServer : NetworkBehaviour {
             enabled = false;
             return;
         }
+        
+        timeSpawned = Time.time;
 
         client = GetComponent<DropClient>();
 
@@ -63,19 +67,29 @@ public class DropServer : NetworkBehaviour {
             SetDropForce();
             rigidbody.AddForce(dropForce, ForceMode2D.Impulse);
         }
+
         StartCoroutine(ActivatePlayerCollider());
     }
 
     void Update() {
-        if (transform.position.y > initialY) {
+        if(!IsSpawned) return;
+
+        
+
+        if (transform.position.y > initialY && timeSpawned < timeSpawned + timeBeforeGravityEffect) {
             initialY = transform.position.y;
         }
+         
         else if (initialY - yDropDistance >= transform.position.y) {
+           
+
+            //keep from happening multiple times
             if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
                 rigidbody.gravityScale = 0;
                 rigidbody.velocity = Vector2.zero;
             }
             if (!animationPlay) {
+                
                 client.StartIdleAnimationClientRpc();
                 animationPlay = true;
             }
@@ -85,7 +99,7 @@ public class DropServer : NetworkBehaviour {
     void OnTriggerEnter2D(Collider2D collider) {
 
         if (collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
-            PickUpAction();
+            PickUpAction(player);
             NetworkObject.Despawn();
         }
 
@@ -97,7 +111,7 @@ public class DropServer : NetworkBehaviour {
         dropForce = new Vector2((float)random.NextDouble() * (xDropForce.MaxValue - xDropForce.MinValue) + xDropForce.MinValue, (float)random.NextDouble() * (yDropForce.MaxValue - yDropForce.MinValue) + yDropForce.MinValue);
     }
 
-    protected virtual void PickUpAction() {
+    protected virtual void PickUpAction(PlayerControllerServer player) {
         Debug.Log("Picked Up");
     }
 

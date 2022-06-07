@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a08e286b9d41f6f4db66eac37b60c25e, type: 3}
   m_Name: RangedWeapon
   m_EditorClassIdentifier: 
-  Name: Weapon Name
-  Sprite: {fileID: 0}
-  WeaponPrefab: {fileID: 0}
-  Damage: 0
-  CoolDown: 0
-  ProjectileSpeed: 0
+  Name: RangeWeaponDefault
+  Sprite: {fileID: -164301326, guid: f813b393ad7aa544bac1d33d7150b967, type: 3}
+  WeaponPrefab: {fileID: 7407448911527856426, guid: ff46cdb5977c8274eb21a67734b81a6d, type: 3}
+  Damage: 1
+  CoolDown: 1
+  ProjectileSpeed: 2

@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using DG.Tweening;
 
+[DefaultExecutionOrder(1)]
 public class DropClient : NetworkBehaviour {
 
     static float idleDeltaY = 1.3f;
@@ -27,6 +28,8 @@ public class DropClient : NetworkBehaviour {
 
         spriteTransform.DOLocalMoveY(spriteTransform.position.y + idleDeltaY, speed).SetLoops(-1, LoopType.Yoyo);
     }
+
+   
 
     public override void OnNetworkDespawn() {
         base.OnNetworkDespawn();
