@@ -5,8 +5,6 @@ using UnityEditor;
 using Unity.Netcode;
 
 
-// Use a resource system like in slashndash to reference the scriptable object with enums to send over the server
-
 
 [CreateAssetMenu(fileName ="WeaponData", menuName = "ScriptableObjects/Weapon" )]
 public class WeaponData : ScriptableObject

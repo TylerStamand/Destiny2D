@@ -92,6 +92,7 @@ public class WeaponHolder : NetworkBehaviour
         weapon.ParentNetID = parentNetID;
 
         WeaponStats weaponStats = new WeaponStats {
+            WeaponName = weaponDataName,
             Damage = weaponData.Damage,
             CoolDown = weaponData.CoolDown,
             ProjectileSpeed = weaponData.ProjectileSpeed

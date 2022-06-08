@@ -6,12 +6,14 @@ using UnityEditor;
 
 public class WeaponDropServer : DropServer
 {
-    [SerializeField] WeaponData weaponData;
+    [SerializeField] WeaponStats weaponStats;
 
 
+    WeaponData weaponData;
 
     protected override void Awake() {
         base.Awake();
+        weaponData = ResourceSystem.Instance.GetWeaponData(weaponStats.WeaponName) ;
         GetComponentInChildren<SpriteRenderer>().sprite = weaponData.Sprite;
     }
 
@@ -39,7 +41,7 @@ public class WeaponDropServer : DropServer
 
 
     protected override void PickUpAction(PlayerControllerServer player) {
-        player.GetComponent<WeaponHolder>().EquipWeaponServerRpc(player.NetworkObjectId, player.OwnerClientId, weaponData.Name);
+        player.GetComponent<PlayerControllerServer>().AddWeaponToInventoryServerRpc(weaponStats);
 
     }
 

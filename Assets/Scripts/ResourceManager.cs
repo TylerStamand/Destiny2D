@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System;
+
+
 
 public class ResourceSystem {
 
@@ -22,6 +25,7 @@ public class ResourceSystem {
     // private Dictionary<EnemyType, Enemy> enemiesDict;
     // private Dictionary<WeaponType, Weapon> weaponsDict;
     private Dictionary<string, WeaponData> weaponDataDic;
+    private Dictionary<Guid, PlayerData> playerDataDic;
 
     private ResourceSystem() {
         AssembleResources();
@@ -38,8 +42,11 @@ public class ResourceSystem {
         // List<Weapon> Weapons = Resources.LoadAll<Weapon>("Weapons").ToList();
         // weaponsDict = Weapons.ToDictionary(r => r.WeaponType, r => r);
 
+        // List<PlayerData> playerDataList = Resources.LoadAll<PlayerData>("Players").ToList();
         List<WeaponData> weaponDataList = Resources.LoadAll<WeaponData>("Items/Weapons").ToList();
     
+        // playerDataDic = playerDataList.ToDictionary(player => player.playerGUID, player => player);
+
         weaponDataDic = weaponDataList.ToDictionary(r => {
             if(r.Name != WeaponData.DefaultName) {
                 return r.Name;
@@ -65,4 +72,8 @@ public class ResourceSystem {
         }
 
     } 
+
+    public PlayerData GetPlayerData(Guid playerGUID) {
+        return playerDataDic[playerGUID];
+    }
 }
