@@ -7,10 +7,10 @@ using Random = UnityEngine.Random;
 
 
 [System.Serializable]
-public struct DropStats {
+public struct DropData {
     [Range(0, 1)]
     public float ChanceToDrop;
-    public DropServer DropPrefab;
+    public ItemData Item;
     public MinMaxInt AmountPossible;
 } 
 
@@ -18,7 +18,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
 
     [field: SerializeField] public NetworkVariable<float> Health { get; private set; } = new NetworkVariable<float>();
     
-    [SerializeField] List<DropStats> Drops;
+    [SerializeField] List<DropData> Drops;
 
     [Header("Animation")]
     [SerializeField] float damageAnimationSpeed = .1f;
@@ -34,7 +34,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-
+        
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -69,15 +69,19 @@ public class Enemy : NetworkBehaviour, IDamageable {
     void DropItems() {
        
         
-        foreach(DropStats drop in Drops) {
+        foreach(DropData drop in Drops) {
             float dropRoll = Random.Range(0,1);
             if(dropRoll <= drop.ChanceToDrop) {
                 int numberToDrop = Random.Range(drop.AmountPossible.MinValue, drop.AmountPossible.MaxValue);
                 Debug.Log($"Max {drop.AmountPossible.MaxValue} Min: {drop.AmountPossible.MinValue} Dropped: {numberToDrop}");
                 for (int i = 0; i <= numberToDrop; i++) {
-                    DropServer dropPrefab = drop.DropPrefab; 
+                    DropServer dropPrefab = ResourceManager.DropPrefab; 
                     DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
+                    
                     dropInstance.NetworkObject.Spawn();
+                    
+                    dropInstance.SetItem(drop.Item.CreateItem());
+                    
                 }
             }
 

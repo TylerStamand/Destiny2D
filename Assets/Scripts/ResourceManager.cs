@@ -5,13 +5,15 @@ using System;
 
 
 
-public class ResourceSystem {
+public class ResourceManager {
 
-    static private ResourceSystem instance;
-    public static ResourceSystem Instance {
+    public static DropServer DropPrefab {get; private set;}
+
+    static private ResourceManager instance;
+    public static ResourceManager Instance {
         get {
             if (instance == null) {
-                instance = new ResourceSystem();
+                instance = new ResourceManager();
             }
             return instance;
         }
@@ -24,31 +26,24 @@ public class ResourceSystem {
 
     // private Dictionary<EnemyType, Enemy> enemiesDict;
     // private Dictionary<WeaponType, Weapon> weaponsDict;
-    private Dictionary<string, WeaponData> weaponDataDic;
+    private Dictionary<string, ItemData> itemDataDic;
     private Dictionary<Guid, PlayerData> playerDataDic;
 
-    private ResourceSystem() {
+    private ResourceManager() {
         AssembleResources();
     }
 
     private void AssembleResources() {
-        // Player = Resources.Load<PlayerUnit>("Player/Player");
-        // PlayerData = Resources.Load<PlayerData>("Player/PlayerData");
-        // PlayerCamera = Resources.Load<CameraController>("Player/PlayerCamera");
 
-        // List<Enemy> Enemies = Resources.LoadAll<Enemy>("Enemies").ToList();
-        // enemiesDict = Enemies.ToDictionary(r => r.EnemyType, r => r);
-
-        // List<Weapon> Weapons = Resources.LoadAll<Weapon>("Weapons").ToList();
-        // weaponsDict = Weapons.ToDictionary(r => r.WeaponType, r => r);
+        DropPrefab = Resources.Load<DropServer>("Prefabs/Drop");
 
         // List<PlayerData> playerDataList = Resources.LoadAll<PlayerData>("Players").ToList();
-        List<WeaponData> weaponDataList = Resources.LoadAll<WeaponData>("Items/Weapons").ToList();
+        List<ItemData> itemDataList = Resources.LoadAll<ItemData>("Items").ToList();
     
         // playerDataDic = playerDataList.ToDictionary(player => player.playerGUID, player => player);
 
-        weaponDataDic = weaponDataList.ToDictionary(r => {
-            if(r.Name != WeaponData.DefaultName) {
+        itemDataDic = itemDataList.ToDictionary(r => {
+            if(r.Name != ItemData.DefaultName) {
                 return r.Name;
             }
             else {
@@ -60,18 +55,18 @@ public class ResourceSystem {
         );
     }
 
-    // public Enemy GetEnemy(EnemyType t) => enemiesDict[t];
-    // public Weapon GetWeapon(WeaponType t) => weaponsDict[t];
-    public WeaponData GetWeaponData(string name) {
-        if(weaponDataDic.TryGetValue(name, out WeaponData weaponData)) {
-            return weaponData;
+
+    public ItemData GetItemData(string name) {
+        if(itemDataDic.TryGetValue(name, out ItemData itemData)) {
+            return itemData;
         }
         else {
-            Debug.LogError($"No weapon of name: {name} was found");
+            Debug.LogError($"No item of name: {name} was found");
             return null;
         }
 
     } 
+
 
     public PlayerData GetPlayerData(Guid playerGUID) {
         return playerDataDic[playerGUID];

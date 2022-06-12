@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System;
 public class SessionManager
 {
 
@@ -14,7 +14,7 @@ public class SessionManager
         List<PlayerData> playerData = SaveSystem.LoadPlayerData();
         if(playerData != null) {
             foreach(PlayerData player in playerData) {
-                clientData[player.PlayerID.ToString()] = player;
+                clientData[player.PlayerID] = player;
             }
         }
     }
@@ -23,8 +23,8 @@ public class SessionManager
 
     static SessionManager instance;
 
-    Dictionary<string, PlayerData> clientData = new Dictionary<string, PlayerData>();
-    Dictionary<ulong, string> ClientIDToPlayerId = new Dictionary<ulong, string>();
+    Dictionary<Guid, PlayerData> clientData = new Dictionary<Guid, PlayerData>();
+    Dictionary<ulong, Guid> ClientIDToPlayerId = new Dictionary<ulong, Guid>();
 
     public void DisconnectClient(ulong clientId) {
         // Mark client as disconnected, but keep their data so they can reconnect.
@@ -38,7 +38,7 @@ public class SessionManager
     }
 
 
-    public void SetupConnectingPlayerSessionData(ulong clientId, string playerId, PlayerData sessionPlayerData) {
+    public void SetupConnectingPlayerSessionData(ulong clientId, Guid playerId) {
         var isReconnecting = false;
 
         // Test for duplicate connection
@@ -56,26 +56,36 @@ public class SessionManager
 
         }
 
+        PlayerData sessionPlayerData;
+
         // Reconnecting. Give data from old player to new player
         if (isReconnecting) {
             // Update player session data
             sessionPlayerData = clientData[playerId];
-            sessionPlayerData.ClientID = clientId;
-            sessionPlayerData.IsConnected = true;
         }
 
+        else {
+            sessionPlayerData = new PlayerData();
+
+        }
+
+        sessionPlayerData.ClientID = clientId;
+        sessionPlayerData.IsConnected = true;
+        sessionPlayerData.PlayerID = playerId;
+        
         //Populate our dictionaries with the SessionPlayerData
         
         clientData[playerId] = sessionPlayerData;
         ClientIDToPlayerId[clientId] = playerId;
     }
 
-    public bool IsDuplicateConnection(string playerId) {
+    public bool IsDuplicateConnection(Guid playerId) {
         return clientData.ContainsKey(playerId) && clientData[playerId].IsConnected;
     }
 
-    public PlayerData GetPlayerData(string playerID) {
-        return clientData[playerID];
+    public PlayerData GetPlayerData(Guid playerID) {
+        clientData.TryGetValue(playerID, out PlayerData playerData);
+        return playerData;
     }
 
     public void SavePlayerData() {

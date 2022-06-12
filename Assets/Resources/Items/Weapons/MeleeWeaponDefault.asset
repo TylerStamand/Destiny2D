@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a08e286b9d41f6f4db66eac37b60c25e, type: 3}
   m_Name: MeleeWeaponDefault
   m_EditorClassIdentifier: 
-  Name: MeleeWeaponDefault
-  Sprite: {fileID: -1314365479, guid: f813b393ad7aa544bac1d33d7150b967, type: 3}
+  <Name>k__BackingField: Melee Weapon
+  <Description>k__BackingField: 
+  <Sprite>k__BackingField: {fileID: -1314365479, guid: f813b393ad7aa544bac1d33d7150b967, type: 3}
   WeaponPrefab: {fileID: 2452918427145112933, guid: 41d48f1abbd8ee64fba8ecdb18573a73, type: 3}
   Damage: 2
   CoolDown: 1

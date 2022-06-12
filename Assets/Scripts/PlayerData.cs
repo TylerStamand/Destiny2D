@@ -5,7 +5,7 @@ using UnityEngine;
 using Unity.Multiplayer.Samples.BossRoom;
 
 [System.Serializable]
-public struct PlayerData : ISessionPlayerData {
+public class PlayerData : ISessionPlayerData {
 
     public Inventory Inventory {get; set;}
     public Guid PlayerID {get; set;}
@@ -17,7 +17,7 @@ public struct PlayerData : ISessionPlayerData {
         Debug.Log($"Reinitialized on {ClientID}");
     }
 
-    public void AddItemToInventory(WeaponStats weapon) {
-        Inventory.Items.Add(weapon);
+    public void AddItemToInventory(Item item) {
+        Inventory.Items.Add(item);
     }
 }

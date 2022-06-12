@@ -1,0 +1,2 @@
+Add state to drops and enemies.
+Right now if they animate before a client joins, they wont have a sprite set and wont be moving 

@@ -79,7 +79,7 @@ public class WeaponHolder : NetworkBehaviour
             weapon.NetworkObject.Despawn();
         }
 
-        WeaponData weaponData = ResourceSystem.Instance.GetWeaponData(weaponDataName);
+        WeaponData weaponData = (WeaponData)ResourceManager.Instance.GetItemData(weaponDataName);
         
         if(weaponData == null) {
             Debug.LogError("Could not get Weapon Data");

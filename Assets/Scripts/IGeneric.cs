@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-public class Inventory {
-    public List<Item> Items {get; set;}  
+public interface IGeneric<out T> where T: Item {
+    T Inner {get;}
 }

@@ -1343,7 +1343,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053045, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053046, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -1373,7 +1373,7 @@ MonoBehaviour:
     m_InternalValue: 1
   Drops:
   - ChanceToDrop: 0.5
-    DropPrefab: {fileID: 9052699100511624050, guid: 8f95fb5b4cd4c49479ac85b59f074634, type: 3}
+    Item: {fileID: 0}
     AmountPossible:
       MaxValue: 3
       MinValue: 1
@@ -1532,9 +1532,14 @@ MonoBehaviour:
     m_InternalValue: 1
   Drops:
   - ChanceToDrop: 1
-    DropPrefab: {fileID: 9052699100511624050, guid: 8f95fb5b4cd4c49479ac85b59f074634, type: 3}
+    Item: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}
     AmountPossible:
-      MaxValue: 2
+      MaxValue: 1
+      MinValue: 1
+  - ChanceToDrop: 1
+    Item: {fileID: 11400000, guid: 067f53b0c0fb1c3419283927179f4479, type: 2}
+    AmountPossible:
+      MaxValue: 1
       MinValue: 1
   damageAnimationSpeed: 0.1
   moveSpeed: 1
@@ -1599,7 +1604,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053045, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3233376406552053046, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -1629,7 +1634,7 @@ MonoBehaviour:
     m_InternalValue: 1
   Drops:
   - ChanceToDrop: 0.5
-    DropPrefab: {fileID: 9052699100511624050, guid: 8f95fb5b4cd4c49479ac85b59f074634, type: 3}
+    Item: {fileID: 0}
     AmountPossible:
       MaxValue: 3
       MinValue: 1

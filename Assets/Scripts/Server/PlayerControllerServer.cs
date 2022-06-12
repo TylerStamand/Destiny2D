@@ -45,7 +45,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
     public Guid GetPlayerGUID() {
         if(PlayerID == null) {
-            PlayerID = Resources.Load<PlayerID>("Player");
+            PlayerID = Resources.Load<PlayerID>("Player/PlayerID");
         }
         if (PlayerID.ID == null) {
             PlayerID.ID = System.Guid.NewGuid();
@@ -53,7 +53,12 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         return PlayerID.ID;
     }
 
+
     public void SetPlayerData(PlayerData playerData) {
+        Debug.Log($"Is server {IsServer}");
+        Debug.Log($"Is client {IsClient}");
+        Debug.Log($"Is spawned { NetworkObject.IsSpawned }");
+        
         this.playerData = playerData;
     }
 
@@ -65,9 +70,13 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
 
 
-    [ServerRpc]
-    public void AddWeaponToInventoryServerRpc(WeaponStats weapon) {
-
+    [ServerRpc(RequireOwnership = false)]
+    public void PickUpItemServerRpc(Item item) {
+        Debug.Log($"Item to add {item.ItemName}");
+        
+        Debug.Log(playerData.PlayerID);
+        if(playerData == null) 
+        playerData.AddItemToInventory(item);
     }
 
     [ServerRpc]

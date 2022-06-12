@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
-
+using System;
 
 public class GameManager : NetworkBehaviour {
 
@@ -33,22 +33,22 @@ public class GameManager : NetworkBehaviour {
             return;
         }
 
+        if(IsServer && IsClient) {
+            PlayerConnected(NetworkObject.OwnerClientId);
+        }
+
         NetworkManager.OnClientConnectedCallback += PlayerConnected;
     }
 
     void PlayerConnected(ulong clientID) {
+        Debug.Log("Player Connected");
         NetworkObject playerNetObject = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientID);
         PlayerControllerServer player = playerNetObject.GetComponent<PlayerControllerServer>();
-        string playerID = player.GetPlayerGUID().ToString();
-        PlayerData connectedPlayerData = sessionManager.GetPlayerData(playerID);
-    
-        //recheck
-        PlayerData newPlayerData = new PlayerData();
-        connectedPlayerData = newPlayerData;
-        sessionManager.SetupConnectingPlayerSessionData(clientID, playerID, newPlayerData);
-    
-        player.SetPlayerData((PlayerData)connectedPlayerData);
-        
+        Guid playerID = player.GetPlayerGUID();
+        sessionManager.SetupConnectingPlayerSessionData(clientID, playerID);
+        PlayerData playerData = sessionManager.GetPlayerData(playerID);
+        Debug.Log(playerData.PlayerID);
+        player.SetPlayerData(playerData);
     }
 
 

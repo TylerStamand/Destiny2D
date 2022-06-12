@@ -83,7 +83,29 @@ public static class Utilities {
         }
     }
 
+    public static void ReadValueSafe(this FastBufferReader reader, out Item value) {
+        reader.ReadValueSafe(out string itemName);
+        value = new Item(itemName);
+    }
 
+    public static void WriteValueSafe(this FastBufferWriter writer, in Item value) {
+        writer.WriteValueSafe(value.ItemName);
+      
+    }
 
+    public static void ReadValueSafe(this FastBufferReader reader, out WeaponItem value) {
+        reader.ReadValueSafe(out string itemName);
+        reader.ReadValueSafe(out float damage);
+        reader.ReadValueSafe(out float coolDown);
+
+        value = new WeaponItem(itemName, damage, coolDown);
+    }
+
+    public static void WriteValueSafe(this FastBufferWriter writer, in WeaponItem value) {
+        writer.WriteValueSafe(value.ItemName);
+        writer.WriteValueSafe(value.Damage);
+        writer.WriteValueSafe(value.CoolDown);
+    }
+    
 
 }

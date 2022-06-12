@@ -29,7 +29,14 @@ public class DropClient : NetworkBehaviour {
         spriteTransform.DOLocalMoveY(spriteTransform.position.y + idleDeltaY, speed).SetLoops(-1, LoopType.Yoyo);
     }
 
-   
+    [ClientRpc]
+    public void SetItemClientRpc(Item item) {
+        Debug.Log("Setting Item");
+        ItemData itemData = ResourceManager.Instance.GetItemData(item.ItemName);
+        Debug.Log($"Item: {itemData.Name}");
+
+        GetComponentInChildren<SpriteRenderer>().sprite = itemData.Sprite;
+    }
 
     public override void OnNetworkDespawn() {
         base.OnNetworkDespawn();

@@ -37,6 +37,8 @@ public class DropServer : NetworkBehaviour {
     static float timeBeforeGravityEffect = 2;
 
     DropClient client;
+    Item item;
+
     Vector2 dropForce = Vector2.zero;
     float timeSpawned;
 
@@ -99,11 +101,18 @@ public class DropServer : NetworkBehaviour {
     void OnTriggerEnter2D(Collider2D collider) {
 
         if (collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
-            PickUpAction(player);
+            Debug.Log(item.ItemName);
+            player.PickUpItemServerRpc(item);
             NetworkObject.Despawn();
         }
 
 
+    }
+
+    public void SetItem (Item item) {
+
+        this.item = item;
+        client.SetItemClientRpc(item);
     }
 
     public void SetDropForce() {
@@ -111,9 +120,6 @@ public class DropServer : NetworkBehaviour {
         dropForce = new Vector2((float)random.NextDouble() * (xDropForce.MaxValue - xDropForce.MinValue) + xDropForce.MinValue, (float)random.NextDouble() * (yDropForce.MaxValue - yDropForce.MinValue) + yDropForce.MinValue);
     }
 
-    protected virtual void PickUpAction(PlayerControllerServer player) {
-        Debug.Log("Picked Up");
-    }
 
     IEnumerator ActivatePlayerCollider() {
         yield return new WaitForSeconds(pickUpDelay);
