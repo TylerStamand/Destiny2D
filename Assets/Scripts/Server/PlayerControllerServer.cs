@@ -70,15 +70,16 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
 
 
-    [ServerRpc(RequireOwnership = false)]
-    public void PickUpItemServerRpc(Item item) {
+
+    public void PickUpItem(Item item) {
+        if(!IsServer) return;
+        
         Debug.Log($"Item to add {item.ItemName}");
         
         
         //Got an error saying this was null
         Debug.Log(playerData.PlayerID);
         
-        if(playerData == null) 
         playerData.AddItemToInventory(item);
     }
 
@@ -87,7 +88,16 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         AnimatorMovement.Value = movement;
     }
 
-
+    [ServerRpc] 
+    public void DisplayInventoryServerRpc() {
+        if(playerData != null) {
+            foreach(Item item in playerData.Inventory.Items) {
+                Debug.Log(item.ItemName);
+                WeaponItem weaponItem = (WeaponItem)item;
+                Debug.Log(weaponItem.Damage);
+            }
+        }
+    }
 
     
 

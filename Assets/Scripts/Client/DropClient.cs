@@ -22,8 +22,9 @@ public class DropClient : NetworkBehaviour {
         spriteTransform = spriteRenderer.gameObject.transform;
 
         DropServer server = GetComponent<DropServer>();
-        Debug.Log($"Getting item name: {server.ItemName.Value.ToString()}");
+ 
         ItemData itemData = ResourceManager.Instance.GetItemData(server.ItemName.Value.Value.ToString());
+
         if(itemData != null) {
             spriteRenderer.sprite = itemData.Sprite;
         }
@@ -38,12 +39,14 @@ public class DropClient : NetworkBehaviour {
         }
     }
 
+
     [ClientRpc]
     public void StartIdleAnimationClientRpc() {
         StartIdleAnimation();
       
     }
 
+    //Change this to the new method in netspawn
     [ClientRpc]
     public void SetItemClientRpc(Item item) {
         Debug.Log("Setting Item");

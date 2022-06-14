@@ -59,6 +59,11 @@ public class PlayerControllerClient : NetworkBehaviour {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 weaponHolder.UseWeapon(Utilities.DirectionFromVector2(direction));
             }
+
+
+            if(Input.GetKeyDown(KeyCode.I)) {
+                playerControllerServer.DisplayInventoryServerRpc();
+            }
         }
     }
 

@@ -7,7 +7,7 @@ using Unity.Multiplayer.Samples.BossRoom;
 [System.Serializable]
 public class PlayerData : ISessionPlayerData {
 
-    public Inventory Inventory {get; set;}
+    public Inventory Inventory {get; set;} = new Inventory();
     public Guid PlayerID {get; set;}
 
     public bool IsConnected { get; set; }
@@ -18,6 +18,8 @@ public class PlayerData : ISessionPlayerData {
     }
 
     public void AddItemToInventory(Item item) {
+        Debug.Log("Adding item to inventory");
         Inventory.Items.Add(item);
+        Debug.Log($"There are now {Inventory.Items.Count} items");
     }
 }

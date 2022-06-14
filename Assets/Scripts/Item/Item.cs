@@ -7,7 +7,7 @@ using Unity.Netcode;
 /// </summary>
 
 [System.Serializable]
-public class Item {
+public class Item : INetworkSerializable{
     private string itemName;
     public string ItemName => itemName;
 
@@ -15,8 +15,12 @@ public class Item {
         this.itemName = itemName;
     }
 
-    // public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
-    //     serializer.SerializeValue(ref itemName);
+    public Item() {
+        itemName = null;
+    }
+
+    public virtual void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
+        serializer.SerializeValue(ref itemName);
         
-    // }
+    }
 }

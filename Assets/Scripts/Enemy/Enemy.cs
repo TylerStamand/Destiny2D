@@ -78,8 +78,8 @@ public class Enemy : NetworkBehaviour, IDamageable {
                     DropServer dropPrefab = ResourceManager.DropPrefab; 
                     DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
                     
-                    dropInstance.SetItem(drop.Item.CreateItem());
-                    
+                    Item itemToDrop = drop.Item.CreateItem();
+                    dropInstance.SetItem(itemToDrop);
                     dropInstance.NetworkObject.Spawn();
                     
                     

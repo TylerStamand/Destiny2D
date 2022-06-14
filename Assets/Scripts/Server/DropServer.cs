@@ -86,10 +86,11 @@ public class DropServer : NetworkBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D collider) {
+        if(!IsServer)return;
 
         if (collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
             Debug.Log(item.ItemName);
-            player.PickUpItemServerRpc(item);
+            player.PickUpItem(item);
             NetworkObject.Despawn();
         }
 
