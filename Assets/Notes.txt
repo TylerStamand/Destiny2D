@@ -1,2 +1,3 @@
 Add state to drops and enemies.
 Right now if they animate before a client joins, they wont have a sprite set and wont be moving 
+Look at boss room to figure out how they deal with state. Network variables cant do classes

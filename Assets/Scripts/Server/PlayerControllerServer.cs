@@ -74,7 +74,10 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     public void PickUpItemServerRpc(Item item) {
         Debug.Log($"Item to add {item.ItemName}");
         
+        
+        //Got an error saying this was null
         Debug.Log(playerData.PlayerID);
+        
         if(playerData == null) 
         playerData.AddItemToInventory(item);
     }

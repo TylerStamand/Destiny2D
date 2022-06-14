@@ -34,7 +34,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-        
+
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -78,9 +78,10 @@ public class Enemy : NetworkBehaviour, IDamageable {
                     DropServer dropPrefab = ResourceManager.DropPrefab; 
                     DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
                     
+                    dropInstance.SetItem(drop.Item.CreateItem());
+                    
                     dropInstance.NetworkObject.Spawn();
                     
-                    dropInstance.SetItem(drop.Item.CreateItem());
                     
                 }
             }

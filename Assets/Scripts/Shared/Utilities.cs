@@ -3,9 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;    
 using UnityEditor;
+using System;
+using Unity.Collections;
+
+
 
 public enum Direction {
     Up, Down, Left, Right
+}
+
+[Serializable]
+public struct MinMaxInt {
+    public int MaxValue;
+    public int MinValue;
+
+    public MinMaxInt(int minValue, int maxValue) {
+        MaxValue = maxValue;
+        MinValue = minValue;
+    }
+}
+
+[Serializable]
+public struct MinMaxFloat {
+    public float MaxValue;
+    public float MinValue;
+
+    public MinMaxFloat(float minValue, float maxValue) {
+        MaxValue = maxValue;
+        MinValue = minValue;
+    }
 }
 
 
@@ -107,5 +133,7 @@ public static class Utilities {
         writer.WriteValueSafe(value.CoolDown);
     }
     
+
+
 
 }

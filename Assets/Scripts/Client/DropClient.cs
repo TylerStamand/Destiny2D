@@ -21,12 +21,27 @@ public class DropClient : NetworkBehaviour {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         spriteTransform = spriteRenderer.gameObject.transform;
 
+        DropServer server = GetComponent<DropServer>();
+        Debug.Log($"Getting item name: {server.ItemName.Value.ToString()}");
+        ItemData itemData = ResourceManager.Instance.GetItemData(server.ItemName.Value.Value.ToString());
+        if(itemData != null) {
+            spriteRenderer.sprite = itemData.Sprite;
+        }
+        else {
+            Debug.Log("Item data null");
+        }
+        
+        Debug.Log("Checking if can animate");
+
+        if(server.IsAnimating.Value) {
+            StartIdleAnimation();
+        }
     }
 
     [ClientRpc]
     public void StartIdleAnimationClientRpc() {
-
-        spriteTransform.DOLocalMoveY(spriteTransform.position.y + idleDeltaY, speed).SetLoops(-1, LoopType.Yoyo);
+        StartIdleAnimation();
+      
     }
 
     [ClientRpc]
@@ -41,6 +56,10 @@ public class DropClient : NetworkBehaviour {
     public override void OnNetworkDespawn() {
         base.OnNetworkDespawn();
         spriteTransform.DOKill();
+    }
+
+    private void StartIdleAnimation() {
+        spriteTransform.DOLocalMoveY(spriteTransform.position.y + idleDeltaY, speed).SetLoops(-1, LoopType.Yoyo);
     }
 
 }

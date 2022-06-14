@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 3233376406552053043}
   - component: {fileID: 3288559689636157704}
   - component: {fileID: 968894130}
+  - component: {fileID: -6788253702900818467}
   m_Layer: 0
   m_Name: DefaultEnemy
   m_TagString: Untagged
@@ -36,7 +37,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3233376406552053040
 SpriteRenderer:
@@ -204,3 +205,28 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
+--- !u!114 &-6788253702900818467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233376406552053045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac17f75d54676645b31b3d43022bd6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField:
+    m_InternalValue: 1
+  Drops:
+  - ChanceToDrop: 1
+    Item: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}
+    AmountPossible:
+      MaxValue: 2
+      MinValue: 1
+  damageAnimationSpeed: 0.1
+  moveSpeed: 1.12
+  alertRadius: 2.97
+  stopDistance: 1.57
+  weaponData: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}

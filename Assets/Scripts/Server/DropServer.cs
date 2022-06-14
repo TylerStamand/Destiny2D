@@ -3,32 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using System;
-
-[Serializable]
-public struct MinMaxInt {
-    public int MaxValue;
-    public int MinValue;
-
-    public MinMaxInt(int minValue, int maxValue) {
-        MaxValue = maxValue;
-        MinValue = minValue;
-    }
-}
-
-[Serializable]
-public struct MinMaxFloat {
-    public float MaxValue;
-    public float MinValue;
-
-    public MinMaxFloat(float minValue, float maxValue) {
-        MaxValue = maxValue;
-        MinValue = minValue;
-    }
-}
+using Unity.Collections;
 
 [DefaultExecutionOrder(0)]
 [RequireComponent(typeof(DropClient))]
 public class DropServer : NetworkBehaviour {
+
+    public NetworkVariable<bool> IsAnimating {get;} = new NetworkVariable<bool>();
+    public NetworkVariable<ForceNetworkSerializeByMemcpy<FixedString512Bytes>> ItemName {get; private set;} = new NetworkVariable<ForceNetworkSerializeByMemcpy<FixedString512Bytes>>(); 
 
     static MinMaxFloat yDropForce = new MinMaxFloat(1, 3);
     static MinMaxFloat xDropForce = new MinMaxFloat(-3, 3);
@@ -65,6 +47,10 @@ public class DropServer : NetworkBehaviour {
 
         client = GetComponent<DropClient>();
 
+        if(client != null) {
+            client.SetItemClientRpc(item);
+        }
+
         if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {
             SetDropForce();
             rigidbody.AddForce(dropForce, ForceMode2D.Impulse);
@@ -94,6 +80,7 @@ public class DropServer : NetworkBehaviour {
                 
                 client.StartIdleAnimationClientRpc();
                 animationPlay = true;
+                IsAnimating.Value = true;
             }
         }
     }
@@ -112,8 +99,10 @@ public class DropServer : NetworkBehaviour {
     public void SetItem (Item item) {
 
         this.item = item;
-        client.SetItemClientRpc(item);
+        ItemName.Value = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(item.ItemName);
+        GetComponentInChildren<SpriteRenderer>().sprite = ResourceManager.Instance.GetItemData(item.ItemName).Sprite;
     }
+
 
     public void SetDropForce() {
         System.Random random = new System.Random();
@@ -125,5 +114,7 @@ public class DropServer : NetworkBehaviour {
         yield return new WaitForSeconds(pickUpDelay);
         gameObject.layer = LayerMask.NameToLayer("Drop");
     }
+
+  
 
 }

@@ -57,13 +57,8 @@ public class ResourceManager {
 
 
     public ItemData GetItemData(string name) {
-        if(itemDataDic.TryGetValue(name, out ItemData itemData)) {
-            return itemData;
-        }
-        else {
-            Debug.LogError($"No item of name: {name} was found");
-            return null;
-        }
+        itemDataDic.TryGetValue(name, out ItemData value);
+        return value;
 
     } 
 
