@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Unity.Netcode;
-using Unity.Netcode.Components;
+using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(1)]
 public class PlayerControllerClient : NetworkBehaviour {
@@ -108,6 +108,12 @@ public class PlayerControllerClient : NetworkBehaviour {
     [ClientRpc]
     public void SetSpawnClientRpc(Vector2 position, ClientRpcParams rpcParams) {
         transform.position = position;
+    }
+
+    [ClientRpc]
+    public void DisplayInventoryClientRpc(PlayerData playerData, ClientRpcParams clientRpcParams) {
+        SceneManager.LoadSceneAsync("Inventory", LoadSceneMode.Additive);
+        
     }
 
     

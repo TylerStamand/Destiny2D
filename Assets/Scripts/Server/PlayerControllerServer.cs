@@ -7,19 +7,20 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
     public PlayerID PlayerID {get; private set;}
     public NetworkVariable<Vector2> AnimatorMovement { get; private set; } = new NetworkVariable<Vector2>();
-
-    PlayerControllerClient playerControllerClient;
-    new Rigidbody2D rigidbody;
+    public PlayerData playerData {get; private set;}
 
     NetworkVariable<float> health = new NetworkVariable<float>();
 
-    PlayerData playerData;
+    PlayerControllerClient playerControllerClient;
+    new Rigidbody2D rigidbody;
+    Inventory inventory;
+
     Vector2 currentVelocity;
     
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
         rigidbody = GetComponent<Rigidbody2D>();
-
+        inventory = GetComponent<Inventory>();
         
     }
 
@@ -54,11 +55,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     }
 
 
-    public void SetPlayerData(PlayerData playerData) {
-        Debug.Log($"Is server {IsServer}");
-        Debug.Log($"Is client {IsClient}");
-        Debug.Log($"Is spawned { NetworkObject.IsSpawned }");
-        
+    public void SetPlayerData(PlayerData playerData) {    
         this.playerData = playerData;
     }
 
@@ -80,7 +77,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         //Got an error saying this was null
         Debug.Log(playerData.PlayerID);
         
-        playerData.AddItemToInventory(item);
+        inventory.AddItem(item);
     }
 
     [ServerRpc]
@@ -90,13 +87,18 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
     [ServerRpc] 
     public void DisplayInventoryServerRpc() {
-        if(playerData != null) {
-            foreach(Item item in playerData.Inventory.Items) {
-                Debug.Log(item.ItemName);
-                WeaponItem weaponItem = (WeaponItem)item;
-                Debug.Log(weaponItem.Damage);
-            }
-        }
+        // if(playerData != null) {
+        //     foreach(Item item in playerData.Inventory.Items) {
+        //         Debug.Log(item.ItemName);
+        //         WeaponItem weaponItem = (WeaponItem)item;
+        //         Debug.Log(weaponItem.Damage);
+        //     }
+        // }
+        ClientRpcParams clientParams = new ClientRpcParams();
+        ClientRpcSendParams sendParams = new ClientRpcSendParams();
+        sendParams.TargetClientIds = new ulong[] {OwnerClientId};
+        clientParams.Send = sendParams;
+        playerControllerClient.DisplayInventoryClientRpc(playerData, clientParams);
     }
 
     

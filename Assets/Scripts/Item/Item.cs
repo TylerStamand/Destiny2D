@@ -1,26 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Unity.Netcode;
+using System;
 /// <summary>
 /// Class holding Stats and a reference back to ItemData by ItemName
 /// </summary>
 
 [System.Serializable]
-public class Item : INetworkSerializable{
-    private string itemName;
-    public string ItemName => itemName;
+public class Item {
+
+
+    
+    public string ItemName;
+
+    public string ItemID {get; private set;}
+
+    //Item Type
+
+    public bool IsStackAble {get; }
 
     public Item(string itemName) {
-        this.itemName = itemName;
+        ItemID = Guid.NewGuid().ToString(); 
+        ItemName = itemName;
     }
 
-    public Item() {
-        itemName = null;
+    public virtual string GetDescription() {
+        return $"This is {ItemName} with the id {ItemID}";
     }
 
-    public virtual void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
-        serializer.SerializeValue(ref itemName);
+    // public virtual void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
+    //     serializer.SerializeValue(ref itemName);
         
-    }
+    // }
 }
+
+// Item Types enum

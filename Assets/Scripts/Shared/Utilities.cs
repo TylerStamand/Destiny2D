@@ -109,15 +109,15 @@ public static class Utilities {
         }
     }
 
-    // public static void ReadValueSafe(this FastBufferReader reader, out Item value) {
-    //     reader.ReadValueSafe(out string itemName);
-    //     value = new Item(itemName);
-    // }
+    public static void ReadValueSafe(this FastBufferReader reader, out Guid value) {
+        reader.ReadValueSafe(out string guid);
+        value = new Guid(guid);
+    }
 
-    // public static void WriteValueSafe(this FastBufferWriter writer, in Item value) {
-    //     writer.WriteValueSafe(value.ItemName);
+    public static void WriteValueSafe(this FastBufferWriter writer, in Guid value) {
+        writer.WriteValueSafe(value.ToString());
       
-    // }
+    }
 
     // public static void ReadValueSafe(this FastBufferReader reader, out WeaponItem value) {
     //     reader.ReadValueSafe(out string itemName);

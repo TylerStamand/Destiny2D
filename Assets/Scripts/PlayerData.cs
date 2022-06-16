@@ -3,23 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Netcode;
 
 [System.Serializable]
 public class PlayerData : ISessionPlayerData {
 
-    public Inventory Inventory {get; set;} = new Inventory();
-    public Guid PlayerID {get; set;}
+    private Guid playerID;
+    private bool isConnected;
+    private ulong clientID;
 
-    public bool IsConnected { get; set; }
-    public ulong ClientID { get; set; }
+    public Guid PlayerID {get => playerID; set => playerID = value;}
+
+    public bool IsConnected { get => isConnected; set => isConnected = value; }
+    public ulong ClientID { get => clientID; set => clientID = value; }
 
     public void Reinitialize() {
         Debug.Log($"Reinitialized on {ClientID}");
     }
 
-    public void AddItemToInventory(Item item) {
-        Debug.Log("Adding item to inventory");
-        Inventory.Items.Add(item);
-        Debug.Log($"There are now {Inventory.Items.Count} items");
-    }
+
+
+  
 }
