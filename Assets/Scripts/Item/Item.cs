@@ -6,8 +6,6 @@ using System;
 [System.Serializable]
 public class Item {
 
-
-    
     public string ItemName;
 
     public string ItemID {get; private set;}

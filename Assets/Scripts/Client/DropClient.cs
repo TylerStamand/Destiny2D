@@ -32,7 +32,6 @@ public class DropClient : NetworkBehaviour {
             Debug.Log("Item data null");
         }
         
-        Debug.Log("Checking if can animate");
 
         if(server.IsAnimating.Value) {
             StartIdleAnimation();
@@ -48,11 +47,9 @@ public class DropClient : NetworkBehaviour {
 
     //Change this to the new method in netspawn
     [ClientRpc]
-    public void SetItemClientRpc(Item item) {
-        Debug.Log("Setting Item");
-        ItemData itemData = ResourceManager.Instance.GetItemData(item.ItemName);
-        Debug.Log($"Item: {itemData.Name}");
-
+    public void SetItemClientRpc(string itemName) {
+        Debug.Log("Setting ItemDrop on Client");
+        ItemData itemData = ResourceManager.Instance.GetItemData(itemName);
         GetComponentInChildren<SpriteRenderer>().sprite = itemData.Sprite;
     }
 

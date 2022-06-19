@@ -223,6 +223,11 @@ MonoBehaviour:
   - ChanceToDrop: 1
     Item: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}
     AmountPossible:
+      MaxValue: 1
+      MinValue: 1
+  - ChanceToDrop: 1
+    Item: {fileID: 11400000, guid: 067f53b0c0fb1c3419283927179f4479, type: 2}
+    AmountPossible:
       MaxValue: 2
       MinValue: 1
   damageAnimationSpeed: 0.1

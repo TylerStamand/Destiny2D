@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(0)]
 public class PlayerControllerServer : NetworkBehaviour, IDamageable {
@@ -16,6 +17,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     Inventory inventory;
 
     Vector2 currentVelocity;
+
     
     void Awake() {
         playerControllerClient = GetComponent<PlayerControllerClient>();
@@ -73,35 +75,33 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         
         Debug.Log($"Item to add {item.ItemName}");
         
-        
-        //Got an error saying this was null
-        Debug.Log(playerData.PlayerID);
-        
         inventory.AddItem(item);
+    }
+
+    [ServerRpc]
+    public void DropItemServerRpc(ItemInfo itemInfo) {
+        string itemID  = itemInfo.ItemID.Value.ToString();
+        
+        Debug.Log($"Item to remove {itemID}");
+        
+        Item itemToDrop = inventory.GetItem(itemID);
+        
+        inventory.RemoveItem(itemID);
+
+        DropServer dropPrefab = ResourceManager.DropPrefab;
+       
+        //Set parent for a second then remove it to keep it in right scene, might be better to have a set parent for drops
+        DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
+        dropInstance.SetItem(itemToDrop);
+        dropInstance.NetworkObject.Spawn();
+
     }
 
     [ServerRpc]
     public void UpdateAnimatorMovementServerRpc(Vector2 movement) {
         AnimatorMovement.Value = movement;
     }
-
-    [ServerRpc] 
-    public void DisplayInventoryServerRpc() {
-        // if(playerData != null) {
-        //     foreach(Item item in playerData.Inventory.Items) {
-        //         Debug.Log(item.ItemName);
-        //         WeaponItem weaponItem = (WeaponItem)item;
-        //         Debug.Log(weaponItem.Damage);
-        //     }
-        // }
-        ClientRpcParams clientParams = new ClientRpcParams();
-        ClientRpcSendParams sendParams = new ClientRpcSendParams();
-        sendParams.TargetClientIds = new ulong[] {OwnerClientId};
-        clientParams.Send = sendParams;
-        playerControllerClient.DisplayInventoryClientRpc(playerData, clientParams);
-    }
-
-    
+ 
 
 
 }

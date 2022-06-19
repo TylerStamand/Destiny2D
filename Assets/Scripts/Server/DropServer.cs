@@ -15,7 +15,7 @@ public class DropServer : NetworkBehaviour {
     static MinMaxFloat yDropForce = new MinMaxFloat(1, 3);
     static MinMaxFloat xDropForce = new MinMaxFloat(-3, 3);
     static float yDropDistance = .3f;
-    static float pickUpDelay = 3;
+    static float pickUpDelay = 2;
     static float timeBeforeGravityEffect = 2;
 
     DropClient client;
@@ -48,7 +48,7 @@ public class DropServer : NetworkBehaviour {
         client = GetComponent<DropClient>();
 
         if(client != null) {
-            client.SetItemClientRpc(item);
+            client.SetItemClientRpc(item.ItemName);
         }
 
         if (TryGetComponent<Rigidbody2D>(out Rigidbody2D rigidbody)) {

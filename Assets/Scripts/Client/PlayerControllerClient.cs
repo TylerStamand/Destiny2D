@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using System;
 
 [DefaultExecutionOrder(1)]
 public class PlayerControllerClient : NetworkBehaviour {
@@ -23,7 +24,8 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     PlayerControllerServer playerControllerServer;
     WeaponHolder weaponHolder;
-
+    
+    bool InInventory = false;
     bool initialized = false;
 
     void Awake() {
@@ -62,7 +64,7 @@ public class PlayerControllerClient : NetworkBehaviour {
 
 
             if(Input.GetKeyDown(KeyCode.I)) {
-                playerControllerServer.DisplayInventoryServerRpc();
+                DisplayInventory();
             }
         }
     }
@@ -105,16 +107,26 @@ public class PlayerControllerClient : NetworkBehaviour {
         }
     }
 
+    private void DisplayInventory() {
+        if(!InInventory){
+            SceneManager.LoadSceneAsync("Inventory", LoadSceneMode.Additive);
+            InInventory = true;
+        }
+
+        else {
+            SceneManager.UnloadSceneAsync("Inventory");
+            InInventory = false;
+        }
+    }
+
+
     [ClientRpc]
     public void SetSpawnClientRpc(Vector2 position, ClientRpcParams rpcParams) {
         transform.position = position;
     }
 
-    [ClientRpc]
-    public void DisplayInventoryClientRpc(PlayerData playerData, ClientRpcParams clientRpcParams) {
-        SceneManager.LoadSceneAsync("Inventory", LoadSceneMode.Additive);
-        
-    }
+
+   
 
     
 
