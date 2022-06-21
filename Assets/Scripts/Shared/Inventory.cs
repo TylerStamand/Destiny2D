@@ -9,9 +9,7 @@ public class Inventory : NetworkBehaviour {
     
     NetworkList<ItemInfo> itemInfoList;
 
-    public Dictionary<string, Item> Items {get; private set;} = new Dictionary<string, Item>();
-
-    bool itemsDirty = true;
+    Dictionary<string, Item> Items {get; set;} = new Dictionary<string, Item>();
 
     void Awake() {
         itemInfoList = new NetworkList<ItemInfo>();
@@ -26,12 +24,14 @@ public class Inventory : NetworkBehaviour {
     }
 
 
+
+
     /// <summary>
     /// Server Only Function
     /// </summary>
     /// <param name="itemID"></param>
     /// <returns></returns>
-    public Item GetItem(string itemID) {
+    public Item GetItemServer(string itemID) {
         if(!IsServer) return null;
         return Items[itemID];
     }
@@ -40,28 +40,41 @@ public class Inventory : NetworkBehaviour {
     /// <summary>
     /// Server Only Function
     /// </summary>
-    /// <param name="item"></param>
-    public void AddItem(Item item) {
+    /// <returns></returns>
+    public List<Item> GetItemListServer() {
+        
+        if(!IsServer) return null;
+        return Items.Values.ToList();
+    }
+
+    /// <summary>
+    /// Server Only Function
+    /// </summary>
+    /// <param name="items"></param>
+
+    public void SetItemListServer(List<Item> items) {
         if(!IsServer) return;
-        Items.Add(item.ItemID, item);
-
-        //Add to info list
-        ItemInfo itemInfo = new ItemInfo {
-            ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(item.ItemID),
-            Name = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(item.ItemName),
-            Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(item.GetDescription())
-        };
-
-        itemInfoList.Add(itemInfo);
-
-        Debug.Log("Added Item to inventory");
+        foreach(Item item in items) {
+            Items.Add(item.ItemID, item);
+            AddItemToInfoList(item);
+        }
     }
 
     /// <summary>
     /// Server Only Function
     /// </summary>
     /// <param name="item"></param>
-    public void RemoveItem(string itemID) {
+    public void AddItemServer(Item item) {
+        if(!IsServer) return;
+        Items.Add(item.ItemID, item);
+        AddItemToInfoList(item);
+    }
+
+    /// <summary>
+    /// Server Only Function
+    /// </summary>
+    /// <param name="item"></param>
+    public void RemoveItemServer(string itemID) {
         if(!IsServer) return;
 
         Items.Remove(itemID);
@@ -77,22 +90,15 @@ public class Inventory : NetworkBehaviour {
 
     }
 
+    void AddItemToInfoList(Item item) {
+        ItemInfo itemInfo = new ItemInfo {
+            ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(item.ItemID),
+            Name = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(item.ItemName),
+            Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(item.GetDescription())
+        };
 
-    [ServerRpc] 
-    void RebuildInfoListServerRpc() {
-        itemInfoList.Clear();
-        foreach (string itemID in Items.Keys) {
-            ItemInfo itemInfo = new ItemInfo {
-                ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(itemID),
-                Name = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(Items[itemID].ItemName),
-                Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(Items[itemID].GetDescription())
-            };
-
-            itemInfoList.Add(itemInfo);
-        }
-        itemsDirty = false;
+        itemInfoList.Add(itemInfo);
     }
-
 
    
 }

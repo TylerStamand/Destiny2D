@@ -54,6 +54,5 @@ public class RangeWeapon : Weapon
         Projectile projectile = Instantiate(projectilePrefab, transform.parent.position + transform.parent.transform.up, transform.parent.transform.rotation);
         
         projectile.Initialize(projectileSpeed.Value, Damage.Value, ParentNetID, IsOwner);
-        Debug.Log(projectileSpeed.Value);
     }
 }

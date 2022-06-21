@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using System.IO;
+
 
 [DefaultExecutionOrder(0)]
 public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
-    public PlayerID PlayerID {get; private set;}
     public NetworkVariable<Vector2> AnimatorMovement { get; private set; } = new NetworkVariable<Vector2>();
-    public PlayerData playerData {get; private set;}
 
     NetworkVariable<float> health = new NetworkVariable<float>();
 
@@ -23,7 +23,6 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         playerControllerClient = GetComponent<PlayerControllerClient>();
         rigidbody = GetComponent<Rigidbody2D>();
         inventory = GetComponent<Inventory>();
-        
     }
 
 
@@ -35,10 +34,6 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
             return;
         }
 
-        
-
-        
-
         health.Value = 5;
 
         GameObject spawnPoint = SpawnManager.Instance.GetSpawnLocation();
@@ -46,19 +41,41 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     }
 
 
-    public Guid GetPlayerGUID() {
-        if(PlayerID == null) {
-            PlayerID = Resources.Load<PlayerID>("Player/PlayerID");
-        }
-        if (PlayerID.ID == null) {
-            PlayerID.ID = System.Guid.NewGuid();
-        }
-        return PlayerID.ID;
+    public string GetPlayerID() {
+
+        return PlayerPrefs.GetString("PlayerID");
+    }
+
+    /// <summary>
+    /// Server Only Function
+    /// </summary>
+    /// <param name="item"></param>
+    public void PickUpItemServer(Item item) {
+        if(!IsServer) return;
+        
+        Debug.Log($"Item to add {item.ItemName}");
+        
+        inventory.AddItemServer(item);
     }
 
 
-    public void SetPlayerData(PlayerData playerData) {    
-        this.playerData = playerData;
+    /// <summary>
+    /// Server Only Function
+    /// </summary>
+    /// <returns></returns>
+    public PlayerSaveData GetSaveDataServer() {
+        return new PlayerSaveData() {
+            PlayerID = GetPlayerID(), 
+            Items = inventory.GetItemListServer()
+        };
+    }
+
+    /// <summary>
+    /// Server Only Function
+    /// </summary>
+    /// <param name="saveData"></param>
+    public void SetSaveDataServer(PlayerSaveData saveData) {
+        inventory.SetItemListServer(saveData.Items);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -68,25 +85,15 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     }
 
 
-
-
-    public void PickUpItem(Item item) {
-        if(!IsServer) return;
-        
-        Debug.Log($"Item to add {item.ItemName}");
-        
-        inventory.AddItem(item);
-    }
-
     [ServerRpc]
     public void DropItemServerRpc(ItemInfo itemInfo) {
         string itemID  = itemInfo.ItemID.Value.ToString();
         
         Debug.Log($"Item to remove {itemID}");
         
-        Item itemToDrop = inventory.GetItem(itemID);
+        Item itemToDrop = inventory.GetItemServer(itemID);
         
-        inventory.RemoveItem(itemID);
+        inventory.RemoveItemServer(itemID);
 
         DropServer dropPrefab = ResourceManager.DropPrefab;
        

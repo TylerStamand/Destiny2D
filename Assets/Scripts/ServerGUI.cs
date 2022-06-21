@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 public class ServerGUI : MonoBehaviour {
+    
     void OnGUI() {
+        if(!GameManager.Instance.playerIDSet) return;
+        
         GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+        
+        
+
         if (!NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsServer) {
             StartButtons();
         }

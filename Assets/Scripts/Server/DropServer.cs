@@ -90,7 +90,7 @@ public class DropServer : NetworkBehaviour {
 
         if (collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
             Debug.Log(item.ItemName);
-            player.PickUpItem(item);
+            player.PickUpItemServer(item);
             NetworkObject.Despawn();
         }
 

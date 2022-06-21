@@ -1,35 +1,24 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
+
+
+//This class needs a lot of work
 public class SessionManager
 {
 
-    SessionManager() {
-
-        //Come back to this. Initialization probably shouldn't happen here
-        SaveSystem.Init();
-
-
-        List<PlayerData> playerData = SaveSystem.LoadPlayerData();
-        if(playerData != null) {
-            foreach(PlayerData player in playerData) {
-                clientData[player.PlayerID] = player;
-            }
-        }
-    }
+    SessionManager() {}
 
     public static SessionManager Instance => instance ??= new SessionManager();
 
     static SessionManager instance;
 
-    Dictionary<Guid, PlayerData> clientData = new Dictionary<Guid, PlayerData>();
-    Dictionary<ulong, Guid> ClientIDToPlayerId = new Dictionary<ulong, Guid>();
+    Dictionary<string, PlayerSessionData> clientData = new Dictionary<string, PlayerSessionData>();
+    Dictionary<ulong, string> ClientIDToPlayerId = new Dictionary<ulong, string>();
 
     public void DisconnectClient(ulong clientId) {
         // Mark client as disconnected, but keep their data so they can reconnect.
         if (ClientIDToPlayerId.TryGetValue(clientId, out var playerId)) {
-            if (clientData.TryGetValue(playerId, out PlayerData playerData)) {
+            if (clientData.TryGetValue(playerId, out PlayerSessionData playerData)) {
                 var data = clientData[playerId];
                 data.IsConnected = false;
                 clientData[playerId] = data;
@@ -38,7 +27,7 @@ public class SessionManager
     }
 
 
-    public void SetupConnectingPlayerSessionData(ulong clientId, Guid playerId) {
+    public void SetupConnectingPlayerSessionData(ulong clientId, string playerId) {
         var isReconnecting = false;
 
         // Test for duplicate connection
@@ -56,7 +45,7 @@ public class SessionManager
 
         }
 
-        PlayerData sessionPlayerData;
+        PlayerSessionData sessionPlayerData;
 
         // Reconnecting. Give data from old player to new player
         if (isReconnecting) {
@@ -65,7 +54,7 @@ public class SessionManager
         }
 
         else {
-            sessionPlayerData = new PlayerData();
+            sessionPlayerData = new PlayerSessionData();
 
         }
 
@@ -77,22 +66,19 @@ public class SessionManager
         
         clientData[playerId] = sessionPlayerData;
         ClientIDToPlayerId[clientId] = playerId;
+
+
+        
     }
 
-    public bool IsDuplicateConnection(Guid playerId) {
+    public bool IsDuplicateConnection(string playerId) {
         return clientData.ContainsKey(playerId) && clientData[playerId].IsConnected;
     }
 
-    public PlayerData GetPlayerData(Guid playerID) {
-        clientData.TryGetValue(playerID, out PlayerData playerData);
+    public PlayerSessionData GetPlayerData(string playerID) {
+        clientData.TryGetValue(playerID, out PlayerSessionData playerData);
         return playerData;
     }
 
-    public void SavePlayerData() {
-        List<PlayerData> players = new List<PlayerData>();
-        foreach(PlayerData playerData in clientData.Values) {
-            players.Add(playerData);
-        }
-        SaveSystem.SavePlayerData(players);
-    }
+    
 }

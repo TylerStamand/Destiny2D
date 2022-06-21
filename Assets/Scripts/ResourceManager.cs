@@ -27,7 +27,7 @@ public class ResourceManager {
     // private Dictionary<EnemyType, Enemy> enemiesDict;
     // private Dictionary<WeaponType, Weapon> weaponsDict;
     private Dictionary<string, ItemData> itemDataDic;
-    private Dictionary<Guid, PlayerData> playerDataDic;
+    private Dictionary<Guid, PlayerSessionData> playerDataDic;
 
     private ResourceManager() {
         AssembleResources();
@@ -63,7 +63,7 @@ public class ResourceManager {
     } 
 
 
-    public PlayerData GetPlayerData(Guid playerGUID) {
+    public PlayerSessionData GetPlayerData(Guid playerGUID) {
         return playerDataDic[playerGUID];
     }
 }
