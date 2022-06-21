@@ -3,7 +3,7 @@ using System;
 /// Class holding Stats and a reference back to ItemData by ItemName
 /// </summary>
 
-[System.Serializable]
+
 public class Item {
 
     public string ItemName;
