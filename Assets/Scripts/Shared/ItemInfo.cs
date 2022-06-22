@@ -12,7 +12,7 @@ public struct ItemInfo : IEquatable<ItemInfo> , INetworkSerializable {
     public ForceNetworkSerializeByMemcpy<FixedString512Bytes> Description;
 
     public bool Equals(ItemInfo other) {
-        if(other.ItemID.Value == ItemID.Value) 
+        if(other.ItemID.Value.ToString() == ItemID.Value.ToString()) 
             return true;
         return false;
     }

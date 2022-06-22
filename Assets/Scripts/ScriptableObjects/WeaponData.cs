@@ -10,11 +10,13 @@ using Unity.Netcode;
 public class WeaponData : ItemData
 {
     public Weapon WeaponPrefab;
-    public float Damage = 0;
-    public float CoolDown = 0;
-    public float ProjectileSpeed = 0;
+    
+    
+    public MinMaxFloat Damage;
+    public MinMaxFloat CoolDown;
+    public MinMaxFloat ProjectileSpeed;
 
     public override Item CreateItem() {
-        return new WeaponItem(Name, Damage, CoolDown);
+        return new WeaponItem(Name, Damage.GetRandomValue(), CoolDown.GetRandomValue(), ProjectileSpeed.GetRandomValue());
     }
 }

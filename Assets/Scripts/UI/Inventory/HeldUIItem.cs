@@ -7,16 +7,19 @@ public class HeldUIItem : MonoBehaviour
 
     Camera mainCamera;
     Vector3 mask = new Vector3(1, 1, 0);
+    RectTransform rectTransform;
 
     void Awake() {
         mainCamera = Camera.main;
+        rectTransform = GetComponent<RectTransform>();
+        
     }
 
     void Update() {
-        Vector3 newPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 newPosition = Input.mousePosition;
         newPosition = new Vector3(newPosition.x, newPosition.y, 0);
 
-        transform.position = newPosition;
+        rectTransform.position = newPosition;
         
     }
 }

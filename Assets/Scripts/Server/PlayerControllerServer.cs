@@ -15,7 +15,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     PlayerControllerClient playerControllerClient;
     new Rigidbody2D rigidbody;
     Inventory inventory;
-
+    WeaponHolder weaponHolder;
     Vector2 currentVelocity;
 
     
@@ -23,6 +23,8 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         playerControllerClient = GetComponent<PlayerControllerClient>();
         rigidbody = GetComponent<Rigidbody2D>();
         inventory = GetComponent<Inventory>();
+        weaponHolder = GetComponent<WeaponHolder>();
+        
     }
 
 
@@ -33,6 +35,9 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
             enabled = false;
             return;
         }
+
+        inventory.OnWeaponChange += weaponHolder.EquipWeaponServer;
+        // weaponHolder.OnInitializedServer += () => weaponHolder.EquipWeaponServer(inventory.Weapon);
 
         health.Value = 5;
 
@@ -95,7 +100,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         
         inventory.RemoveItemServer(itemID);
 
-        DropServer dropPrefab = ResourceManager.DropPrefab;
+        DropServer dropPrefab = ResourceManager.Instance.DropPrefab;
        
         //Set parent for a second then remove it to keep it in right scene, might be better to have a set parent for drops
         DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);

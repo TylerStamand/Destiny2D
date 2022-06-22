@@ -20,9 +20,9 @@ public abstract class Weapon : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public virtual void InitializeServerRpc(WeaponStats weaponStats) {
-        Debug.Log("Initialized Weapon");
+    public virtual void InitializeWeaponServer(WeaponStats weaponStats) {
+        if(!IsServer) return;
+        
         Damage.Value = weaponStats.Damage;
         coolDown.Value = weaponStats.CoolDown;
         initialized = true;

@@ -4,20 +4,31 @@ using Unity.Netcode;
 using System.Linq;
 using Unity.Collections;
 using UnityEngine;
+using System;
 
 public class Inventory : NetworkBehaviour {
     
-    NetworkList<ItemInfo> itemInfoList;
+
+    public event Action OnInventoryChange;
+    public event Action<WeaponItem> OnWeaponChange;
+
+    public NetworkList<ItemInfo> itemInfoList {get; private set;}
 
     Dictionary<string, Item> Items {get; set;} = new Dictionary<string, Item>();
 
+    public WeaponItem Weapon {get; private set;}
+    
+    public NetworkVariable<ItemInfo> weaponInfo {get; private set;}
+    
+    
+
+
     void Awake() {
         itemInfoList = new NetworkList<ItemInfo>();
-
+        weaponInfo = new NetworkVariable<ItemInfo>();
     }
 
-    public override void OnNetworkSpawn() {
-    } 
+   
 
     public NetworkList<ItemInfo> GetItemInfoList() {
         return itemInfoList;
@@ -47,6 +58,7 @@ public class Inventory : NetworkBehaviour {
         return Items.Values.ToList();
     }
 
+
     /// <summary>
     /// Server Only Function
     /// </summary>
@@ -56,9 +68,18 @@ public class Inventory : NetworkBehaviour {
         if(!IsServer) return;
         foreach(Item item in items) {
             Items.Add(item.ItemID, item);
-            AddItemToInfoList(item);
+            itemInfoList.Add(item.GetItemInfo());
         }
+        OnInventoryChange?.Invoke();
     }
+
+
+    // [ServerRpc]
+    // public void AddGearToInventory(string itemID) {
+    //     if(Weapon.ItemID == itemID) {
+    //         AddItemServer(Weapon);
+    //     }
+    // }
 
     /// <summary>
     /// Server Only Function
@@ -67,7 +88,15 @@ public class Inventory : NetworkBehaviour {
     public void AddItemServer(Item item) {
         if(!IsServer) return;
         Items.Add(item.ItemID, item);
-        AddItemToInfoList(item);
+        itemInfoList.Add(item.GetItemInfo());
+
+        OnInventoryChange?.Invoke();
+    }
+
+
+    [ServerRpc]
+    public void RemoveItemServerServerRpc(string itemID) {
+        RemoveItemServer(itemID);
     }
 
     /// <summary>
@@ -87,18 +116,42 @@ public class Inventory : NetworkBehaviour {
         }
 
         Debug.Log("Removed Item in inventory");
-
+        OnInventoryChange?.Invoke();
     }
 
-    void AddItemToInfoList(Item item) {
-        ItemInfo itemInfo = new ItemInfo {
-            ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(item.ItemID),
-            Name = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(item.ItemName),
-            Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(item.GetDescription())
-        };
+    [ServerRpc]
+    public void SetWeaponServerRpc(string itemID) {
 
-        itemInfoList.Add(itemInfo);
+        Item item = Items[itemID];
+
+        WeaponItem newWeapon;
+        if(item is WeaponItem) {
+            newWeapon = (WeaponItem)item;  
+        }
+        else {
+            Debug.LogWarning("Item is not a weapon");
+            return;
+        }
+
+
+        if(newWeapon == null) {
+            Debug.LogWarning("Trying to set weapon but item was not found in inventory");
+        }
+
+        if(Weapon != null) {
+            AddItemServer(Weapon);
+        }
+
+        RemoveItemServer(itemID);
+
+        SetWeaponServer(newWeapon);
     }
 
-   
+    void SetWeaponServer(WeaponItem weapon) {
+        this.Weapon = weapon;
+        weaponInfo.Value = weapon.GetItemInfo();
+        OnWeaponChange?.Invoke(weapon);
+        OnInventoryChange?.Invoke();
+    }
+
 }

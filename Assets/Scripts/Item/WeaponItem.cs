@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode;
-using UnityEngine;
+using System;
 
+[Serializable]
 public class WeaponItem : Item {
 
     private float damage;
@@ -10,10 +8,12 @@ public class WeaponItem : Item {
 
     public float Damage {get => damage; private set => damage = value;}
     public float CoolDown {get => coolDown; private set => coolDown = value; }
+    public float ProjectileSpeed {get; private set;}
 
-    public WeaponItem(string name, float damage, float coolDown) : base(name) {
+    public WeaponItem(string name, float damage, float coolDown, float projectileSpeed) : base(name) {
         Damage = damage;
         CoolDown = coolDown;
+        ProjectileSpeed = projectileSpeed;
     }
 
  

@@ -3,23 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Unity.Netcode;
+using System;
 
 public class WeaponHolder : NetworkBehaviour
 {
-    [SerializeField] NetworkObject networkParentPrefab;
-    
+
     public bool Initialized {get; private set;}
 
     GameObject weaponSlot;
     Weapon weapon;
 
+    public event Action OnInitializedServer; 
 
-    
+    ulong clientID;
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
 
-        if(IsOwner) {
+        if(IsClient) {
             StartCoroutine(Initialize());
         }
     }
@@ -34,8 +35,8 @@ public class WeaponHolder : NetworkBehaviour
 
     IEnumerator Initialize() {
         yield return new WaitForSeconds(0.0001f);
-        InitializeServerRpc(NetworkManager.Singleton.LocalClientId, IsLocalPlayer);
-        Initialized = true;
+        InitializeServerRpc(NetworkManager.Singleton.LocalClientId);
+        
     }
 
 
@@ -60,26 +61,39 @@ public class WeaponHolder : NetworkBehaviour
     }
 
     [ServerRpc]
-    void InitializeServerRpc(ulong clientID, bool isPlayer = false) {
+    void InitializeServerRpc(ulong clientID) {
         
+        this.clientID = clientID;
+        NetworkObject networkParentPrefab = ResourceManager.Instance.NetworkParentPrefab;
         weaponSlot = Instantiate(networkParentPrefab.gameObject);
         NetworkObject networkObject = weaponSlot.GetComponent<NetworkObject>();
     
         networkObject.SpawnWithOwnership(clientID);
-        
-        
-        weaponSlot.transform.parent = this.transform;
+    
+        weaponSlot.transform.SetParent(this.transform);
+
+
+        Initialized = true;
+        OnInitializedServer?.Invoke();
 
         InitializeClientRpc(networkObject.NetworkObjectId);
     }
 
-    [ServerRpc]
-    public void EquipWeaponServerRpc(ulong parentNetID, ulong clientID,  string weaponDataName) {
+    /// <summary>
+    /// Server Only Function
+    /// </summary>
+    /// <param name="weaponItem"></param>
+    public void EquipWeaponServer(WeaponItem weaponItem) {
+        if(!IsServer) return;
+        if(!Initialized)  {
+            Debug.LogWarning("Tried to equip weapon before initialization was complete");
+            return;
+        }
         if (weapon != null) {
             weapon.NetworkObject.Despawn();
         }
 
-        WeaponData weaponData = (WeaponData)ResourceManager.Instance.GetItemData(weaponDataName);
+        WeaponData weaponData = (WeaponData)ResourceManager.Instance.GetItemData(weaponItem.ItemName);
         
         if(weaponData == null) {
             Debug.LogError("Could not get Weapon Data");
@@ -89,37 +103,40 @@ public class WeaponHolder : NetworkBehaviour
 
         weapon = Instantiate(weaponData.WeaponPrefab);
     
-        weapon.ParentNetID = parentNetID;
+        weapon.ParentNetID = NetworkObjectId;
 
         WeaponStats weaponStats = new WeaponStats {
-            WeaponName = weaponDataName,
-            Damage = weaponData.Damage,
-            CoolDown = weaponData.CoolDown,
-            ProjectileSpeed = weaponData.ProjectileSpeed
+            WeaponName = weaponItem.ItemName,
+            Damage = weaponItem.Damage,
+            CoolDown = weaponItem.CoolDown,
+            ProjectileSpeed = weaponItem.ProjectileSpeed
 
         };
         
         weapon.NetworkObject.SpawnWithOwnership(clientID);
 
-        weapon.InitializeServerRpc(weaponStats);
+        weapon.InitializeWeaponServer(weaponStats);
 
 
         if(weaponSlot != null) {
             weapon.transform.SetParent(weaponSlot.transform);
+        }else {
+            Debug.LogWarning("WeaponSlot is not set");
         }
 
         ulong weaponID = weapon.NetworkObjectId;
         EquipWeaponClientRpc(weaponID);
     }
 
+
     public void UseWeapon(Direction direction) {
         if(IsOwner) {
             if(weapon != null) {
                 weapon.AttackServerRpc(direction);
             }
-            // else {
-            //     Debug.LogWarning("Weapon not initialized");
-            // }
+            else {
+                Debug.LogWarning("Weapon not initialized");
+            }
         }
     }
 }

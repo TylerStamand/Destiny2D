@@ -274,7 +274,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 150
-  weaponData: {fileID: 11400000, guid: 067f53b0c0fb1c3419283927179f4479, type: 2}
 --- !u!114 &-4829901794372278007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,7 +298,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd76e1b7df1a9546a232e006ab57b75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  networkParentPrefab: {fileID: 4237924938959069607, guid: 08de9b38e21ffe4489642f31ecaa1a10, type: 3}
 --- !u!114 &-7272330903609815566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,3 +310,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3211f94de004d974ea5f5ee04acca71c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultWeapon: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}

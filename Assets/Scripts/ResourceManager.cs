@@ -2,12 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
-
+using Unity.Netcode;
 
 
 public class ResourceManager {
 
-    public static DropServer DropPrefab {get; private set;}
+    public DropServer DropPrefab {get; private set;}
+    public NetworkObject NetworkParentPrefab {get; private set;}
 
     static private ResourceManager instance;
     public static ResourceManager Instance {
@@ -20,14 +21,8 @@ public class ResourceManager {
     }
 
 
-    // public PlayerUnit Player { get; private set; }
-    // public PlayerData PlayerData { get; private set; }
-    // public CameraController PlayerCamera { get; private set; }
-
-    // private Dictionary<EnemyType, Enemy> enemiesDict;
-    // private Dictionary<WeaponType, Weapon> weaponsDict;
+    
     private Dictionary<string, ItemData> itemDataDic;
-    private Dictionary<Guid, PlayerSessionData> playerDataDic;
 
     private ResourceManager() {
         AssembleResources();
@@ -36,11 +31,10 @@ public class ResourceManager {
     private void AssembleResources() {
 
         DropPrefab = Resources.Load<DropServer>("Prefabs/Drop");
+        NetworkParentPrefab = Resources.Load<NetworkObject>("Prefabs/NetworkParent");
 
-        // List<PlayerData> playerDataList = Resources.LoadAll<PlayerData>("Players").ToList();
         List<ItemData> itemDataList = Resources.LoadAll<ItemData>("Items").ToList();
     
-        // playerDataDic = playerDataList.ToDictionary(player => player.playerGUID, player => player);
 
         itemDataDic = itemDataList.ToDictionary(r => {
             if(r.Name != ItemData.DefaultName) {
@@ -63,7 +57,4 @@ public class ResourceManager {
     } 
 
 
-    public PlayerSessionData GetPlayerData(Guid playerGUID) {
-        return playerDataDic[playerGUID];
-    }
 }

@@ -38,7 +38,7 @@ public class MeleeEnemy : Enemy {
         while(!weaponHolder.Initialized) {
             yield return null;
         }
-        weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId, weaponData.Name);
+        weaponHolder.EquipWeaponServer((WeaponItem)weaponData.CreateItem());
     }
 
 

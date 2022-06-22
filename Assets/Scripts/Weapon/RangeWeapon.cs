@@ -29,9 +29,8 @@ public class RangeWeapon : Weapon
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public override void InitializeServerRpc(WeaponStats weaponStats) {
-        base.InitializeServerRpc(weaponStats);
+    public override void InitializeWeaponServer(WeaponStats weaponStats) {
+        base.InitializeWeaponServer(weaponStats);
         projectileSpeed.Value = weaponStats.ProjectileSpeed;
     }
 

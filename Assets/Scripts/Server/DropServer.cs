@@ -89,7 +89,6 @@ public class DropServer : NetworkBehaviour {
         if(!IsServer)return;
 
         if (collider.TryGetComponent<PlayerControllerServer>(out PlayerControllerServer player)) {
-            Debug.Log(item.ItemName);
             player.PickUpItemServer(item);
             NetworkObject.Despawn();
         }
@@ -107,7 +106,7 @@ public class DropServer : NetworkBehaviour {
 
     public void SetDropForce() {
         System.Random random = new System.Random();
-        dropForce = new Vector2((float)random.NextDouble() * (xDropForce.MaxValue - xDropForce.MinValue) + xDropForce.MinValue, (float)random.NextDouble() * (yDropForce.MaxValue - yDropForce.MinValue) + yDropForce.MinValue);
+        dropForce = new Vector2(xDropForce.GetRandomValue(), yDropForce.GetRandomValue());
     }
 
 
