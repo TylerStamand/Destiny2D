@@ -12,18 +12,22 @@ public class Slot : MonoBehaviour
 
     public event Action<Slot> OnClick;
 
-    public void SetItem(ItemInfo item) {
-        this.Item = item;
-        Sprite itemSprite = ResourceManager.Instance.GetItemData(item.Name.Value.ToString()).Sprite;
-        itemImageSlot.sprite = itemSprite;
-        
-        if(TryGetComponent<Button>(out Button button)) {
+    void Awake() {
+        if (TryGetComponent<Button>(out Button button)) {
             button.onClick.AddListener(HandleButtonClick);
         }
     }
 
+    public void SetItem(ItemInfo item) {
+        this.Item = item;
+        Sprite itemSprite = ResourceManager.Instance.GetItemData(item.Name.Value.ToString()).Sprite;
+        itemImageSlot.sprite = itemSprite;
+        itemImageSlot.color = Color.white;
+        
+        
+    }
+
     void HandleButtonClick() {
-        Debug.Log("Slot item clicked");
         OnClick?.Invoke(this);
     }  
 

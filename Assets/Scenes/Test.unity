@@ -170,6 +170,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultEnemyPrefab: {fileID: -6788253702900818467, guid: f80fd81ea067f904fbbcec1e3843bb01, type: 3}
+  weaponDrop: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}
   playerIDSet: 0
 --- !u!4 &241157607
 Transform:
@@ -978,7 +979,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &550628146
 MonoBehaviour:
   m_ObjectHideFlags: 0

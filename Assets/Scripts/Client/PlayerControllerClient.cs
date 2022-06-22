@@ -10,7 +10,6 @@ using System;
 public class PlayerControllerClient : NetworkBehaviour {
 
     [SerializeField] float moveSpeed;
-    [SerializeField] WeaponData weaponData;
 
     new Rigidbody2D rigidbody;
     Animator animator;
@@ -47,7 +46,7 @@ public class PlayerControllerClient : NetworkBehaviour {
         if (IsLocalPlayer) {
             rigidbody.gravityScale = 0;
             //Server rpc calls delayed by a fraction of a second.
-            StartCoroutine(Initialize());
+            //StartCoroutine(Initialize());
 
 
         }
@@ -101,10 +100,6 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     IEnumerator Initialize() {
         yield return new WaitForSeconds(.001f);
-        if (!initialized) {
-            Debug.Log("Initializing Player Weapon");
-            weaponHolder.EquipWeaponServerRpc(NetworkObjectId, NetworkManager.Singleton.LocalClientId, weaponData.Name);
-        }
     }
 
     private void DisplayInventory() {

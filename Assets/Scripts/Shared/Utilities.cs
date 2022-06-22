@@ -25,12 +25,19 @@ public struct MinMaxInt {
 
 [Serializable]
 public struct MinMaxFloat {
+
     public float MaxValue;
     public float MinValue;
 
     public MinMaxFloat(float minValue, float maxValue) {
         MaxValue = maxValue;
         MinValue = minValue;
+    }
+
+
+    public float GetRandomValue() {
+        System.Random random = new System.Random();
+        return (float)random.NextDouble() * (MaxValue - MinValue) + MinValue;
     }
 }
 
@@ -118,22 +125,6 @@ public static class Utilities {
         writer.WriteValueSafe(value.ToString());
       
     }
-
-    // public static void ReadValueSafe(this FastBufferReader reader, out WeaponItem value) {
-    //     reader.ReadValueSafe(out string itemName);
-    //     reader.ReadValueSafe(out float damage);
-    //     reader.ReadValueSafe(out float coolDown);
-
-    //     value = new WeaponItem(itemName, damage, coolDown);
-    // }
-
-    // public static void WriteValueSafe(this FastBufferWriter writer, in WeaponItem value) {
-    //     writer.WriteValueSafe(value.ItemName);
-    //     writer.WriteValueSafe(value.Damage);
-    //     writer.WriteValueSafe(value.CoolDown);
-    // }
-    
-
 
 
 }

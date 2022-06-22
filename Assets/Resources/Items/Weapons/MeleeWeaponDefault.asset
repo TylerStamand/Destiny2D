@@ -13,9 +13,17 @@ MonoBehaviour:
   m_Name: MeleeWeaponDefault
   m_EditorClassIdentifier: 
   <Name>k__BackingField: Melee Weapon
+  <ItemType>k__BackingField: 0
+  <StackAble>k__BackingField: 0
   <Description>k__BackingField: 
   <Sprite>k__BackingField: {fileID: -1314365479, guid: f813b393ad7aa544bac1d33d7150b967, type: 3}
   WeaponPrefab: {fileID: 2452918427145112933, guid: 41d48f1abbd8ee64fba8ecdb18573a73, type: 3}
-  Damage: 2
-  CoolDown: 1
-  ProjectileSpeed: 1
+  Damage:
+    MaxValue: 3
+    MinValue: 1
+  CoolDown:
+    MaxValue: 1
+    MinValue: 1
+  ProjectileSpeed:
+    MaxValue: 0
+    MinValue: 0

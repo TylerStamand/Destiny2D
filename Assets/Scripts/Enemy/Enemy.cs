@@ -75,7 +75,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
                 int numberToDrop = Random.Range(drop.AmountPossible.MinValue, drop.AmountPossible.MaxValue);
                 Debug.Log($"Max {drop.AmountPossible.MaxValue} Min: {drop.AmountPossible.MinValue} Dropped: {numberToDrop}");
                 for (int i = 0; i <= numberToDrop; i++) {
-                    DropServer dropPrefab = ResourceManager.DropPrefab; 
+                    DropServer dropPrefab = ResourceManager.Instance.DropPrefab; 
                     DropServer dropInstance = Instantiate(dropPrefab, transform.position, Quaternion.identity);
                     
                     Item itemToDrop = drop.Item.CreateItem();

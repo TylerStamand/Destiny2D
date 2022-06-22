@@ -12,6 +12,7 @@ using System.Linq;
 public class GameManager : NetworkBehaviour {
 
     [SerializeField] Enemy defaultEnemyPrefab;
+    [SerializeField] WeaponData weaponDrop;
 
     public static GameManager Instance;
 
@@ -83,6 +84,12 @@ public class GameManager : NetworkBehaviour {
         }
 
         NetworkManager.OnClientConnectedCallback += PlayerConnected;
+
+    
+        DropServer spawnWeaponDrop = Instantiate(ResourceManager.Instance.DropPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        spawnWeaponDrop.SetItem(weaponDrop.CreateItem());
+        spawnWeaponDrop.GetComponent<NetworkObject>().Spawn();
+
     }
 
     void PlayerConnected(ulong clientID) {
