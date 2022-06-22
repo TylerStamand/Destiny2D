@@ -7,30 +7,45 @@ using UnityEngine;
 using System;
 
 public class Inventory : NetworkBehaviour {
-    
+    public static int InventorySize = 35;
 
     public event Action OnInventoryChange;
     public event Action<WeaponItem> OnWeaponChange;
 
     public NetworkList<ItemInfo> itemInfoList {get; private set;}
 
-    Dictionary<string, Item> Items {get; set;} = new Dictionary<string, Item>();
+    Dictionary<string, Item> itemLookup {get; set;} = new Dictionary<string, Item>();
+
+    List<Item> items;
 
     public WeaponItem Weapon {get; private set;}
     
     public NetworkVariable<ItemInfo> weaponInfo {get; private set;}
     
-    
+    public bool IsFull => itemLookup.Count == InventorySize;
 
 
     void Awake() {
         itemInfoList = new NetworkList<ItemInfo>();
         weaponInfo = new NetworkVariable<ItemInfo>();
+        items = new List<Item>(new Item[InventorySize]);
     }
 
    
 
     public NetworkList<ItemInfo> GetItemInfoList() {
+        itemInfoList.Clear();
+        Debug.Log(items.Count);
+        for(int i = 0; i < InventorySize; i++) {
+            Item item = items[i];
+            if(item != null) {
+
+                itemInfoList.Add(item.GetItemInfo());
+            }
+            else {
+                itemInfoList.Add(new ItemInfo());
+            }
+        }
         return itemInfoList;
     }
 
@@ -44,7 +59,7 @@ public class Inventory : NetworkBehaviour {
     /// <returns></returns>
     public Item GetItemServer(string itemID) {
         if(!IsServer) return null;
-        return Items[itemID];
+        return itemLookup[itemID];
     }
 
 
@@ -55,7 +70,7 @@ public class Inventory : NetworkBehaviour {
     public List<Item> GetItemListServer() {
         
         if(!IsServer) return null;
-        return Items.Values.ToList();
+        return itemLookup.Values.ToList();
     }
 
 
@@ -67,8 +82,12 @@ public class Inventory : NetworkBehaviour {
     public void SetItemListServer(List<Item> items) {
         if(!IsServer) return;
         foreach(Item item in items) {
-            Items.Add(item.ItemID, item);
-            itemInfoList.Add(item.GetItemInfo());
+            if(item == null) {
+                this.items[items.IndexOf(item)] = null;
+                continue;
+            }
+            AddItemServer(item);
+
         }
         OnInventoryChange?.Invoke();
     }
@@ -87,8 +106,27 @@ public class Inventory : NetworkBehaviour {
     /// <param name="item"></param>
     public void AddItemServer(Item item) {
         if(!IsServer) return;
-        Items.Add(item.ItemID, item);
-        itemInfoList.Add(item.GetItemInfo());
+
+        if(item == null) return;
+
+        if(IsFull) {
+            Debug.Log("There is no space in the inventory");
+            return;
+        }
+
+
+        
+        itemLookup.Add(item.ItemID, item);
+
+        int i;
+        for(i = 0; i < items.Count; i++) {
+            if(items[i] == null) {
+                items[i] = item;
+                break;
+            }
+        }
+
+    
 
         OnInventoryChange?.Invoke();
     }
@@ -106,14 +144,9 @@ public class Inventory : NetworkBehaviour {
     public void RemoveItemServer(string itemID) {
         if(!IsServer) return;
 
-        Items.Remove(itemID);
-
-        foreach(ItemInfo itemInfo in itemInfoList) {
-            if(itemInfo.ItemID.Value.ToString() == itemID) {
-                itemInfoList.Remove(itemInfo);
-                break;
-            }
-        }
+        Item itemToRemove = itemLookup[itemID];
+        itemLookup.Remove(itemID);
+        items[items.IndexOf(itemToRemove)] = null;
 
         Debug.Log("Removed Item in inventory");
         OnInventoryChange?.Invoke();
@@ -122,7 +155,7 @@ public class Inventory : NetworkBehaviour {
     [ServerRpc]
     public void SetWeaponServerRpc(string itemID) {
 
-        Item item = Items[itemID];
+        Item item = itemLookup[itemID];
 
         WeaponItem newWeapon;
         if(item is WeaponItem) {

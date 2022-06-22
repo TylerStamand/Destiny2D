@@ -12,7 +12,6 @@ public class Item {
 
     public string ItemID {get; private set;}
 
-
     public Item(string itemName) {
         ItemID = Guid.NewGuid().ToString(); 
         ItemName = itemName;
@@ -22,7 +21,7 @@ public class Item {
         ItemInfo itemInfo = new ItemInfo {
             ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(ItemID),
             Name = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(ItemName),
-            Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(GetDescription())
+            Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(GetDescription()),
         };
         return itemInfo;
     }

@@ -8,6 +8,7 @@ public class Slot : MonoBehaviour
 {
     [SerializeField] Image itemImageSlot;
  
+    public bool ItemSet;
     public ItemInfo Item {get; private set;}
 
     public event Action<Slot> OnClick;
@@ -16,6 +17,7 @@ public class Slot : MonoBehaviour
         if (TryGetComponent<Button>(out Button button)) {
             button.onClick.AddListener(HandleButtonClick);
         }
+        ItemSet = false;
     }
 
     public void SetItem(ItemInfo item) {
@@ -24,7 +26,7 @@ public class Slot : MonoBehaviour
         itemImageSlot.sprite = itemSprite;
         itemImageSlot.color = Color.white;
         
-        
+        ItemSet = true; 
     }
 
     void HandleButtonClick() {

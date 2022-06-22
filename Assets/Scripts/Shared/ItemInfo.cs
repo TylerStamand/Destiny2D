@@ -11,6 +11,9 @@ public struct ItemInfo : IEquatable<ItemInfo> , INetworkSerializable {
     public ForceNetworkSerializeByMemcpy<FixedString64Bytes> Name;
     public ForceNetworkSerializeByMemcpy<FixedString512Bytes> Description;
 
+
+
+
     public bool Equals(ItemInfo other) {
         if(other.ItemID.Value.ToString() == ItemID.Value.ToString()) 
             return true;
@@ -22,5 +25,6 @@ public struct ItemInfo : IEquatable<ItemInfo> , INetworkSerializable {
         serializer.SerializeValue(ref ItemID);
         serializer.SerializeValue(ref Name);
         serializer.SerializeValue(ref Description);
+
     }
 }

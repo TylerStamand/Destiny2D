@@ -57,22 +57,24 @@ public class InventoryUIController : MonoBehaviour {
 
 
     void PopulateItemList() {
-        Debug.Log("PopulatingList");
         items.Clear();
+
+
         foreach (ItemInfo item in inventory.GetItemInfoList()) {
             items.Add(item);
             Debug.Log(item.ItemID.Value.ToString());
         }
+
         if(currentHeldItemInfo.ItemID.Value.ToString() != "") {
             Debug.Log("Removing held item from list");
             Debug.Log(currentHeldItemInfo.ItemID.Value.ToString());
             Debug.Log(items.Remove(currentHeldItemInfo));
         }
+
         weapon = inventory.weaponInfo.Value;
     }
 
     void Display() {
-        Debug.Log("Displaying");
         
         foreach (Slot slot in slots)
         {
@@ -81,16 +83,24 @@ public class InventoryUIController : MonoBehaviour {
 
         slots.Clear();
 
-        foreach(ItemInfo item in items) {
+
+
+        for (int i = 0; i < Inventory.InventorySize; i++) {
             Slot slot = Instantiate(slotPrefab);
             slot.transform.SetParent(inventorySlotsParent.transform);
-        
-            
-            slot.SetItem(item);
-            slot.OnClick += HandleSlotClick;
-
             slots.Add(slot);
         }
+
+        for(int i = 0; i < items.Count; i++) {
+            ItemInfo item = items[i];
+
+            if(!item.ItemID.Value.IsEmpty) {
+                slots[i].SetItem(item);
+                slots[i].OnClick += HandleSlotClick;
+            }
+
+        }
+
 
         if(weapon.ItemID.Value.ToString() != "") {
             weaponSlot.SetItem(weapon);
@@ -100,7 +110,7 @@ public class InventoryUIController : MonoBehaviour {
 
     void HandleSlotClick(Slot slot) {
        
-        items.Remove(slot.Item);
+        items[items.IndexOf(slot.Item)] = new ItemInfo();
         Display();
 
         ItemInfo itemInfo = slot.Item;
@@ -153,7 +163,7 @@ public class InventoryUIController : MonoBehaviour {
 
         slot.SetItem(newWeaponItemInfo);
         inventory.SetWeaponServerRpc(newWeaponItemInfo.ItemID.Value.ToString());
-        inventory.RemoveItemServerServerRpc(newWeaponItemInfo.ItemID.Value.ToString());
+        //inventory.RemoveItemServerServerRpc(newWeaponItemInfo.ItemID.Value.ToString());
         
 
     }
