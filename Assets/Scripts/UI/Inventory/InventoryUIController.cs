@@ -35,8 +35,10 @@ public class InventoryUIController : MonoBehaviour {
       
         
         if(inventory != null) {
-            inventory.OnInventoryChange += PopulateItemList;
-            inventory.OnInventoryChange += Display;
+
+            inventory.itemInfoList.OnListChanged += HandleInventoryItemListUpdate;
+            // inventory.OnItemAdded += AddItemToList;
+            inventory.WeaponInfo.OnValueChanged += HandleWeaponItemUpdate;
 
             PopulateItemList();
             Display();
@@ -51,27 +53,40 @@ public class InventoryUIController : MonoBehaviour {
     }
 
     void OnDestroy() {
-        inventory.OnInventoryChange -= PopulateItemList;
-        inventory.OnInventoryChange -= Display;
+        inventory.itemInfoList.OnListChanged -= HandleInventoryItemListUpdate;
+        inventory.WeaponInfo.OnValueChanged -= HandleWeaponItemUpdate;
+
+        //Deals with exiting inventory with item in hand
+        if(currentHeldUIItem != null) {
+            for(int i = 0; i < Inventory.InventorySize; i++) {
+                if(items[i].ItemID.Value.IsEmpty) {
+                    items[i] = currentHeldItemInfo;
+                    break;
+                }
+            }
+        }
+
+        ItemInfo[] itemInfoArray = new ItemInfo[Inventory.InventorySize];
+        for(int i = 0; i < items.Count; i++) {
+            itemInfoArray[i] = items[i];
+
+        }
+        inventory.SetItemOrderServerRpc(itemInfoArray);
+
     }
 
 
     void PopulateItemList() {
         items.Clear();
 
-
+        Debug.Log("Items in info list " + inventory.GetItemInfoList().Count);
         foreach (ItemInfo item in inventory.GetItemInfoList()) {
             items.Add(item);
-            Debug.Log(item.ItemID.Value.ToString());
         }
 
-        if(currentHeldItemInfo.ItemID.Value.ToString() != "") {
-            Debug.Log("Removing held item from list");
-            Debug.Log(currentHeldItemInfo.ItemID.Value.ToString());
-            Debug.Log(items.Remove(currentHeldItemInfo));
-        }
+        Debug.Log("Items in item list " +  items.Count);
 
-        weapon = inventory.weaponInfo.Value;
+        weapon = inventory.WeaponInfo.Value;
     }
 
     void Display() {
@@ -88,41 +103,53 @@ public class InventoryUIController : MonoBehaviour {
         for (int i = 0; i < Inventory.InventorySize; i++) {
             Slot slot = Instantiate(slotPrefab);
             slot.transform.SetParent(inventorySlotsParent.transform);
+            slot.OnClick += HandleSlotClick;
             slots.Add(slot);
-        }
 
-        for(int i = 0; i < items.Count; i++) {
+
+            Debug.Log("Item list size when displaying " + items.Count);
             ItemInfo item = items[i];
-
-            if(!item.ItemID.Value.IsEmpty) {
-                slots[i].SetItem(item);
-                slots[i].OnClick += HandleSlotClick;
+            if (!item.ItemID.Value.IsEmpty) {
+                slot.SetItem(item);
             }
-
         }
 
 
-        if(weapon.ItemID.Value.ToString() != "") {
+        if(!weapon.ItemID.Value.IsEmpty) {
             weaponSlot.SetItem(weapon);
         }
     }
 
 
     void HandleSlotClick(Slot slot) {
+        
+        
+        ItemInfo slotItemInfo = slot.Item;
        
-        items[items.IndexOf(slot.Item)] = new ItemInfo();
-        Display();
-
-        ItemInfo itemInfo = slot.Item;
-
-        if(currentHeldUIItem != null)  {
+        //Removes the old item info from the slot
+        if(currentHeldUIItem == null) {
+            items[items.IndexOf(slotItemInfo)] = new ItemInfo();
+        }
+        //Changes the item slot to the item currently held
+        else {
+            items[slots.IndexOf(slot)] = currentHeldItemInfo;
             Destroy(currentHeldUIItem.gameObject);
-            items.Add(currentHeldItemInfo);
         }
         
-        currentHeldItemInfo = itemInfo;
+        //If the slot held an item, create a held item
+        if(!slotItemInfo.ItemID.Value.IsEmpty) {
+            currentHeldItemInfo = slotItemInfo;
+            currentHeldUIItem = CreateHeldUIItem(currentHeldItemInfo);
+        }
 
-        currentHeldUIItem = CreateHeldUIItem(currentHeldItemInfo);
+        //Otherwise set the held item to null
+        else {
+            currentHeldUIItem = null;
+        }
+
+        Display();
+
+       
 
     }
 
@@ -163,8 +190,7 @@ public class InventoryUIController : MonoBehaviour {
 
         slot.SetItem(newWeaponItemInfo);
         inventory.SetWeaponServerRpc(newWeaponItemInfo.ItemID.Value.ToString());
-        //inventory.RemoveItemServerServerRpc(newWeaponItemInfo.ItemID.Value.ToString());
-        
+
 
     }
 
@@ -180,8 +206,29 @@ public class InventoryUIController : MonoBehaviour {
         return UIItem;
     }
 
-    void HandleAddItemToInventory() {
-        Debug.Log("Inventory Clicked");
-       // inventory.AddGearToInventory(currentHeldItemInfo.ItemID.Value.ToString());
+    void AddItemToList(ItemInfo item) {
+        
+    }
+
+    void HandleInventoryItemListUpdate(NetworkListEvent<ItemInfo> itemChangeEvent) {
+        //Means inventory picked something up
+        if(currentHeldItemInfo.ItemID.Value.ToString() != itemChangeEvent.Value.ItemID.Value.ToString()) {
+            if(itemChangeEvent.Value.ItemID.Value.IsEmpty) {
+                items[itemChangeEvent.Index] = new ItemInfo();
+            }
+            else {
+                for(int i = 0; i < items.Count; i++) {
+                    if(items[i].ItemID.Value.IsEmpty) {
+                        items[i] = itemChangeEvent.Value;
+                    }
+                }
+            }
+
+        }
+    }
+
+    void HandleWeaponItemUpdate(ItemInfo prev, ItemInfo newVal) {
+        weapon = newVal;
+        Display();
     }
 }

@@ -9,7 +9,7 @@ using System;
 public class Inventory : NetworkBehaviour {
     public static int InventorySize = 35;
 
-    public event Action OnInventoryChange;
+    public event Action<ItemInfo> OnItemAdded;
     public event Action<WeaponItem> OnWeaponChange;
 
     public NetworkList<ItemInfo> itemInfoList {get; private set;}
@@ -18,16 +18,16 @@ public class Inventory : NetworkBehaviour {
 
     List<Item> items;
 
-    public WeaponItem Weapon {get; private set;}
+    public WeaponItem CurrentWeapon {get; private set;}
     
-    public NetworkVariable<ItemInfo> weaponInfo {get; private set;}
+    public NetworkVariable<ItemInfo> WeaponInfo {get; private set;}
     
     public bool IsFull => itemLookup.Count == InventorySize;
 
 
     void Awake() {
         itemInfoList = new NetworkList<ItemInfo>();
-        weaponInfo = new NetworkVariable<ItemInfo>();
+        WeaponInfo = new NetworkVariable<ItemInfo>();
         items = new List<Item>(new Item[InventorySize]);
     }
 
@@ -89,7 +89,6 @@ public class Inventory : NetworkBehaviour {
             AddItemServer(item);
 
         }
-        OnInventoryChange?.Invoke();
     }
 
 
@@ -128,7 +127,7 @@ public class Inventory : NetworkBehaviour {
 
     
 
-        OnInventoryChange?.Invoke();
+        OnItemAdded?.Invoke(item.GetItemInfo());
     }
 
 
@@ -149,13 +148,17 @@ public class Inventory : NetworkBehaviour {
         items[items.IndexOf(itemToRemove)] = null;
 
         Debug.Log("Removed Item in inventory");
-        OnInventoryChange?.Invoke();
+
     }
 
     [ServerRpc]
     public void SetWeaponServerRpc(string itemID) {
 
         Item item = itemLookup[itemID];
+      
+        if(item == null) {
+            Debug.LogWarning("Trying to set weapon but item was not found in inventory");
+        }
 
         WeaponItem newWeapon;
         if(item is WeaponItem) {
@@ -166,13 +169,8 @@ public class Inventory : NetworkBehaviour {
             return;
         }
 
-
-        if(newWeapon == null) {
-            Debug.LogWarning("Trying to set weapon but item was not found in inventory");
-        }
-
-        if(Weapon != null) {
-            AddItemServer(Weapon);
+        if(CurrentWeapon != null) {
+            AddItemServer(CurrentWeapon);
         }
 
         RemoveItemServer(itemID);
@@ -181,10 +179,25 @@ public class Inventory : NetworkBehaviour {
     }
 
     void SetWeaponServer(WeaponItem weapon) {
-        this.Weapon = weapon;
-        weaponInfo.Value = weapon.GetItemInfo();
+        this.CurrentWeapon = weapon;
+        WeaponInfo.Value = weapon.GetItemInfo();
         OnWeaponChange?.Invoke(weapon);
-        OnInventoryChange?.Invoke();
+    }
+
+    [ServerRpc]
+    public void SetItemOrderServerRpc(ItemInfo[] itemInfoList) {
+        for(int i = 0; i < InventorySize; i++) {
+            if(i >= itemInfoList.Count()) {
+                items[i] = null;
+                
+            }
+            else if(itemInfoList[i].ItemID.Value.IsEmpty) {
+                items[i] = null;
+            }
+            else {
+                items[i] = itemLookup[itemInfoList[i].ItemID.Value.ToString()];
+            }
+        }
     }
 
 }

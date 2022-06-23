@@ -21,6 +21,8 @@ public class Slot : MonoBehaviour
     }
 
     public void SetItem(ItemInfo item) {
+        if(item.ItemID.Value.IsEmpty) return;
+        
         this.Item = item;
         Sprite itemSprite = ResourceManager.Instance.GetItemData(item.Name.Value.ToString()).Sprite;
         itemImageSlot.sprite = itemSprite;
