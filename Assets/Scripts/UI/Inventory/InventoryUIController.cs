@@ -5,6 +5,7 @@ using Unity.Netcode;
 using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 
 public class InventoryUIController : MonoBehaviour {
@@ -37,7 +38,6 @@ public class InventoryUIController : MonoBehaviour {
         if(inventory != null) {
 
             inventory.itemInfoList.OnListChanged += HandleInventoryItemListUpdate;
-            // inventory.OnItemAdded += AddItemToList;
             inventory.WeaponInfo.OnValueChanged += HandleWeaponItemUpdate;
 
             PopulateItemList();
@@ -53,25 +53,28 @@ public class InventoryUIController : MonoBehaviour {
     }
 
     void OnDestroy() {
-        inventory.itemInfoList.OnListChanged -= HandleInventoryItemListUpdate;
-        inventory.WeaponInfo.OnValueChanged -= HandleWeaponItemUpdate;
+        if(inventory != null) {
+            inventory.itemInfoList.OnListChanged -= HandleInventoryItemListUpdate;
+            inventory.WeaponInfo.OnValueChanged -= HandleWeaponItemUpdate;
 
-        //Deals with exiting inventory with item in hand
-        if(currentHeldUIItem != null) {
-            for(int i = 0; i < Inventory.InventorySize; i++) {
-                if(items[i].ItemID.Value.IsEmpty) {
-                    items[i] = currentHeldItemInfo;
-                    break;
+            //Deals with exiting inventory with item in hand
+            if (currentHeldUIItem != null) {
+                for (int i = 0; i < Inventory.InventorySize; i++) {
+                    if (items[i].ItemID.Value.IsEmpty) {
+                        items[i] = currentHeldItemInfo;
+                        break;
+                    }
                 }
             }
-        }
 
-        ItemInfo[] itemInfoArray = new ItemInfo[Inventory.InventorySize];
-        for(int i = 0; i < items.Count; i++) {
-            itemInfoArray[i] = items[i];
+            ItemInfo[] itemInfoArray = new ItemInfo[Inventory.InventorySize];
+            for (int i = 0; i < items.Count; i++) {
+                itemInfoArray[i] = items[i];
 
+            }
+            inventory.SetItemOrderServerRpc(itemInfoArray);
         }
-        inventory.SetItemOrderServerRpc(itemInfoArray);
+       
 
     }
 
@@ -106,8 +109,6 @@ public class InventoryUIController : MonoBehaviour {
             slot.OnClick += HandleSlotClick;
             slots.Add(slot);
 
-
-            Debug.Log("Item list size when displaying " + items.Count);
             ItemInfo item = items[i];
             if (!item.ItemID.Value.IsEmpty) {
                 slot.SetItem(item);

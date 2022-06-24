@@ -31,21 +31,29 @@ public class Inventory : NetworkBehaviour {
         items = new List<Item>(new Item[InventorySize]);
     }
 
+    public override void OnNetworkSpawn()  {
+        if(IsServer) {
+            for(int i = 0; i < InventorySize; i++) {
+                itemInfoList.Add(new ItemInfo());
+            }
+        }
+    }
+
    
 
     public NetworkList<ItemInfo> GetItemInfoList() {
         itemInfoList.Clear();
-        Debug.Log(items.Count);
+
         for(int i = 0; i < InventorySize; i++) {
             Item item = items[i];
             if(item != null) {
-
                 itemInfoList.Add(item.GetItemInfo());
             }
             else {
                 itemInfoList.Add(new ItemInfo());
             }
         }
+       
         return itemInfoList;
     }
 
@@ -70,7 +78,7 @@ public class Inventory : NetworkBehaviour {
     public List<Item> GetItemListServer() {
         
         if(!IsServer) return null;
-        return itemLookup.Values.ToList();
+        return items;
     }
 
 
@@ -79,28 +87,31 @@ public class Inventory : NetworkBehaviour {
     /// </summary>
     /// <param name="items"></param>
 
-    public void SetItemListServer(List<Item> items) {
+    public void SetInventoryServer(List<Item> items, WeaponItem weaponItem = null) {
+        Debug.Log("Items when setting " + items.Count);
         if(!IsServer) return;
         foreach(Item item in items) {
             if(item == null) {
                 this.items[items.IndexOf(item)] = null;
+                itemInfoList[items.IndexOf(item)] = new ItemInfo();
                 continue;
             }
-            AddItemServer(item);
 
+            this.items[items.IndexOf(item)] = item;
+          //  itemInfoList[items.IndexOf(item)] = item.GetItemInfo();
+            itemLookup.Add(item.ItemID, item);
+            OnItemAdded?.Invoke(item.GetItemInfo());
+            Debug.Log("Adding item to server" + item.ItemID);
+        }
+
+        if(weaponItem != null) {
+            SetWeaponServer(weaponItem);
         }
     }
 
 
-    // [ServerRpc]
-    // public void AddGearToInventory(string itemID) {
-    //     if(Weapon.ItemID == itemID) {
-    //         AddItemServer(Weapon);
-    //     }
-    // }
-
     /// <summary>
-    /// Server Only Function
+    /// Server Only Function, adds an item at the first empty slot
     /// </summary>
     /// <param name="item"></param>
     public void AddItemServer(Item item) {
@@ -117,15 +128,18 @@ public class Inventory : NetworkBehaviour {
         
         itemLookup.Add(item.ItemID, item);
 
-        int i;
-        for(i = 0; i < items.Count; i++) {
+        
+        for(int i = 0; i < InventorySize; i++) {
             if(items[i] == null) {
                 items[i] = item;
+              //  itemInfoList[i] = item.GetItemInfo();
                 break;
             }
         }
 
-    
+        for (int i = 0; i < InventorySize; i++) {
+            Debug.Log(itemInfoList[i].ItemID.Value.ToString());
+        }
 
         OnItemAdded?.Invoke(item.GetItemInfo());
     }

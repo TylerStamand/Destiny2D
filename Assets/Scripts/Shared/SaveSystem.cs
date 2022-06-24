@@ -15,7 +15,9 @@ public class SaveSystem {
     }
 
     public static void SavePlayerData(List<PlayerSaveData> playerSaveDataList) {
-        string json = JsonConvert.SerializeObject(playerSaveDataList);
+        string json = JsonConvert.SerializeObject(playerSaveDataList, Formatting.Indented, new JsonSerializerSettings {
+            TypeNameHandling = TypeNameHandling.All
+        });
         File.WriteAllText(SaveFolder + "save.txt", json);
         Debug.Log("Saved Player Data");
     }
@@ -24,7 +26,9 @@ public class SaveSystem {
      
         if(File.Exists(SaveFolder + "save.txt")) {
             string json = File.ReadAllText(SaveFolder + "save.txt");
-            List<PlayerSaveData> playerSaveDataList = JsonConvert.DeserializeObject<List<PlayerSaveData>>(json);
+            List<PlayerSaveData> playerSaveDataList = JsonConvert.DeserializeObject<List<PlayerSaveData>>(json, new JsonSerializerSettings{
+                TypeNameHandling = TypeNameHandling.Auto
+            });
             
             foreach(PlayerSaveData saveData in playerSaveDataList) {
                 

@@ -6,4 +6,5 @@ public class PlayerSaveData
 {
     public string PlayerID;
     public List<Item> Items;
+    public WeaponItem Weapon;
 }

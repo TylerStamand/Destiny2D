@@ -71,7 +71,8 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     public PlayerSaveData GetSaveDataServer() {
         return new PlayerSaveData() {
             PlayerID = GetPlayerID(), 
-            Items = inventory.GetItemListServer()
+            Items = inventory.GetItemListServer(),
+            Weapon = inventory.CurrentWeapon  
         };
     }
 
@@ -80,7 +81,11 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     /// </summary>
     /// <param name="saveData"></param>
     public void SetSaveDataServer(PlayerSaveData saveData) {
-        inventory.SetItemListServer(saveData.Items);
+        inventory.SetInventoryServer(saveData.Items, saveData.Weapon);
+
+        //This is called because when the inventory sets the weapon, weapon holder hasn't initialized yet
+        //so it needs to be done manually
+        weaponHolder.OnInitializedServer += () => weaponHolder.EquipWeaponServer(saveData.Weapon);
     }
 
     [ServerRpc(RequireOwnership = false)]
