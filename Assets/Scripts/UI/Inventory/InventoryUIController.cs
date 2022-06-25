@@ -75,6 +75,7 @@ public class InventoryUIController : MonoBehaviour {
     void PopulateItemList() {
         items.Clear();
 
+        Debug.Log("Populating List");
         Debug.Log("Items in info list " + inventory.GetItemInfoList().Count);
         foreach (ItemInfo item in inventory.GetItemInfoList()) {
             items.Add(item);
@@ -84,7 +85,7 @@ public class InventoryUIController : MonoBehaviour {
     }
 
     void Display() {
-        
+        Debug.Log("Displaying Items");
         foreach (Slot slot in slots)
         {
             Destroy(slot.gameObject);
@@ -141,7 +142,6 @@ public class InventoryUIController : MonoBehaviour {
         }
 
         Display();
-
        
 
     }
@@ -178,10 +178,13 @@ public class InventoryUIController : MonoBehaviour {
         }
 
         ItemInfo newWeaponItemInfo = currentHeldItemInfo;
+        
+
         currentHeldItemInfo = oldWeaponItemInfo;
 
         slot.SetItem(newWeaponItemInfo);
 
+        //items[items.IndexOf(newWeaponItemInfo)] = new ItemInfo();
         
         SetInventoryOrder();
 
@@ -202,8 +205,10 @@ public class InventoryUIController : MonoBehaviour {
     }
 
     void AddItemToList(ItemInfo item) {
+
+        Debug.Log("Added Item To List");
         if(items.IndexOf(item) != -1) return;
-        
+        if(item.ItemID.Value.ToString() == currentHeldItemInfo.ItemID.Value.ToString()) return;
         for(int i = 0; i < Inventory.InventorySize; i++) {
             if(items[i].ItemID.Value.IsEmpty) {
                 items[i] = item;
@@ -236,6 +241,7 @@ public class InventoryUIController : MonoBehaviour {
     // }
 
     void HandleWeaponItemUpdate(ItemInfo prev, ItemInfo newVal) {
+        Debug.Log("Handling Weapon Item Update");
         weapon = newVal;
         Display();
     }
