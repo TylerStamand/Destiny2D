@@ -100,8 +100,6 @@ public class Inventory : NetworkBehaviour {
             this.items[items.IndexOf(item)] = item;
           //  itemInfoList[items.IndexOf(item)] = item.GetItemInfo();
             itemLookup.Add(item.ItemID, item);
-            OnItemAdded?.Invoke(item.GetItemInfo());
-            Debug.Log("Adding item to server" + item.ItemID);
         }
 
         if(weaponItem != null) {
@@ -126,7 +124,7 @@ public class Inventory : NetworkBehaviour {
 
 
         
-        itemLookup.Add(item.ItemID, item);
+        itemLookup.TryAdd(item.ItemID, item);
 
         
         for(int i = 0; i < InventorySize; i++) {
@@ -135,10 +133,6 @@ public class Inventory : NetworkBehaviour {
               //  itemInfoList[i] = item.GetItemInfo();
                 break;
             }
-        }
-
-        for (int i = 0; i < InventorySize; i++) {
-            Debug.Log(itemInfoList[i].ItemID.Value.ToString());
         }
 
         OnItemAdded?.Invoke(item.GetItemInfo());
@@ -157,7 +151,10 @@ public class Inventory : NetworkBehaviour {
     public void RemoveItemServer(string itemID) {
         if(!IsServer) return;
 
+
+        Debug.Log("Removing Item Server");
         Item itemToRemove = itemLookup[itemID];
+
         itemLookup.Remove(itemID);
         items[items.IndexOf(itemToRemove)] = null;
 
@@ -167,7 +164,7 @@ public class Inventory : NetworkBehaviour {
 
     [ServerRpc]
     public void SetWeaponServerRpc(string itemID) {
-
+        Debug.Log("Setting Weapon");
         Item item = itemLookup[itemID];
       
         if(item == null) {
@@ -187,7 +184,11 @@ public class Inventory : NetworkBehaviour {
             AddItemServer(CurrentWeapon);
         }
 
-        RemoveItemServer(itemID);
+        //Removes item from item list but does not drop it from the lookup
+        Item itemToRemove = itemLookup[itemID];
+        if(items.IndexOf(itemToRemove) != -1) {
+            items[items.IndexOf(itemToRemove)] = null;
+        }
 
         SetWeaponServer(newWeapon);
     }
@@ -200,6 +201,7 @@ public class Inventory : NetworkBehaviour {
 
     [ServerRpc]
     public void SetItemOrderServerRpc(ItemInfo[] itemInfoList) {
+        Debug.Log("Setting Item Order");
         for(int i = 0; i < InventorySize; i++) {
             if(i >= itemInfoList.Count()) {
                 items[i] = null;
