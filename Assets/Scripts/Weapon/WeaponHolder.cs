@@ -20,7 +20,7 @@ public class WeaponHolder : NetworkBehaviour
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
 
-        if(IsClient) {
+        if(IsOwner) {
             StartCoroutine(Initialize());
         }
     }
@@ -41,7 +41,8 @@ public class WeaponHolder : NetworkBehaviour
 
 
     [ClientRpc]
-    public void InitializeClientRpc(ulong weaponSlotNetID) {
+    public void InitializeClientRpc(ulong weaponSlotNetID, ClientRpcParams rpcParams) {
+
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[weaponSlotNetID];
         weaponSlot = netObj.gameObject;
         weaponSlot.transform.localPosition = Vector2.zero;
@@ -60,7 +61,7 @@ public class WeaponHolder : NetworkBehaviour
 
     }
 
-    [ServerRpc]
+    [ServerRpc (RequireOwnership = false)]
     void InitializeServerRpc(ulong clientID) {
         
         this.clientID = clientID;
@@ -76,7 +77,9 @@ public class WeaponHolder : NetworkBehaviour
         Initialized = true;
         OnInitializedServer?.Invoke();
 
-        InitializeClientRpc(networkObject.NetworkObjectId);
+        ClientRpcParams sendParams = new ClientRpcParams();
+        sendParams.Send.TargetClientIds = new ulong[] {clientID};
+        InitializeClientRpc(networkObject.NetworkObjectId, sendParams );
     }
 
     /// <summary>
