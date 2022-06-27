@@ -12,7 +12,8 @@ public class InventoryUIController : MonoBehaviour {
     [SerializeField] GameObject inventorySlotsParent;
     [SerializeField] Slot weaponSlot;
     [SerializeField] Slot slotPrefab;
-    [SerializeField] HeldUIItem heldUIItemPrefab;
+    [SerializeField] MouseFollower heldUIItemPrefab;
+   
     [SerializeField] GameObject backPanel;
     [SerializeField] GameObject mainPanel;
 
@@ -24,7 +25,8 @@ public class InventoryUIController : MonoBehaviour {
     List<Slot> slots;
 
     ItemInfo currentHeldItemInfo;
-    HeldUIItem currentHeldUIItem;
+    MouseFollower currentHeldUIItem;
+
 
     void Awake() {
         items = new List<ItemInfo>();
@@ -95,9 +97,10 @@ public class InventoryUIController : MonoBehaviour {
 
 
         for (int i = 0; i < Inventory.InventorySize; i++) {
-            Slot slot = Instantiate(slotPrefab);
-            slot.transform.SetParent(inventorySlotsParent.transform);
+            Slot slot = Instantiate(slotPrefab, inventorySlotsParent.transform);
+           
             slot.OnClick += HandleSlotClick;
+          
             slots.Add(slot);
 
             ItemInfo item = items[i];
@@ -189,8 +192,8 @@ public class InventoryUIController : MonoBehaviour {
 
     }
 
-    HeldUIItem CreateHeldUIItem(ItemInfo itemInfo) {
-        HeldUIItem UIItem = Instantiate(heldUIItemPrefab);
+    MouseFollower CreateHeldUIItem(ItemInfo itemInfo) {
+        MouseFollower UIItem = Instantiate(heldUIItemPrefab);
         SceneManager.MoveGameObjectToScene(UIItem.gameObject, SceneManager.GetSceneByName("Inventory"));
         UIItem.transform.SetParent(mainPanel.transform);
         UIItem.transform.SetAsLastSibling();
@@ -230,4 +233,6 @@ public class InventoryUIController : MonoBehaviour {
         }
         inventory.SetItemOrderServerRpc(itemInfoArray);
     }
+
+ 
 }

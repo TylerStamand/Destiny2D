@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 [Serializable]
 public class WeaponItem : Item {
@@ -14,6 +15,16 @@ public class WeaponItem : Item {
         Damage = damage;
         CoolDown = coolDown;
         ProjectileSpeed = projectileSpeed;
+    }
+
+    public override string GetDescription() {
+        string description = $"Damage: {Damage.ToString("N", CultureInfo.CurrentCulture)} \n";
+        description += $"CoolDown: {CoolDown}\n";
+        WeaponData weaponData = (WeaponData)ResourceManager.Instance.GetItemData(ItemName);
+        if(weaponData.WeaponType == WeaponType.Projectile) {
+            description += $"Projectile Speed: {ProjectileSpeed}\n";
+        }
+        return description;
     }
 
  

@@ -378,6 +378,7 @@ MonoBehaviour:
   weaponSlot: {fileID: 1266555729}
   slotPrefab: {fileID: 3212444841759101787, guid: 213eff00308870e4f83b46a701f90e3b, type: 3}
   heldUIItemPrefab: {fileID: 6159807422533270690, guid: 0dc0b8cedbd3e214e8da32a0ef7fba28, type: 3}
+  DescriptionBoxPrefab: {fileID: -7352150592192135123, guid: 0540814ff21a9ac458631711b6068f17, type: 3}
   backPanel: {fileID: 1235194227}
   mainPanel: {fileID: 524860240}
 --- !u!1001 &318193186

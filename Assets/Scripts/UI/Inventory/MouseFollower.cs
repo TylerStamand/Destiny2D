@@ -2,8 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HeldUIItem : MonoBehaviour
+public class MouseFollower : MonoBehaviour
 {
+    [SerializeField] Vector2 offset;
 
     Camera mainCamera;
     Vector3 mask = new Vector3(1, 1, 0);
@@ -17,7 +18,7 @@ public class HeldUIItem : MonoBehaviour
 
     void Update() {
         Vector3 newPosition = Input.mousePosition;
-        newPosition = new Vector3(newPosition.x, newPosition.y, 0);
+        newPosition = new Vector3(newPosition.x + offset.x, newPosition.y + offset.y, 0);
 
         rectTransform.position = newPosition;
         
