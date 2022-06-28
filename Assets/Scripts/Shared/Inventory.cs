@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Transports;
 using System.Linq;
 using Unity.Collections;
 using UnityEngine;
@@ -31,9 +32,11 @@ public class Inventory : NetworkBehaviour {
         WeaponInfo = new NetworkVariable<ItemInfo>();
         items = new List<Item>(new Item[InventorySize]);
         
+        //NEED TO FIND A NEW WAY TO DO THIS, USES TOO MUCH BANDWIDTH
         for (int i = 0; i < InventorySize; i++) {
             itemInfoList.Add(new ItemInfo());
         }
+
     }
 
    

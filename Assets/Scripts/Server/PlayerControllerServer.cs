@@ -24,6 +24,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         rigidbody = GetComponent<Rigidbody2D>();
         inventory = GetComponent<Inventory>();
         weaponHolder = GetComponent<WeaponHolder>();
+
         
     }
 
@@ -37,7 +38,6 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
         }
 
         inventory.OnWeaponChange += weaponHolder.EquipWeaponServer;
-        // weaponHolder.OnInitializedServer += () => weaponHolder.EquipWeaponServer(inventory.Weapon);
 
         health.Value = 5;
 

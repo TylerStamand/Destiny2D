@@ -29,6 +29,7 @@ public class GameManager : NetworkBehaviour {
             Destroy(gameObject);
         }
 
+        //NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
 
         //Come back to this. Initialization probably shouldn't happen here
         SaveSystem.Init();
@@ -70,6 +71,10 @@ public class GameManager : NetworkBehaviour {
             GUILayout.EndArea();
         }
        
+    
+    }
+    void ApprovalCheck() {
+
     }
 
     public override void OnNetworkSpawn() {
@@ -95,8 +100,10 @@ public class GameManager : NetworkBehaviour {
     void PlayerConnected(ulong clientID) {
         Debug.Log("Player Connected");
         NetworkObject playerNetObject = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientID);
+        playerNetObject.gameObject.name = "Player " + clientID;
         PlayerControllerServer player = playerNetObject.GetComponent<PlayerControllerServer>();
         string playerID = player.GetPlayerID();
+        //player.transform.position = SpawnManager.Instance.GetSpawnLocation().transform.position;
         //sessionManager.SetupConnectingPlayerSessionData(clientID, playerID);
         PlayerSaveData saveData = SaveSystem.LoadPlayerData(playerID);
 

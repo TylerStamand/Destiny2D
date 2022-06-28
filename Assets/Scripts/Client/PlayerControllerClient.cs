@@ -5,11 +5,13 @@ using UnityEditor;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System;
+using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
 
 [DefaultExecutionOrder(1)]
 public class PlayerControllerClient : NetworkBehaviour {
 
     [SerializeField] float moveSpeed;
+    [SerializeField] GameObject InventoryUI;
 
     new Rigidbody2D rigidbody;
     Animator animator;
@@ -24,6 +26,8 @@ public class PlayerControllerClient : NetworkBehaviour {
     PlayerControllerServer playerControllerServer;
     WeaponHolder weaponHolder;
     
+    GameObject inventoryUIObject;
+
     bool InInventory = false;
     bool initialized = false;
 
@@ -33,6 +37,9 @@ public class PlayerControllerClient : NetworkBehaviour {
         animator = GetComponent<Animator>();
         weaponHolder = GetComponent<WeaponHolder>();
         direction = new Vector2(0, -1);
+
+
+        
     }
 
 
@@ -45,9 +52,6 @@ public class PlayerControllerClient : NetworkBehaviour {
 
         if (IsLocalPlayer) {
             rigidbody.gravityScale = 0;
-            //Server rpc calls delayed by a fraction of a second.
-            //StartCoroutine(Initialize());
-
 
         }
 
@@ -98,18 +102,14 @@ public class PlayerControllerClient : NetworkBehaviour {
         animator.SetFloat("Y", playerControllerServer.AnimatorMovement.Value.y);
     }
 
-    IEnumerator Initialize() {
-        yield return new WaitForSeconds(.001f);
-    }
-
     private void DisplayInventory() {
         if(!InInventory){
-            SceneManager.LoadSceneAsync("Inventory", LoadSceneMode.Additive);
+            inventoryUIObject = Instantiate(InventoryUI);
             InInventory = true;
         }
 
         else {
-            SceneManager.UnloadSceneAsync("Inventory");
+            Destroy(inventoryUIObject);
             InInventory = false;
         }
     }
@@ -117,7 +117,10 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     [ClientRpc]
     public void SetSpawnClientRpc(Vector2 position, ClientRpcParams rpcParams) {
+        ClientNetworkTransform clientTransform = GetComponent<ClientNetworkTransform>();
+        clientTransform.Interpolate = false;
         transform.position = position;
+        clientTransform.Interpolate = true;
     }
 
 

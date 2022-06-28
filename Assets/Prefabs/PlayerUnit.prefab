@@ -132,13 +132,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SyncPositionX: 1
   SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncPositionZ: 0
+  SyncRotAngleX: 0
+  SyncRotAngleY: 0
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -274,6 +274,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 150
+  InventoryUI: {fileID: 2712004918303161845, guid: 3cc409c52bdaba44f9357f94d5d12516, type: 3}
 --- !u!114 &-4829901794372278007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,4 +311,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3211f94de004d974ea5f5ee04acca71c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultWeapon: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}

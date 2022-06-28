@@ -49,6 +49,7 @@ public class InventoryUIController : MonoBehaviour {
         else {
             Debug.Log("Player does not have an inventory, can not display Inventory");
         }
+
     }
 
     void OnDestroy() {
@@ -194,7 +195,7 @@ public class InventoryUIController : MonoBehaviour {
 
     MouseFollower CreateHeldUIItem(ItemInfo itemInfo) {
         MouseFollower UIItem = Instantiate(heldUIItemPrefab);
-        SceneManager.MoveGameObjectToScene(UIItem.gameObject, SceneManager.GetSceneByName("Inventory"));
+       // SceneManager.MoveGameObjectToScene(UIItem.gameObject, SceneManager.GetSceneByName("Inventory"));
         UIItem.transform.SetParent(mainPanel.transform);
         UIItem.transform.SetAsLastSibling();
         UIItem.GetComponent<Image>().sprite = ResourceManager.Instance.GetItemData(itemInfo.Name.Value.ToString()).Sprite;
