@@ -6,6 +6,7 @@ using Unity.Collections;
 using UnityEngine;
 using System;
 
+
 public class Inventory : NetworkBehaviour {
     public static int InventorySize = 35;
 
@@ -29,31 +30,17 @@ public class Inventory : NetworkBehaviour {
         itemInfoList = new NetworkList<ItemInfo>();
         WeaponInfo = new NetworkVariable<ItemInfo>();
         items = new List<Item>(new Item[InventorySize]);
-    }
-
-    public override void OnNetworkSpawn()  {
-        if(IsServer) {
-            for(int i = 0; i < InventorySize; i++) {
-                itemInfoList.Add(new ItemInfo());
-            }
+        
+        for (int i = 0; i < InventorySize; i++) {
+            itemInfoList.Add(new ItemInfo());
         }
     }
 
    
 
     public NetworkList<ItemInfo> GetItemInfoList() {
-        itemInfoList.Clear();
-
-        for(int i = 0; i < InventorySize; i++) {
-            Item item = items[i];
-            if(item != null) {
-                itemInfoList.Add(item.GetItemInfo());
-            }
-            else {
-                itemInfoList.Add(new ItemInfo());
-            }
-        }
        
+        Debug.Log("Getting Item Info List");
         return itemInfoList;
     }
 
@@ -90,15 +77,16 @@ public class Inventory : NetworkBehaviour {
     public void SetInventoryServer(List<Item> items, WeaponItem weaponItem = null) {
         Debug.Log("Items when setting " + items.Count);
         if(!IsServer) return;
-        foreach(Item item in items) {
+        for(int i = 0; i < InventorySize; i++) {
+            Item item = items[i];
             if(item == null) {
-                this.items[items.IndexOf(item)] = null;
-                itemInfoList[items.IndexOf(item)] = new ItemInfo();
+                this.items[i] = null;
+                itemInfoList[i] = new ItemInfo();
                 continue;
             }
 
-            this.items[items.IndexOf(item)] = item;
-          //  itemInfoList[items.IndexOf(item)] = item.GetItemInfo();
+            this.items[i] = item;
+            itemInfoList[i] = item.GetItemInfo();
             itemLookup.Add(item.ItemID, item);
         }
 
@@ -115,7 +103,10 @@ public class Inventory : NetworkBehaviour {
     public void AddItemServer(Item item) {
         if(!IsServer) return;
 
-        if(item == null) return;
+        if(item == null) {
+            Debug.LogWarning("Item to add to inventory is null");
+            return;
+        }
 
         if(IsFull) {
             Debug.Log("There is no space in the inventory");
@@ -130,7 +121,8 @@ public class Inventory : NetworkBehaviour {
         for(int i = 0; i < InventorySize; i++) {
             if(items[i] == null) {
                 items[i] = item;
-              //  itemInfoList[i] = item.GetItemInfo();
+                itemInfoList[i] = item.GetItemInfo();
+                Debug.Log("Item Added Successfully");
                 break;
             }
         }
@@ -155,8 +147,11 @@ public class Inventory : NetworkBehaviour {
         Debug.Log("Removing Item Server");
         Item itemToRemove = itemLookup[itemID];
 
+        int indexOfItemToRemove = items.IndexOf(itemToRemove); 
+
         itemLookup.Remove(itemID);
-        items[items.IndexOf(itemToRemove)] = null;
+        items[indexOfItemToRemove] = null;
+        itemInfoList[indexOfItemToRemove] = new ItemInfo();
 
         Debug.Log("Removed Item in inventory");
 
@@ -188,6 +183,7 @@ public class Inventory : NetworkBehaviour {
         Item itemToRemove = itemLookup[itemID];
         if(items.IndexOf(itemToRemove) != -1) {
             items[items.IndexOf(itemToRemove)] = null;
+            itemInfoList[items.IndexOf(itemToRemove)] = new ItemInfo();
         }
 
         SetWeaponServer(newWeapon);
@@ -200,20 +196,34 @@ public class Inventory : NetworkBehaviour {
     }
 
     [ServerRpc]
-    public void SetItemOrderServerRpc(ItemInfo[] itemInfoList) {
+    public void SetItemOrderServerRpc(ForceNetworkSerializeByMemcpy<FixedString64Bytes>[] itemInfoOrderIDs) {
+        
         Debug.Log("Setting Item Order");
         for(int i = 0; i < InventorySize; i++) {
-            if(i >= itemInfoList.Count()) {
+            if(i >= itemInfoOrderIDs.Count()) {
                 items[i] = null;
-                
+                itemInfoList[i] = new ItemInfo();
             }
-            else if(itemInfoList[i].ItemID.Value.IsEmpty) {
+            else if(String.IsNullOrEmpty(itemInfoOrderIDs[i].Value.ToString())) {
                 items[i] = null;
+                itemInfoList[i] = new ItemInfo();
             }
             else {
-                items[i] = itemLookup[itemInfoList[i].ItemID.Value.ToString()];
+                items[i] = itemLookup[itemInfoOrderIDs[i].Value.ToString()];
+                itemInfoList[i] = items[i].GetItemInfo();
             }
         }
+    }
+
+    [ServerRpc]
+    public void SetItemOrderServerRpc(int itemIndexFrom, int itemIndexTo) {
+        itemInfoList[itemIndexFrom] = items[itemIndexTo].GetItemInfo();
+        itemInfoList[itemIndexTo] = items[itemIndexFrom].GetItemInfo();
+
+        Item itemTemp = items[itemIndexTo];
+        items[itemIndexTo] = items[itemIndexFrom];
+        items[itemIndexFrom] = itemTemp;
+
     }
 
 }

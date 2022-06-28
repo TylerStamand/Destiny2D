@@ -8,8 +8,8 @@ using Unity.Netcode;
 
 public struct ItemInfo : IEquatable<ItemInfo> , INetworkSerializable {
     public ForceNetworkSerializeByMemcpy<FixedString64Bytes> ItemID;
-    public ForceNetworkSerializeByMemcpy<FixedString64Bytes> Name;
-    public ForceNetworkSerializeByMemcpy<FixedString512Bytes> Description;
+    public ForceNetworkSerializeByMemcpy<FixedString32Bytes> Name;
+    public ForceNetworkSerializeByMemcpy<FixedString32Bytes> Description;
 
 
 

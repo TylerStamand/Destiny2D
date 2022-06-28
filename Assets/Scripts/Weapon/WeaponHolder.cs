@@ -27,7 +27,9 @@ public class WeaponHolder : NetworkBehaviour
 
     public override void OnNetworkDespawn() {
         if(IsServer) {
-            weapon.NetworkObject.Despawn();
+            if(weapon != null) {
+                weapon.NetworkObject.Despawn();
+            }
             weaponSlot.GetComponent<NetworkObject>().Despawn();
         }
         base.OnNetworkDespawn();
@@ -61,7 +63,7 @@ public class WeaponHolder : NetworkBehaviour
 
     }
 
-    [ServerRpc (RequireOwnership = false)]
+    [ServerRpc]
     void InitializeServerRpc(ulong clientID) {
         
         this.clientID = clientID;

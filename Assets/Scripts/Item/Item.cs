@@ -20,8 +20,8 @@ public class Item {
     public ItemInfo GetItemInfo() {
         ItemInfo itemInfo = new ItemInfo {
             ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(ItemID),
-            Name = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(ItemName),
-            Description = new ForceNetworkSerializeByMemcpy<FixedString512Bytes>(GetDescription()),
+            Name = new ForceNetworkSerializeByMemcpy<FixedString32Bytes>(ItemName),
+            Description = new ForceNetworkSerializeByMemcpy<FixedString32Bytes>(GetDescription()),
         };
         return itemInfo;
     }

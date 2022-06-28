@@ -5,8 +5,7 @@ using Unity.Netcode;
 using System.Linq;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-
-
+using Unity.Collections;
 
 public class InventoryUIController : MonoBehaviour {
     [SerializeField] GameObject inventorySlotsParent;
@@ -80,8 +79,9 @@ public class InventoryUIController : MonoBehaviour {
         //Debug.Log("Items in info list " + inventory.GetItemInfoList().Count);
         foreach (ItemInfo item in inventory.GetItemInfoList()) {
             items.Add(item);
+            
         }
-
+        Debug.Log(items[0].ItemID.Value.ToString());
         weapon = inventory.WeaponInfo.Value;
     }
 
@@ -227,9 +227,9 @@ public class InventoryUIController : MonoBehaviour {
 
     void SetInventoryOrder() {
         //Debug.Log("Setting inventory order");
-        ItemInfo[] itemInfoArray = new ItemInfo[Inventory.InventorySize];
+        ForceNetworkSerializeByMemcpy<FixedString64Bytes>[] itemInfoArray = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>[Inventory.InventorySize];
         for (int i = 0; i < Inventory.InventorySize; i++) {
-            itemInfoArray[i] = items[i];
+            itemInfoArray[i] = items[i].ItemID;
         }
         inventory.SetItemOrderServerRpc(itemInfoArray);
     }
