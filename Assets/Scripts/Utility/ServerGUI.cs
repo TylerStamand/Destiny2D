@@ -24,7 +24,11 @@ public class ServerGUI : MonoBehaviour {
     }
 
     static void StartButtons() {
-        if (GUILayout.Button("Host")) NetworkManager.Singleton.StartHost();
+        if (GUILayout.Button("Host")) {
+            //For Some reason this needs to be in a monobehavior?
+           
+            NetworkManager.Singleton.StartHost();
+        }
         if (GUILayout.Button("Client")) NetworkManager.Singleton.StartClient();
         if (GUILayout.Button("Server")) NetworkManager.Singleton.StartServer();
     }

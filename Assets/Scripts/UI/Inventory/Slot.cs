@@ -36,7 +36,7 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
     public void SetItem(ItemInfo item) {
-        if(item.ItemID.Value.IsEmpty) return;
+        if(item.ItemID.IsEmpty) return;
         
         this.Item = item;
         Sprite itemSprite = ResourceManager.Instance.GetItemData(item.Name.Value.ToString()).Sprite;
@@ -51,7 +51,7 @@ public class Slot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        if (Item.ItemID.Value.IsEmpty) return;
+        if (Item.ItemID.IsEmpty) return;
         if (currentDescriptionObject != null) {
             Destroy(currentDescriptionObject.gameObject);
         }

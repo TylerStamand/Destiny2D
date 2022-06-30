@@ -12,6 +12,7 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     [SerializeField] float moveSpeed;
     [SerializeField] GameObject InventoryUI;
+    [SerializeField] GameObject HUDUI;
 
     new Rigidbody2D rigidbody;
     Animator animator;
@@ -25,10 +26,11 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     PlayerControllerServer playerControllerServer;
     WeaponHolder weaponHolder;
-    
-    GameObject inventoryUIObject;
 
-    bool InInventory = false;
+    GameObject displayObject;
+    ClientDisplay currentDisplay;
+
+    bool InMenu = false;
     bool initialized = false;
 
     void Awake() {
@@ -38,8 +40,6 @@ public class PlayerControllerClient : NetworkBehaviour {
         weaponHolder = GetComponent<WeaponHolder>();
         direction = new Vector2(0, -1);
 
-
-        
     }
 
 
@@ -52,7 +52,7 @@ public class PlayerControllerClient : NetworkBehaviour {
 
         if (IsLocalPlayer) {
             rigidbody.gravityScale = 0;
-
+            ChangeDisplay(ClientDisplay.HUD);
         }
 
     }
@@ -65,9 +65,13 @@ public class PlayerControllerClient : NetworkBehaviour {
                 weaponHolder.UseWeapon(Utilities.DirectionFromVector2(direction));
             }
 
-
             if(Input.GetKeyDown(KeyCode.I)) {
-                DisplayInventory();
+                if(currentDisplay == ClientDisplay.Inventory) {
+                    ChangeDisplay(ClientDisplay.HUD);
+                }
+                else {
+                    ChangeDisplay(ClientDisplay.Inventory);
+                }
             }
         }
     }
@@ -102,16 +106,39 @@ public class PlayerControllerClient : NetworkBehaviour {
         animator.SetFloat("Y", playerControllerServer.AnimatorMovement.Value.y);
     }
 
-    private void DisplayInventory() {
-        if(!InInventory){
-            inventoryUIObject = Instantiate(InventoryUI);
-            InInventory = true;
+
+    /// <summary>
+    /// Change the client UI
+    /// </summary>
+    /// <param name="display"></param>
+    private void ChangeDisplay(ClientDisplay display) {
+        
+
+        if(currentDisplay == display) {
+            return;
+        }
+        
+        currentDisplay = display;
+        
+        InMenu = false;
+
+        if(displayObject != null) {
+            Destroy(displayObject);
         }
 
-        else {
-            Destroy(inventoryUIObject);
-            InInventory = false;
+
+        switch(display) {
+            case ClientDisplay.None:
+                break;
+            case ClientDisplay.HUD:
+                displayObject = Instantiate(HUDUI);
+                break;
+            case ClientDisplay.Inventory:
+                displayObject = Instantiate(InventoryUI);
+                InMenu = true;
+                break;
         }
+
     }
 
 
@@ -129,4 +156,9 @@ public class PlayerControllerClient : NetworkBehaviour {
     
 
 
+}
+
+
+enum ClientDisplay {
+    None, HUD, Inventory, Settings
 }

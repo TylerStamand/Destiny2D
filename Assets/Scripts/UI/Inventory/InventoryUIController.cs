@@ -60,11 +60,12 @@ public class InventoryUIController : MonoBehaviour {
             //Deals with exiting inventory with item in hand
             if (currentHeldUIItem != null) {
                 for (int i = 0; i < Inventory.InventorySize; i++) {
-                    if (items[i].ItemID.Value.IsEmpty) {
+                    if (items[i].ItemID.IsEmpty) {
                         items[i] = currentHeldItemInfo;
                         break;
                     }
                 }
+                //Or Drop it
             }
 
             SetInventoryOrder();
@@ -76,8 +77,8 @@ public class InventoryUIController : MonoBehaviour {
     void PopulateItemList() {
         items.Clear();
 
-        //Debug.Log("Populating List");
-        //Debug.Log("Items in info list " + inventory.GetItemInfoList().Count);
+        Debug.Log("Populating List");
+        Debug.Log("Items in info list " + inventory.GetItemInfoList().Count);
         foreach (ItemInfo item in inventory.GetItemInfoList()) {
             items.Add(item);
             
@@ -105,13 +106,13 @@ public class InventoryUIController : MonoBehaviour {
             slots.Add(slot);
 
             ItemInfo item = items[i];
-            if (!item.ItemID.Value.IsEmpty) {
+            if (!item.ItemID.IsEmpty) {
                 slot.SetItem(item);
             }
         }
 
 
-        if(!weapon.ItemID.Value.IsEmpty) {
+        if(!weapon.ItemID.IsEmpty) {
             weaponSlot.SetItem(weapon);
         }
     }
@@ -133,7 +134,7 @@ public class InventoryUIController : MonoBehaviour {
         }
         
         //If the slot held an item, create a held item
-        if(!slotItemInfo.ItemID.Value.IsEmpty) {
+        if(!slotItemInfo.ItemID.IsEmpty) {
             currentHeldItemInfo = slotItemInfo;
             currentHeldUIItem = CreateHeldUIItem(currentHeldItemInfo);
         }
@@ -211,7 +212,7 @@ public class InventoryUIController : MonoBehaviour {
         if(items.IndexOf(item) != -1) return;
         if(item.ItemID.Value.ToString() == currentHeldItemInfo.ItemID.Value.ToString()) return;
         for(int i = 0; i < Inventory.InventorySize; i++) {
-            if(items[i].ItemID.Value.IsEmpty) {
+            if(items[i].ItemID.IsEmpty) {
                 items[i] = item;
                 break;
             }

@@ -18,11 +18,10 @@ GameObject:
   - component: {fileID: 1846740207}
   - component: {fileID: 1846740219}
   - component: {fileID: 1601051452874884116}
-  - component: {fileID: 8744850052681274501}
   - component: {fileID: -5413379432232810642}
   - component: {fileID: -4829901794372278007}
   - component: {fileID: 6759024285813516604}
-  - component: {fileID: -7272330903609815566}
+  - component: {fileID: -4267017854784433636}
   m_Layer: 6
   m_Name: PlayerUnit
   m_TagString: Untagged
@@ -248,19 +247,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80d7c879794dfda4687da0e400131852, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8744850052681274501
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2181443973947071286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Animator: {fileID: 1846740206}
 --- !u!114 &-5413379432232810642
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,7 +260,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 150
-  InventoryUI: {fileID: 2712004918303161845, guid: 3cc409c52bdaba44f9357f94d5d12516, type: 3}
+  InventoryUI: {fileID: 2712004918303161845, guid: b119acbfb21c0f24cb2751d56cf0e7be, type: 3}
+  HUDUI: {fileID: 2236797742909022621, guid: 650579dff82be364fa23840ca3a99454, type: 3}
 --- !u!114 &-4829901794372278007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,6 +274,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96f5ed564ccb28e40aac926a61c931ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health:
+    m_InternalValue: 0
 --- !u!114 &6759024285813516604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,7 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd76e1b7df1a9546a232e006ab57b75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &-7272330903609815566
+--- !u!114 &-4267017854784433636
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

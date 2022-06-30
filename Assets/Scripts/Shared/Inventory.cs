@@ -14,7 +14,7 @@ public class Inventory : NetworkBehaviour {
     public event Action<ItemInfo> OnItemAdded;
     public event Action<WeaponItem> OnWeaponChange;
 
-    public NetworkList<ItemInfo> itemInfoList {get; private set;}
+    NetworkList<ItemInfo> itemInfoList {get; set;}
 
     Dictionary<string, Item> itemLookup {get; set;} = new Dictionary<string, Item>();
 
@@ -28,22 +28,30 @@ public class Inventory : NetworkBehaviour {
 
 
     void Awake() {
-        itemInfoList = new NetworkList<ItemInfo>();
+       // itemInfoList = new NetworkList<ItemInfo>();
         WeaponInfo = new NetworkVariable<ItemInfo>();
         items = new List<Item>(new Item[InventorySize]);
-        
-        //NEED TO FIND A NEW WAY TO DO THIS, USES TOO MUCH BANDWIDTH
+        itemInfoList = new NetworkList<ItemInfo>();
+
+        Debug.Log("Initializing Info List");
         for (int i = 0; i < InventorySize; i++) {
             itemInfoList.Add(new ItemInfo());
         }
 
     }
 
-   
+    public override void OnNetworkSpawn() {
+        if(IsServer) {
+        }
+
+    }
+
+
 
     public NetworkList<ItemInfo> GetItemInfoList() {
        
         Debug.Log("Getting Item Info List");
+       
         return itemInfoList;
     }
 

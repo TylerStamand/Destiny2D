@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class SpawnManager : NetworkBehaviour {
+public class SpawnManager : MonoBehaviour {
 
 
 
@@ -15,9 +15,9 @@ public class SpawnManager : NetworkBehaviour {
 
 
     void Awake() {
+        Debug.Log("SceneManager Awake");
         if (Instance == null) {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else {
             Destroy(gameObject);

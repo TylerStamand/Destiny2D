@@ -3,28 +3,10 @@
   "$values": [
     {
       "$type": "PlayerSaveData, Assembly-CSharp",
-      "PlayerID": "2",
+      "PlayerID": "1",
       "Items": {
         "$type": "System.Collections.Generic.List`1[[Item, Assembly-CSharp]], mscorlib",
         "$values": [
-          {
-            "$type": "WeaponItem, Assembly-CSharp",
-            "ItemName": "Melee Weapon",
-            "Damage": 2.519648,
-            "CoolDown": 1.0,
-            "ProjectileSpeed": 0.0,
-            "ItemID": "6989c557-0563-4f40-8993-eb8b26bc9cd7"
-          },
-          null,
-          null,
-          {
-            "$type": "WeaponItem, Assembly-CSharp",
-            "ItemName": "Melee Weapon",
-            "Damage": 2.09815073,
-            "CoolDown": 1.0,
-            "ProjectileSpeed": 0.0,
-            "ItemID": "41cfeff0-4e4b-42e7-ba66-9d6a1929b52c"
-          },
           null,
           null,
           null,
@@ -37,22 +19,12 @@
           null,
           null,
           null,
-          {
-            "$type": "WeaponItem, Assembly-CSharp",
-            "ItemName": "Melee Weapon",
-            "Damage": 1.11733174,
-            "CoolDown": 1.0,
-            "ProjectileSpeed": 0.0,
-            "ItemID": "8a82d734-3b5d-4d6c-b51b-4c97eef065b0"
-          },
-          {
-            "$type": "WeaponItem, Assembly-CSharp",
-            "ItemName": "Melee Weapon",
-            "Damage": 2.86019659,
-            "CoolDown": 1.0,
-            "ProjectileSpeed": 0.0,
-            "ItemID": "815c7337-9742-4d43-9122-69cf000687b1"
-          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
           null,
           null,
           null,
@@ -74,11 +46,11 @@
       },
       "Weapon": {
         "$type": "WeaponItem, Assembly-CSharp",
-        "ItemName": "Ranged Weapon",
-        "Damage": 1.50348842,
+        "ItemName": "Melee Weapon",
+        "Damage": 2.17424726,
         "CoolDown": 1.0,
-        "ProjectileSpeed": 2.0,
-        "ItemID": "2002b10f-d6d3-4f90-9132-717cea46f698"
+        "ProjectileSpeed": 0.0,
+        "ItemID": "1a8bb9a0-1f5c-4863-873d-c66ede3c7a69"
       }
     }
   ]

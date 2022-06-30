@@ -4,64 +4,97 @@ using UnityEngine;
 using Unity.Netcode;
 using System;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
-
-//Figure out setting the host, then loading data for the host. Then when someone joins, look at save data for their stuff
-
+public enum GameState {
+    MainMenu,
+    Play
+}
 
 public class GameManager : NetworkBehaviour {
+
+    [SerializeField] GameObject PlayerUnit;
+    [SerializeField] GameObject IDGrabberUI;
 
     [SerializeField] Enemy defaultEnemyPrefab;
     [SerializeField] WeaponData weaponDrop;
 
+
     public static GameManager Instance;
 
-//    SessionManager sessionManager;
-    
+    public NetworkVariable<GameState> CurrentGameState;
+
     public bool playerIDSet = false;
 
 
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        GameObject idGrabberInstance;
+#endif
+
+
     void Awake() {
-        if(Instance == null) {
+        if (Instance == null) {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else {
             Destroy(gameObject);
         }
 
-        //NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
+
 
         //Come back to this. Initialization probably shouldn't happen here
         SaveSystem.Init();
-  //      sessionManager = SessionManager.Instance;
+        //sessionManager = SessionManager.Instance;
+    }
+
+    void Start() {
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+        idGrabberInstance = Instantiate(IDGrabberUI);
+#endif
+       
     }
 
     void Update() {
-        if(!IsSpawned) return;
-        if(Input.GetKeyDown(KeyCode.F)) {
+        if (!IsSpawned) return;
+        if (Input.GetKeyDown(KeyCode.F)) {
             SavePlayerData();
         }
+
+    }
+
+    //Handlers for Main Menu
+    public void StartGame() {
+        NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
+        SceneManager.LoadSceneAsync("Test");
+        SceneManager.sceneLoaded += (Scene scene, LoadSceneMode sceneMode) => NetworkManager.StartHost();
         
     }
 
-    string playerID = "0";
+    public void JoinGame() {
+        SceneManager.LoadSceneAsync("Test");
+        SceneManager.sceneLoaded += (Scene scene, LoadSceneMode sceneMode) => NetworkManager.StartClient();
+    }
+
+
+
+    public void SetPlayerID(string playerID) {
+
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+       Destroy(idGrabberInstance);
+#endif
+        playerIDSet = true;
+        PlayerPrefs.SetString("PlayerID", playerID);
+
+        SceneManager.LoadScene("MainMenu");
+        CurrentGameState.Value = GameState.MainMenu;
+    }
+
 
     void OnGUI() {
 
-        if(!playerIDSet) {
-            GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-            playerID = GUILayout.TextField(playerID);
-            if (GUILayout.Button("Submit")) {
-                if (TryGetComponent<ServerGUI>(out ServerGUI serverGUI)) {
-                    serverGUI.enabled = true;
-                }
-                playerIDSet = true;
-                PlayerPrefs.SetString("PlayerID", playerID);
-            }
-            GUILayout.EndArea();
-        }
-
-        if(IsSpawned)  {
+        if (IsSpawned) {
             GUILayout.BeginArea(new Rect(10, 10, 300, 300));
             if (GUILayout.Button("Spawn Enemy")) {
                 Vector3 spawn = SpawnManager.Instance.GetSpawnLocation().transform.position;
@@ -70,46 +103,102 @@ public class GameManager : NetworkBehaviour {
             }
             GUILayout.EndArea();
         }
-       
-    
-    }
-    void ApprovalCheck() {
 
+
+    }
+    public void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) {
+        // The client identifier to be authenticated
+        var clientId = request.ClientNetworkId;
+
+        // Additional connection data defined by user code
+        var connectionData = request.Payload;
+
+        // Your approval logic determines the following values
+        response.Approved = true;
+        response.CreatePlayerObject = true;
+
+        // The prefab hash value of the NetworkPrefab, if null the default NetworkManager player prefab is used
+        response.PlayerPrefabHash = null;
+
+        // Position to spawn the player object (if null it uses default of Vector3.zero)
+
+        response.Position = Vector3.zero;
+
+        // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
+        response.Rotation = Quaternion.identity;
+
+        // If additional approval steps are needed, set this to true until the additional steps are complete
+        // once it transitions from true to false the connection approval response will be processed.
+        response.Pending = false;
     }
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-        if(!IsServer) {
+        if (!IsServer) {
             enabled = false;
             return;
         }
 
-        if(IsServer && IsClient) {
+        Debug.Log("GameManager Spawn");
+
+        // NetworkManager.SceneManager.LoadScene("Test", LoadSceneMode.Single);
+        // NetworkManager.SceneManager.OnLoadComplete += SpawnPlayers;
+
+        // NetworkManager.SceneManager.OnSceneEvent += SceneEvent;
+        if (IsServer && IsClient) {
             PlayerConnected(NetworkObject.OwnerClientId);
         }
 
         NetworkManager.OnClientConnectedCallback += PlayerConnected;
 
-    
+
         DropServer spawnWeaponDrop = Instantiate(ResourceManager.Instance.DropPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         spawnWeaponDrop.SetItem(weaponDrop.CreateItem());
         spawnWeaponDrop.GetComponent<NetworkObject>().Spawn();
 
     }
 
+
+
+    void SceneEvent(SceneEvent sceneEvent) {
+        if(sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
+        if(sceneEvent.ClientId != 0) {
+            PlayerConnected(sceneEvent.ClientId);
+        }
+    }
+
+    void SpawnPlayers(ulong clientID, string sceneName, LoadSceneMode loadSceneMode) {
+        if(!IsServer) return;
+        Debug.Log("Spawn Players");
+        PlayerConnected(clientID);
+        NetworkManager.SceneManager.OnLoadComplete -= SpawnPlayers;
+    }
+
     void PlayerConnected(ulong clientID) {
         Debug.Log("Player Connected");
-        NetworkObject playerNetObject = NetworkManager.SpawnManager.GetPlayerNetworkObject(clientID);
-        playerNetObject.gameObject.name = "Player " + clientID;
-        PlayerControllerServer player = playerNetObject.GetComponent<PlayerControllerServer>();
-        string playerID = player.GetPlayerID();
-        //player.transform.position = SpawnManager.Instance.GetSpawnLocation().transform.position;
+        GameObject playerUnitInstance = Instantiate(PlayerUnit, SpawnManager.Instance.GetSpawnLocation().transform.position, Quaternion.identity);
+        NetworkObject playerUnitNetObj = playerUnitInstance.GetComponent<NetworkObject>();
+
+        //Might need to set destroy it with scene depending
+        playerUnitNetObj.SpawnAsPlayerObject(clientID);
+
+        NetworkObject playerNetObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID);
+        // ConnectedPlayer connectedPlayer = playerNetObj.GetComponent<ConnectedPlayer>();
+        // connectedPlayer.ClientID.Value = clientId;
+        // connectedPlayer.PlayerUnitObjectNetID.Value = playerUnitNetObj.NetworkObjectId;
+
+
+        string playerID = PlayerPrefs.GetString("PlayerID");
+
         //sessionManager.SetupConnectingPlayerSessionData(clientID, playerID);
         PlayerSaveData saveData = SaveSystem.LoadPlayerData(playerID);
 
-        if(saveData != null) {
-            player.SetSaveDataServer(saveData);       
+        if (saveData != null) {
+            playerUnitInstance.GetComponent<PlayerControllerServer>().SetSaveDataServer(saveData);
         }
+
+        if(!playerNetObj.IsLocalPlayer)
+            StartCoroutine(FixNetList(playerNetObj));
 
     }
 
@@ -122,4 +211,14 @@ public class GameManager : NetworkBehaviour {
         SaveSystem.SavePlayerData(playerSaveDataList);
     }
 
+    IEnumerator FixNetList(NetworkObject player) {
+        
+        yield return new WaitForSeconds(0.001f);
+        player.NetworkHide(player.OwnerClientId);
+        yield return new WaitForSeconds(0.001f);
+        player.NetworkShow(player.OwnerClientId);
+    }
+
 }
+
+

@@ -19,9 +19,9 @@ public class Item {
     
     public ItemInfo GetItemInfo() {
         ItemInfo itemInfo = new ItemInfo {
-            ItemID = new ForceNetworkSerializeByMemcpy<FixedString64Bytes>(ItemID),
-            Name = new ForceNetworkSerializeByMemcpy<FixedString32Bytes>(ItemName),
-            Description = new ForceNetworkSerializeByMemcpy<FixedString32Bytes>(GetDescription()),
+            ItemID = new FixedString64Bytes(ItemID),
+            Name = new FixedString32Bytes(ItemName),
+            Description = new FixedString32Bytes(GetDescription()),
         };
         return itemInfo;
     }

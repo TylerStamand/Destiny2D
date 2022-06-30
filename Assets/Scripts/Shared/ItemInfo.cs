@@ -7,9 +7,9 @@ using Unity.Netcode;
 
 
 public struct ItemInfo : IEquatable<ItemInfo> , INetworkSerializable {
-    public ForceNetworkSerializeByMemcpy<FixedString64Bytes> ItemID;
-    public ForceNetworkSerializeByMemcpy<FixedString32Bytes> Name;
-    public ForceNetworkSerializeByMemcpy<FixedString32Bytes> Description;
+    public FixedString64Bytes ItemID;
+    public FixedString32Bytes Name;
+    public FixedString32Bytes Description;
 
 
 
@@ -20,7 +20,7 @@ public struct ItemInfo : IEquatable<ItemInfo> , INetworkSerializable {
         return false;
     }
 
-    void INetworkSerializable.NetworkSerialize<T>(BufferSerializer<T> serializer) {
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
         
         serializer.SerializeValue(ref ItemID);
         serializer.SerializeValue(ref Name);

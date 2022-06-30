@@ -10,7 +10,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
     public NetworkVariable<Vector2> AnimatorMovement { get; private set; } = new NetworkVariable<Vector2>();
 
-    NetworkVariable<float> health = new NetworkVariable<float>();
+    public NetworkVariable<float> Health = new NetworkVariable<float>();
 
     PlayerControllerClient playerControllerClient;
     new Rigidbody2D rigidbody;
@@ -37,19 +37,17 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
             return;
         }
 
-        inventory.OnWeaponChange += weaponHolder.EquipWeaponServer;
+        if(inventory != null) {
+            inventory.OnWeaponChange += weaponHolder.EquipWeaponServer;
+        }
 
-        health.Value = 5;
+        Health.Value = 5;
 
-        GameObject spawnPoint = SpawnManager.Instance.GetSpawnLocation();
-        playerControllerClient.SetSpawnClientRpc(spawnPoint.transform.position, new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } });
+       // GameObject spawnPoint = SpawnManager.Instance.GetSpawnLocation();
+       // playerControllerClient.SetSpawnClientRpc(spawnPoint.transform.position, new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } });
     }
 
 
-    public string GetPlayerID() {
-
-        return PlayerPrefs.GetString("PlayerID");
-    }
 
     /// <summary>
     /// Server Only Function
@@ -70,7 +68,7 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
     /// <returns></returns>
     public PlayerSaveData GetSaveDataServer() {
         return new PlayerSaveData() {
-            PlayerID = GetPlayerID(), 
+            PlayerID = PlayerPrefs.GetString("PlayerID"), 
             Items = inventory.GetItemListServer(),
             Weapon = inventory.CurrentWeapon  
         };
@@ -85,13 +83,15 @@ public class PlayerControllerServer : NetworkBehaviour, IDamageable {
 
         //This is called because when the inventory sets the weapon, weapon holder hasn't initialized yet
         //so it needs to be done manually
-        weaponHolder.OnInitializedServer += () => weaponHolder.EquipWeaponServer(saveData.Weapon);
+        if(saveData.Weapon != null) {
+            weaponHolder.OnInitializedServer += () => weaponHolder.EquipWeaponServer(saveData.Weapon);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void TakeDamageServerRpc(float damage) {
 
-        health.Value -= damage;
+        Health.Value -= damage;
     }
 
 
