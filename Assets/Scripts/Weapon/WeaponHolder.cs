@@ -43,8 +43,9 @@ public class WeaponHolder : NetworkBehaviour
 
 
     [ClientRpc]
-    public void InitializeClientRpc(ulong weaponSlotNetID, ClientRpcParams rpcParams) {
+    public void InitializeClientRpc(ulong weaponSlotNetID) {
 
+        Debug.Log("Initialized WeaponHolder");
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[weaponSlotNetID];
         weaponSlot = netObj.gameObject;
         weaponSlot.transform.localPosition = Vector2.zero;
@@ -53,22 +54,24 @@ public class WeaponHolder : NetworkBehaviour
 
     [ClientRpc]
     void EquipWeaponClientRpc(ulong itemNetID) {
-        
-
+        Debug.Log("Equipped Weapon Client");
         NetworkObject netObj = NetworkManager.SpawnManager.SpawnedObjects[itemNetID];
         weapon = netObj.gameObject.GetComponent<Weapon>();
         weapon.transform.localPosition = Vector2.zero;
         weapon.transform.localRotation = Quaternion.identity;
         weapon.transform.localScale = Vector3.one;
-
+        
     }
 
     [ServerRpc]
     void InitializeServerRpc(ulong clientID) {
-        
+        Debug.Log("Initializing Weapon On Server");
         this.clientID = clientID;
         NetworkObject networkParentPrefab = ResourceManager.Instance.NetworkParentPrefab;
         weaponSlot = Instantiate(networkParentPrefab.gameObject);
+        
+        weaponSlot.transform.localPosition = Vector2.zero;
+
         NetworkObject networkObject = weaponSlot.GetComponent<NetworkObject>();
     
         networkObject.SpawnWithOwnership(clientID);
@@ -79,9 +82,9 @@ public class WeaponHolder : NetworkBehaviour
         Initialized = true;
         OnInitializedServer?.Invoke();
 
-        ClientRpcParams sendParams = new ClientRpcParams();
-        sendParams.Send.TargetClientIds = new ulong[] {clientID};
-        InitializeClientRpc(networkObject.NetworkObjectId, sendParams );
+        // ClientRpcParams sendParams = new ClientRpcParams();
+        // sendParams.Send.TargetClientIds = new ulong[] {clientID};
+        InitializeClientRpc(networkObject.NetworkObjectId );
     }
 
     /// <summary>

@@ -20,6 +20,8 @@ public class GameManager : NetworkBehaviour {
     [SerializeField] WeaponData weaponDrop;
 
 
+    public event Action<ulong> OnNetListFixFinished;
+
     public static GameManager Instance;
 
     public NetworkVariable<GameState> CurrentGameState;
@@ -67,14 +69,12 @@ public class GameManager : NetworkBehaviour {
     //Handlers for Main Menu
     public void StartGame() {
         NetworkManager.Singleton.ConnectionApprovalCallback += ApprovalCheck;
-        SceneManager.LoadSceneAsync("Test");
-        SceneManager.sceneLoaded += (Scene scene, LoadSceneMode sceneMode) => NetworkManager.StartHost();
+        NetworkManager.StartHost();
         
     }
 
     public void JoinGame() {
-        SceneManager.LoadSceneAsync("Test");
-        SceneManager.sceneLoaded += (Scene scene, LoadSceneMode sceneMode) => NetworkManager.StartClient();
+        NetworkManager.StartClient();
     }
 
 
@@ -100,6 +100,11 @@ public class GameManager : NetworkBehaviour {
                 Vector3 spawn = SpawnManager.Instance.GetSpawnLocation().transform.position;
                 Enemy enemy = Instantiate(defaultEnemyPrefab, spawn, Quaternion.identity);
                 enemy.NetworkObject.Spawn();
+            }
+            if (GUILayout.Button("Spawn Item")) {
+                DropServer spawnWeaponDrop = Instantiate(ResourceManager.Instance.DropPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+                spawnWeaponDrop.SetItem(weaponDrop.CreateItem());
+                spawnWeaponDrop.GetComponent<NetworkObject>().Spawn();
             }
             GUILayout.EndArea();
         }
@@ -141,20 +146,20 @@ public class GameManager : NetworkBehaviour {
 
         Debug.Log("GameManager Spawn");
 
-        // NetworkManager.SceneManager.LoadScene("Test", LoadSceneMode.Single);
-        // NetworkManager.SceneManager.OnLoadComplete += SpawnPlayers;
-
-        // NetworkManager.SceneManager.OnSceneEvent += SceneEvent;
-        if (IsServer && IsClient) {
-            PlayerConnected(NetworkObject.OwnerClientId);
-        }
-
-        NetworkManager.OnClientConnectedCallback += PlayerConnected;
+        NetworkManager.SceneManager.LoadScene("Test", LoadSceneMode.Single);
+        NetworkManager.SceneManager.OnLoadComplete += SpawnPlayers;
+        
 
 
-        DropServer spawnWeaponDrop = Instantiate(ResourceManager.Instance.DropPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        spawnWeaponDrop.SetItem(weaponDrop.CreateItem());
-        spawnWeaponDrop.GetComponent<NetworkObject>().Spawn();
+        NetworkManager.SceneManager.OnSceneEvent += SceneEvent;
+        // if (IsServer && IsClient) {
+        //     PlayerConnected(NetworkObject.OwnerClientId);
+        // }
+
+        // NetworkManager.OnClientConnectedCallback += PlayerConnected;
+
+
+        
 
     }
 
@@ -212,11 +217,12 @@ public class GameManager : NetworkBehaviour {
     }
 
     IEnumerator FixNetList(NetworkObject player) {
-        
+        Debug.Log("Fixing Net List");
         yield return new WaitForSeconds(0.001f);
         player.NetworkHide(player.OwnerClientId);
         yield return new WaitForSeconds(0.001f);
         player.NetworkShow(player.OwnerClientId);
+        Debug.Log("Finished Net List Fix");
     }
 
 }

@@ -5,7 +5,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 
-public class SceneSwitchManager : MonoBehaviour
+public class SceneSwitchManager
 {
     public enum SceneStates {
         Init, MainMenu, InGame
@@ -19,13 +19,15 @@ public class SceneSwitchManager : MonoBehaviour
     public event Action<ulong> OnClientLoadedScene;
 
 
-    private void Awake() {
-        if (Instance != this && Instance != null) {
-            GameObject.Destroy(Instance.gameObject);
-        }
-        Instance = this;
-        SetSceneState(SceneStates.Init);
-    }
+    
+
+    // private void Awake() {
+    //     if (Instance != this && Instance != null) {
+    //         GameObject.Destroy(Instance.gameObject);
+    //     }
+    //     Instance = this;
+    //     SetSceneState(SceneStates.Init);
+    // }
 
     public void SetSceneState(SceneStates sceneState) {
         SceneState = sceneState;
