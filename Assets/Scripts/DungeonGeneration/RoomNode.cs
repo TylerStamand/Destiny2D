@@ -1,12 +1,10 @@
-
-
 public class RoomNode {
 
-    public RoomNode(Room room, RoomNode head = null, RoomNode left = null, RoomNode right = null) {
+    public RoomNode(Room room) {
         Room = room;
-        Head = head;
-        Left = left;
-        Right = right;
+        // Head = head;
+        // Left = left;
+        // Right = right;
     }
 
     public RoomNode Head;

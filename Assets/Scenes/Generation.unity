@@ -203,10 +203,10 @@ MonoBehaviour:
   seed: 5
   width: 100
   height: 100
-  deathLimit: 3
-  birthLimit: 4
-  initialChance: 0.414
-  NumberOfSteps: 2
+  ShrinkPercentage:
+    MaxValue: 0.4
+    MinValue: 0.15
+  numberOfSteps: 4
 --- !u!4 &1119808096
 Transform:
   m_ObjectHideFlags: 0

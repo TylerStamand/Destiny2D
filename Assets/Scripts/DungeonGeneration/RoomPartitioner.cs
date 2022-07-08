@@ -1,52 +1,96 @@
 using System;
+using System.Collections.Generic;
+using Plankton;
+using UnityEngine;
 
+using Random = System.Random;
 public class RoomPartitioner {
 
-    // public static List<Room> PartitionRooms(Room room, int numberOfSteps) {
+    public static List<Room> PartitionRooms(Room room, int seed,  int numberOfSteps, out PlanktonMesh mesh) {
+        RoomPartitioner partitioner = new RoomPartitioner(seed, room);
+        
+        partitioner.Partition(ref partitioner.head, partitioner.splitHorizontal, numberOfSteps);
 
-    // } 
+        mesh = partitioner.mesh;
+
+        return partitioner.rooms;
+        
+    } 
 
     RoomNode head;
-
+    PlanktonMesh mesh;
     Random random;
 
     float lowerRatio;
     float upperRatio;
     float ratioDifference;
-
     bool splitHorizontal;
-
     int minArea;
 
+    List<Room> rooms;
+
     RoomPartitioner(int seed, Room room) {
+       
         random = new Random(seed);
-        lowerRatio = 30;
-        upperRatio = 70;
+        lowerRatio = .40f;
+        upperRatio = .60f;
         ratioDifference = upperRatio - lowerRatio; 
         head = new RoomNode(room);
         splitHorizontal = true;
+        rooms = new List<Room>();
+
+        mesh = new PlanktonMesh();
+       
     }
 
-    RoomNode SimulationStep(RoomNode head, bool splitHorizontal, int numberOfSteps) {
-        float roomRatio = (float)(random.NextDouble() * ratioDifference) + lowerRatio;
-        Room roomToSplit = head.Room;
+
+    void Partition(ref RoomNode head, bool splitHorizontal, int numberOfSteps) {
 
         Room leftRoom;
         Room rightRoom;
-
+        
         if(numberOfSteps <= 0) {
-            return null;
+            leftRoom = head.Head.Left.Room;
+            rightRoom = head.Head.Right.Room;
+
+            PlanktonXYZ[] vertices;
+            int[] vertIndexes;
+
+            vertices = new PlanktonXYZ[] {new PlanktonXYZ(leftRoom.XPosition, leftRoom.YPosition ,0), new PlanktonXYZ(leftRoom.XPosition, leftRoom.YPosition + leftRoom.Height, 0),
+                new PlanktonXYZ(leftRoom.XPosition + leftRoom.Width, leftRoom.YPosition, 0), new PlanktonXYZ(leftRoom.XPosition + leftRoom.Width, leftRoom.YPosition + leftRoom.Height, 0)};
+
+            vertIndexes = mesh.Vertices.AddVertices(vertices);
+            mesh.Faces.AddFace(vertIndexes);
+
+            vertices = new PlanktonXYZ[] {new PlanktonXYZ(rightRoom.XPosition, rightRoom.YPosition ,0), new PlanktonXYZ(rightRoom.XPosition, rightRoom.YPosition + rightRoom.Height, 0),
+                new PlanktonXYZ(rightRoom.XPosition + rightRoom.Width, rightRoom.YPosition, 0), new PlanktonXYZ(rightRoom.XPosition + rightRoom.Width, rightRoom.YPosition + rightRoom.Height, 0)};
+
+            vertIndexes = mesh.Vertices.AddVertices(vertices);
+            mesh.Faces.AddFace(vertIndexes);
+            Debug.Log("Current Faces: " + mesh.Faces.Count);
+
+            rooms.Add(leftRoom);
+            rooms.Add(rightRoom);
+
+            Debug.Log("Current Rooms: " + rooms.Count);
+            return;
         }
+
+
+        float roomRatio = (float)(random.NextDouble() * ratioDifference) + lowerRatio;
+        Room roomToSplit = head.Room;
+
+    
 
         if(splitHorizontal) {
 
             //Top Room
             int leftRoomHeight = (int) (roomToSplit.Height * roomRatio);
             leftRoom = new Room(roomToSplit.XPosition, roomToSplit.YPosition, roomToSplit.Width, leftRoomHeight ); 
-            
+
             //Bottom Room
             int rightRoomHeight = roomToSplit.Height - leftRoomHeight; 
-            rightRoom =  new Room(roomToSplit.XPosition, roomToSplit.YPosition - leftRoomHeight, roomToSplit.Width, rightRoomHeight);
+            rightRoom =  new Room(roomToSplit.XPosition, roomToSplit.YPosition + leftRoomHeight, roomToSplit.Width, rightRoomHeight);
 
         }
         else {
@@ -61,17 +105,24 @@ public class RoomPartitioner {
 
         numberOfSteps--;
 
-        head.Left = new RoomNode(leftRoom, head);
-        head.Right = new RoomNode(rightRoom, head);
+        RoomNode leftNode = new RoomNode(leftRoom); 
+        leftNode.Head = head;
+        head.Left = leftNode;
+        
+        RoomNode rightNode = new RoomNode(rightRoom);
+        rightNode.Head = head;
+        head.Right = rightNode;
 
-        SimulationStep(head.Left, !splitHorizontal, numberOfSteps);
-        SimulationStep(head.Right, !splitHorizontal, numberOfSteps);
+        Partition(ref head.Left, !splitHorizontal, numberOfSteps);
+        Partition(ref head.Right, !splitHorizontal, numberOfSteps);
 
 
-        return head;
+        return;
     
     
     
     }
+
+
     
 }
