@@ -50,29 +50,27 @@ public class RoomPartitioner {
         Room rightRoom;
         
         if(numberOfSteps <= 0) {
-            leftRoom = head.Head.Left.Room;
-            rightRoom = head.Head.Right.Room;
 
             PlanktonXYZ[] vertices;
             int[] vertIndexes;
+            Room room = head.Room;
 
-            vertices = new PlanktonXYZ[] {new PlanktonXYZ(leftRoom.XPosition, leftRoom.YPosition ,0), new PlanktonXYZ(leftRoom.XPosition, leftRoom.YPosition + leftRoom.Height, 0),
-                new PlanktonXYZ(leftRoom.XPosition + leftRoom.Width, leftRoom.YPosition, 0), new PlanktonXYZ(leftRoom.XPosition + leftRoom.Width, leftRoom.YPosition + leftRoom.Height, 0)};
+            vertices = new PlanktonXYZ[] {new PlanktonXYZ(room.XPosition, room.YPosition ,0), new PlanktonXYZ(room.XPosition + room.Width, room.YPosition, 0), 
+            new PlanktonXYZ(room.XPosition + room.Width, room.YPosition + room.Height, 0), new PlanktonXYZ(room.XPosition, room.YPosition + room.Height, 0)};
+
+            // foreach(PlanktonXYZ vertex in vertices) {
+            //     Debug.Log(vertex.X + " " +  vertex.Y); 
+            // }
 
             vertIndexes = mesh.Vertices.AddVertices(vertices);
-            mesh.Faces.AddFace(vertIndexes);
 
-            vertices = new PlanktonXYZ[] {new PlanktonXYZ(rightRoom.XPosition, rightRoom.YPosition ,0), new PlanktonXYZ(rightRoom.XPosition, rightRoom.YPosition + rightRoom.Height, 0),
-                new PlanktonXYZ(rightRoom.XPosition + rightRoom.Width, rightRoom.YPosition, 0), new PlanktonXYZ(rightRoom.XPosition + rightRoom.Width, rightRoom.YPosition + rightRoom.Height, 0)};
 
-            vertIndexes = mesh.Vertices.AddVertices(vertices);
-            mesh.Faces.AddFace(vertIndexes);
-            Debug.Log("Current Faces: " + mesh.Faces.Count);
+            int faceIndex = mesh.Faces.AddFace(vertIndexes);
 
-            rooms.Add(leftRoom);
-            rooms.Add(rightRoom);
-
-            Debug.Log("Current Rooms: " + rooms.Count);
+            int[] vertexIndexs = mesh.Faces.GetFaceVertices(faceIndex);
+         
+            rooms.Add(room);
+       
             return;
         }
 
