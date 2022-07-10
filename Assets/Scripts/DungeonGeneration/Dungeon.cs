@@ -110,6 +110,7 @@ public class Dungeon : MonoBehaviour {
     void OnDrawGizmos() {
         if (planktonMesh == null) return;
 
+        Gizmos.color = Color.white;
         for (int i = 0; i < planktonMesh.Faces.Count; i++) {
 
             Vector3 oldPoint = Vector3.zero;
@@ -131,6 +132,32 @@ public class Dungeon : MonoBehaviour {
                 }
             }
 
+        }
+
+        Gizmos.color = Color.red;
+
+        Vector3 currentFace;
+        Vector3 adjacentFace;
+        for(int i = 0; i < planktonMesh.Faces.Count; i++) {
+            PlanktonXYZ xyz =  planktonMesh.Faces.GetFaceCenter(i);
+            currentFace = new Vector3(xyz.X, xyz.Y, 0);
+
+            int[] halfEdgeIndexs = planktonMesh.Faces.GetHalfedges(i);
+           // Debug.Log(halfEdgeIndexs.Length);
+            for(int j = 0; j < halfEdgeIndexs.Length; j++) {
+               // Debug.Log(halfEdgeIndexs[j]);
+                int pairHalfEdge = planktonMesh.Halfedges.GetPairHalfedge(halfEdgeIndexs[j]);
+               // Debug.Log(pairHalfEdge);
+                int adjacentFaceIndex = planktonMesh.Halfedges[pairHalfEdge].AdjacentFace;
+              //  Debug.Log(adjacentFaceIndex);
+                if(adjacentFaceIndex != -1) {
+                    xyz = planktonMesh.Faces.GetFaceCenter(adjacentFaceIndex);
+                    adjacentFace = new Vector3(xyz.X, xyz.Y, 0);
+                    Gizmos.DrawLine(currentFace, adjacentFace);
+                }
+            }
+
+       
         }
 
 
