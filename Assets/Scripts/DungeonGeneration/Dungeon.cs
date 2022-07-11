@@ -24,7 +24,7 @@ public class Dungeon : MonoBehaviour {
     [SerializeField] int numberOfSteps;
 
     System.Random random;
-
+    List<Room> rooms;
     PlanktonMesh planktonMesh;
 
     [ContextMenu("GenerateMap")]
@@ -41,7 +41,7 @@ public class Dungeon : MonoBehaviour {
         tilemap.ClearAllTiles();
 
         Room startRoom = new Room(-width / 2, -height / 2, width, height);
-        List<Room> rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps, out planktonMesh);
+        rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps, out planktonMesh);
 
         Debug.Log("Faces: " + planktonMesh.Faces.Count);
         Debug.Log("Rooms: " + rooms.Count);
@@ -108,57 +108,72 @@ public class Dungeon : MonoBehaviour {
     }
 
     void OnDrawGizmos() {
-        if (planktonMesh == null) return;
 
-        Gizmos.color = Color.white;
-        for (int i = 0; i < planktonMesh.Faces.Count; i++) {
 
-            Vector3 oldPoint = Vector3.zero;
-            Vector3 newPoint = Vector3.zero;
-            int[] vertexIndexs = planktonMesh.Faces.GetFaceVertices(i);
-            //Debug.Log("I: " + i);
-            for (int j = 0; j < vertexIndexs.Length + 1; j++) {
-               // Debug.Log($"X: {planktonMesh.Vertices[j].X} + Y: {planktonMesh.Vertices[j].Y}");
-                
-                oldPoint = newPoint;
+        if(rooms != null) {
+            foreach(Room room in rooms) {
+                List<Room> adjacentRooms = room.GetAdjacentRooms();
+                foreach(Room adjacentRoom in adjacentRooms) {
 
-                PlanktonVertex vertex = planktonMesh.Vertices[vertexIndexs[j % vertexIndexs.Length]];
-
-                newPoint = new Vector3(vertex.X, vertex.Y);
-                if (j != 0) {
-                //    Debug.Log($"From: {oldPoint} To: {newPoint}");
-                    Gizmos.DrawLine(oldPoint, newPoint);
-
+                    Gizmos.DrawLine(room.Center, adjacentRoom.Center);
                 }
             }
-
         }
 
-        Gizmos.color = Color.red;
 
-        Vector3 currentFace;
-        Vector3 adjacentFace;
-        for(int i = 0; i < planktonMesh.Faces.Count; i++) {
-            PlanktonXYZ xyz =  planktonMesh.Faces.GetFaceCenter(i);
-            currentFace = new Vector3(xyz.X, xyz.Y, 0);
 
-            int[] halfEdgeIndexs = planktonMesh.Faces.GetHalfedges(i);
-           // Debug.Log(halfEdgeIndexs.Length);
-            for(int j = 0; j < halfEdgeIndexs.Length; j++) {
-               // Debug.Log(halfEdgeIndexs[j]);
-                int pairHalfEdge = planktonMesh.Halfedges.GetPairHalfedge(halfEdgeIndexs[j]);
-               // Debug.Log(pairHalfEdge);
-                int adjacentFaceIndex = planktonMesh.Halfedges[pairHalfEdge].AdjacentFace;
-              //  Debug.Log(adjacentFaceIndex);
-                if(adjacentFaceIndex != -1) {
-                    xyz = planktonMesh.Faces.GetFaceCenter(adjacentFaceIndex);
-                    adjacentFace = new Vector3(xyz.X, xyz.Y, 0);
-                    Gizmos.DrawLine(currentFace, adjacentFace);
-                }
-            }
+
+        // if (planktonMesh == null) return;
+
+        // Gizmos.color = Color.white;
+        // for (int i = 0; i < planktonMesh.Faces.Count; i++) {
+
+        //     Vector3 oldPoint = Vector3.zero;
+        //     Vector3 newPoint = Vector3.zero;
+        //     int[] vertexIndexs = planktonMesh.Faces.GetFaceVertices(i);
+        //     //Debug.Log("I: " + i);
+        //     for (int j = 0; j < vertexIndexs.Length + 1; j++) {
+        //        // Debug.Log($"X: {planktonMesh.Vertices[j].X} + Y: {planktonMesh.Vertices[j].Y}");
+                
+        //         oldPoint = newPoint;
+
+        //         PlanktonVertex vertex = planktonMesh.Vertices[vertexIndexs[j % vertexIndexs.Length]];
+
+        //         newPoint = new Vector3(vertex.X, vertex.Y);
+        //         if (j != 0) {
+        //         //    Debug.Log($"From: {oldPoint} To: {newPoint}");
+        //             Gizmos.DrawLine(oldPoint, newPoint);
+
+        //         }
+        //     }
+
+        // }
+
+        // Gizmos.color = Color.red;
+
+        // Vector3 currentFace;
+        // Vector3 adjacentFace;
+        // for(int i = 0; i < planktonMesh.Faces.Count; i++) {
+        //     PlanktonXYZ xyz =  planktonMesh.Faces.GetFaceCenter(i);
+        //     currentFace = new Vector3(xyz.X, xyz.Y, 0);
+
+        //     int[] halfEdgeIndexs = planktonMesh.Faces.GetHalfedges(i);
+        //    // Debug.Log(halfEdgeIndexs.Length);
+        //     for(int j = 0; j < halfEdgeIndexs.Length; j++) {
+        //        // Debug.Log(halfEdgeIndexs[j]);
+        //         int pairHalfEdge = planktonMesh.Halfedges.GetPairHalfedge(halfEdgeIndexs[j]);
+        //        // Debug.Log(pairHalfEdge);
+        //         int adjacentFaceIndex = planktonMesh.Halfedges[pairHalfEdge].AdjacentFace;
+        //       //  Debug.Log(adjacentFaceIndex);
+        //         if(adjacentFaceIndex != -1) {
+        //             xyz = planktonMesh.Faces.GetFaceCenter(adjacentFaceIndex);
+        //             adjacentFace = new Vector3(xyz.X, xyz.Y, 0);
+        //             Gizmos.DrawLine(currentFace, adjacentFace);
+        //         }
+        //     }
 
        
-        }
+        // }
 
 
 
