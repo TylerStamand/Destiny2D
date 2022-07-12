@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Plankton;
+using System.Linq;
 using System;
 
 
@@ -41,10 +42,9 @@ public class Dungeon : MonoBehaviour {
         tilemap.ClearAllTiles();
 
         Room startRoom = new Room(-width / 2, -height / 2, width, height);
+
         rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps, out planktonMesh);
 
-        Debug.Log("Faces: " + planktonMesh.Faces.Count);
-        Debug.Log("Rooms: " + rooms.Count);
 
         //Shrinks down rooms
         foreach (Room room in rooms) {
@@ -115,9 +115,20 @@ public class Dungeon : MonoBehaviour {
                 List<Room> adjacentRooms = room.GetAdjacentRooms();
                 foreach(Room adjacentRoom in adjacentRooms) {
 
+                    Gizmos.color = Color.blue;  
                     Gizmos.DrawLine(room.Center, adjacentRoom.Center);
+                    
                 }
+
+                Gizmos.color = Color.white;
+                Gizmos.DrawLine(new Vector2(room.OriginalXPosition, room.OriginalYPosition), new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition));
+                Gizmos.DrawLine(new Vector2(room.OriginalXPosition, room.OriginalYPosition), new Vector2(room.OriginalXPosition, room.OriginalYPosition + room.OriginalHeight));
+                Gizmos.DrawLine(new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition + room.OriginalHeight), new Vector2(room.OriginalXPosition, room.OriginalYPosition + room.OriginalHeight));
+                Gizmos.DrawLine(new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition + room.OriginalHeight), new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition));
+
             }
+
+           
         }
 
 

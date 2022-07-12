@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Room {
 
+    public readonly int OriginalXPosition;
+    public readonly int OriginalYPosition;
+    public readonly int OriginalWidth;
+    public readonly int OriginalHeight;
     public int XPosition;
     public int YPosition;
     public int Width;
@@ -14,6 +18,11 @@ public class Room {
         YPosition = yPosition;
         Width = width;
         Height = height;
+
+        OriginalXPosition = xPosition;
+        OriginalYPosition = yPosition;
+        OriginalWidth = width;
+        OriginalHeight = height;
 
         North = new List<Room>();
         South = new List<Room>();

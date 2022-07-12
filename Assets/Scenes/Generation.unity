@@ -200,12 +200,12 @@ MonoBehaviour:
   tilemap: {fileID: 1257141530}
   floorTile: {fileID: 11400000, guid: 05b13880a4598b545929f67006515041, type: 2}
   wallTile: {fileID: 11400000, guid: 905853ebb63a7014aa42a2c9705c3ed8, type: 2}
-  seed: 5
+  seed: 9
   width: 100
   height: 100
   ShrinkPercentage:
-    MaxValue: 0.4
-    MinValue: 0.15
+    MaxValue: 0.3
+    MinValue: 0.2
   numberOfSteps: 4
 --- !u!4 &1119808096
 Transform:

@@ -34,8 +34,8 @@ public class RoomPartitioner {
     RoomPartitioner(int seed, Room room, bool initialSplitHorizontal) {
        
         random = new Random(seed);
-        lowerRatio = .40f;
-        upperRatio = .60f;
+        lowerRatio = .20f;
+        upperRatio = .80f;
         ratioDifference = upperRatio - lowerRatio; 
         head = new RoomNode(room);
         this.initialSplitHorizontal = initialSplitHorizontal;
@@ -79,10 +79,6 @@ public class RoomPartitioner {
         float roomRatio = (float)(random.NextDouble() * ratioDifference) + lowerRatio;
         Room roomToSplit = head.Room;
 
-        // foreach (int vertex in vertices) {
-        //     Debug.Log($"X: {mesh.Vertices[vertex].X} Y: {mesh.Vertices[vertex].Y}");
-        // }
-
 
         if (splitHorizontal) {
 
@@ -112,12 +108,6 @@ public class RoomPartitioner {
             //Top Face
             rightFaceIndex = mesh.Faces.AddFace(leftVertexIndex, rightVertexIndex, vertices[2], vertices[3]);
 
-
-
-            // Debug.Log($"Right Vertex: {rightVertex.X},{rightVertex.Y}");
-            // Debug.Log($"Left Vertex: {leftVertex.X},{leftVertex.Y}");
-
-
         }
         else {
             //Left Room
@@ -146,8 +136,6 @@ public class RoomPartitioner {
             rightFaceIndex = mesh.Faces.AddFace(bottomVertexIndex, vertices[1], vertices[2], topVertexIndex);
 
 
-            // Debug.Log($"Right Vertex: {topVertex.X},{topVertex.Y}");
-            // Debug.Log($"Left Vertex: {bottomVertex.X},{bottomVertex.Y}");
         }
 
 
@@ -255,13 +243,6 @@ public class RoomPartitioner {
                         topIndex++;
                     }
                 }
-
-                // List<RoomNode> frontiers = new List<RoomNode>(); 
-                // frontiers.AddRange(head.Left.SouthFrontier);
-                // frontiers.Union(head.Right.NorthFrontier);
-                // List<Room> rooms = new List<Room>(frontiers.Select(r => r.Room ));
-                // head.Left.Room.South =  rooms;
-                // head.Right.Room.North = rooms;
             }
             else {
                 RoomNode currentLeft;
@@ -290,12 +271,6 @@ public class RoomPartitioner {
                 }
 
                 
-                // List<RoomNode> frontiers = new List<RoomNode>();
-                // frontiers.AddRange(head.Left.EastFrontier);
-                // frontiers.Union(head.Right.WestFrontier);
-                // List<Room> rooms = new List<Room>(frontiers.Select(r => r.Room));
-                // head.Left.Room.East = rooms;
-                // head.Right.Room.West = rooms;
             }
         }
     }
