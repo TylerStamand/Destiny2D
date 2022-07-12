@@ -26,6 +26,7 @@ public class Dungeon : MonoBehaviour {
 
     System.Random random;
     List<Room> rooms;
+    List<Edge> edges;
     PlanktonMesh planktonMesh;
 
     [ContextMenu("GenerateMap")]
@@ -45,7 +46,7 @@ public class Dungeon : MonoBehaviour {
 
         rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps, out planktonMesh);
 
-
+        edges = EdgeSelector.GetEdges(rooms);
         //Shrinks down rooms
         foreach (Room room in rooms) {
             //float widthShrinkPercent = (float)random.NextDouble() * (ShrinkPercentage.MaxValue - ShrinkPercentage.MinValue) + ShrinkPercentage.MinValue;
@@ -79,6 +80,8 @@ public class Dungeon : MonoBehaviour {
                 }
             }
         }
+
+
 
 
 
@@ -129,6 +132,13 @@ public class Dungeon : MonoBehaviour {
             }
 
            
+        }
+
+        if(edges != null) {
+            Gizmos.color = Color.red;
+            foreach(Edge edge in edges) {
+                Gizmos.DrawLine(edge.From.Room.Center, edge.To.Room.Center);
+            }
         }
 
 

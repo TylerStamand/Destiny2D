@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
-public class Room {
+public class Room : IEquatable<Room> {
 
     public readonly int OriginalXPosition;
     public readonly int OriginalYPosition;
@@ -45,4 +46,17 @@ public class Room {
         return rooms;
     }
 
+    public bool Equals(Room other) {
+        if(XPosition == other.XPosition &&
+            YPosition == other.YPosition &&
+            Width == other.Width &&
+            Height == other.Height) {
+                return true;
+        }
+        return true;
+    }
+
+    public override bool Equals(object obj) {
+        return Equals(obj as Room);
+    }
 }

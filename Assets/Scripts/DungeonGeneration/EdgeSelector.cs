@@ -1,50 +1,143 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-public class Edge : IEquatable<Edge> {
-    public Edge(Room room1, Room room2, int distance) {
-        Room1 = room1;
-        Room2 = room2;
+public class Vertex : IEquatable<Vertex> {
+    public Room Room;
+    public Vertex Parent;
+    
+    public Vertex(Room room, Vertex parent = null) {
+        Room = room;
+        Parent = parent;
+    }
+
+    public bool Equals(Vertex other) {
+        return Room == other.Room;
+    }
+
+    public override bool Equals(object obj) {
+        return Equals(obj as Vertex);
+    }
+}
+public class Edge : IEquatable<Edge>, IComparable<Edge> {
+    
+    public Edge(Vertex to, Vertex from, int distance) {
+        To = to;
+        From = from;
         Distance = distance;
     }
 
-    public Room Room1;
-    public Room Room2;
+    public Vertex To;
+    public Vertex From;
     public int Distance;
 
 
     public bool Equals(Edge otherEdge) {
-        return (Room1 == otherEdge.Room1 && Room2 == otherEdge.Room2) || (Room1 == otherEdge.Room2 && Room2 == otherEdge.Room1);
+
+        return (To.Room == otherEdge.To.Room && From.Room == otherEdge.From.Room) || (To.Room == otherEdge.From.Room && From.Room == otherEdge.To.Room);
+    }
+
+    public override bool Equals(object obj) {
+        return Equals(obj as Edge);
+    }
+    
+
+    public int CompareTo(Edge other) {
+        return Distance - other.Distance;
     }
 }
+
+public class Graph {
+    public List<Vertex> Vertices = new List<Vertex>();
+    public List<Edge> Edges = new List<Edge>();
+
+    Vertex Find(Vertex vertex) {
+        if(vertex.Parent == null) {
+            return vertex;
+        }
+        return Find(vertex.Parent);
+    }
+
+    void Union(Vertex x, Vertex y) {
+        x.Parent = y;
+    }
+
+    public bool IsCycle() {
+
+        //Potentially not efficient
+        foreach(Vertex vertex in Vertices) {
+            vertex.Parent = null;
+        }
+
+        foreach(Edge edge in Edges) {
+            Vertex x = Find(edge.To);
+            Vertex y = Find(edge.From);
+
+            if(x == y) {
+                return true;
+            }
+
+
+            Union(x, y);
+
+        }
+        return false;
+    }
+
+}
+
 
 public class EdgeSelector {
     
     public static List<Edge> GetEdges(List<Room> rooms ) {
-        return null;
+        EdgeSelector edgeSelector = new EdgeSelector(rooms);
+        Debug.Log(edgeSelector.graph.Vertices.Count);
+        Debug.Log(edgeSelector.graph.Edges.Count);
+        return edgeSelector.graph.Edges;
     }
 
     List<Room> rooms;
     List<Edge> sortedEdges;
-
+    Graph graph;
     EdgeSelector(List<Room> rooms) {
         this.rooms = rooms;
+        graph = new Graph();
+        sortedEdges = new List<Edge>();
         SetSortedEdges();
+        FindMST();
+    }
+
+    void FindMST() {
+        foreach(Edge edge in sortedEdges) {
+            graph.Edges.Add(edge);
+            if(graph.IsCycle()) {
+                graph.Edges.Remove(edge);
+            }
+            if(graph.Edges.Count == graph.Vertices.Count - 1) {
+                return;
+            }
+        }
     }
 
     void SetSortedEdges() {
         foreach (Room room in rooms) {
+
+            Vertex x = new Vertex(room);
+            graph.Vertices.Add(x);
             foreach (Room adjacentRoom in room.GetAdjacentRooms()) {
-                Edge newEdge = new Edge(room, adjacentRoom, CalculateEdgeDistance(room, adjacentRoom));
+                Vertex y = new Vertex(adjacentRoom);
+                Edge newEdge = new Edge(x, y, CalculateEdgeDistance(room, adjacentRoom));
+
+                //This checks for backwards paths from other rooms
                 if (!sortedEdges.Contains(newEdge)) {
-                    for (int i = 0; i < sortedEdges.Count; i++) {
-                        if (newEdge.Distance < sortedEdges[i].Distance) {
-                            sortedEdges.Insert(i, newEdge);
-                        }
-                    }
+                  
+                    sortedEdges.Add(newEdge);
+
                 }
             }
         }
+        sortedEdges.Sort();
+        Debug.Log($"Number of edges: {sortedEdges.Count}");
     }
 
     int CalculateEdgeDistance(Room room1, Room room2) {
