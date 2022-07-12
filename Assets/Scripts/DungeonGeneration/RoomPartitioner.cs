@@ -225,9 +225,9 @@ public class RoomPartitioner {
                 int topIndex = 0;
                 int bottomIndex = 0;
 
-                while(topIndex < head.Left.SouthFrontier.Count && bottomIndex < head.Right.NorthFrontier.Count) {
-                    currentTop = head.Left.SouthFrontier[topIndex];
-                    currentBottom = head.Right.NorthFrontier[bottomIndex];
+                while(topIndex < head.Right.NorthFrontier.Count && bottomIndex < head.Left.SouthFrontier.Count) {
+                    currentBottom = head.Left.SouthFrontier[bottomIndex];
+                    currentTop = head.Right.NorthFrontier[topIndex];
 
                     currentTop.Room.South.Add(currentBottom.Room);
                     currentBottom.Room.North.Add(currentTop.Room);

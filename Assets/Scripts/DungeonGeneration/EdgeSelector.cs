@@ -12,7 +12,7 @@ public class Vertex : IEquatable<Vertex> {
     }
 
     public bool Equals(Vertex other) {
-        return Room == other.Room;
+        return Room.Equals(other.Room);
     }
 
     public override bool Equals(object obj) {
@@ -34,7 +34,7 @@ public class Edge : IEquatable<Edge>, IComparable<Edge> {
 
     public bool Equals(Edge otherEdge) {
 
-        return (To.Room == otherEdge.To.Room && From.Room == otherEdge.From.Room) || (To.Room == otherEdge.From.Room && From.Room == otherEdge.To.Room);
+        return (To.Room.Equals( otherEdge.To.Room) && From.Room.Equals( otherEdge.From.Room)) || (To.Room.Equals(otherEdge.From.Room) && From.Room.Equals(otherEdge.To.Room));
     }
 
     public override bool Equals(object obj) {
@@ -64,12 +64,11 @@ public class Graph {
 
     public bool IsCycle() {
 
-        //Potentially not efficient
-        foreach(Vertex vertex in Vertices) {
+        foreach (Vertex vertex in Vertices) {
             vertex.Parent = null;
         }
 
-        foreach(Edge edge in Edges) {
+        foreach (Edge edge in Edges) {
             Vertex x = Find(edge.To);
             Vertex y = Find(edge.From);
 
@@ -91,18 +90,25 @@ public class EdgeSelector {
     
     public static List<Edge> GetEdges(List<Room> rooms ) {
         EdgeSelector edgeSelector = new EdgeSelector(rooms);
-        Debug.Log(edgeSelector.graph.Vertices.Count);
         Debug.Log(edgeSelector.graph.Edges.Count);
         return edgeSelector.graph.Edges;
     }
 
     List<Room> rooms;
     List<Edge> sortedEdges;
+    List<Vertex> vertices;
     Graph graph;
     EdgeSelector(List<Room> rooms) {
         this.rooms = rooms;
         graph = new Graph();
+        vertices = new List<Vertex>();
         sortedEdges = new List<Edge>();
+
+        foreach (Room room in rooms) { 
+            vertices.Add(new Vertex(room));
+        }
+        graph.Vertices = vertices;
+
         SetSortedEdges();
         FindMST();
     }
@@ -113,7 +119,7 @@ public class EdgeSelector {
             if(graph.IsCycle()) {
                 graph.Edges.Remove(edge);
             }
-            if(graph.Edges.Count == graph.Vertices.Count - 1) {
+            if(graph.Edges.Count == rooms.Count - 1) {
                 return;
             }
         }
@@ -121,11 +127,10 @@ public class EdgeSelector {
 
     void SetSortedEdges() {
         foreach (Room room in rooms) {
-
-            Vertex x = new Vertex(room);
-            graph.Vertices.Add(x);
+            
+           Vertex x = GetVertexOfRoom(room);
             foreach (Room adjacentRoom in room.GetAdjacentRooms()) {
-                Vertex y = new Vertex(adjacentRoom);
+                Vertex y = GetVertexOfRoom(adjacentRoom);
                 Edge newEdge = new Edge(x, y, CalculateEdgeDistance(room, adjacentRoom));
 
                 //This checks for backwards paths from other rooms
@@ -140,10 +145,22 @@ public class EdgeSelector {
         Debug.Log($"Number of edges: {sortedEdges.Count}");
     }
 
+    Vertex GetVertexOfRoom(Room room)
+    {
+        foreach (Vertex vertex in vertices)
+        {
+            if (vertex.Room == room)
+            {
+                return vertex;
+            }
+        }
+        return null;
+    }
+
     int CalculateEdgeDistance(Room room1, Room room2) {
         int XDistance = (int)room1.Center.x - (int)room2.Center.x;
         XDistance = Math.Abs(XDistance);
-        int YDistance = (int)room1.Center.y - (int)room1.Center.y;
+        int YDistance = (int)room1.Center.y - (int)room2.Center.y;
         YDistance = Math.Abs(YDistance);
         return XDistance + YDistance;
     }

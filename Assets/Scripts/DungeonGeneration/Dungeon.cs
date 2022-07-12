@@ -46,7 +46,6 @@ public class Dungeon : MonoBehaviour {
 
         rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps, out planktonMesh);
 
-        edges = EdgeSelector.GetEdges(rooms);
         //Shrinks down rooms
         foreach (Room room in rooms) {
             //float widthShrinkPercent = (float)random.NextDouble() * (ShrinkPercentage.MaxValue - ShrinkPercentage.MinValue) + ShrinkPercentage.MinValue;
@@ -69,6 +68,7 @@ public class Dungeon : MonoBehaviour {
             room.Height -= topShrink + bottomShrink;
         }
 
+        edges = EdgeSelector.GetEdges(rooms);
 
         //Draw Rooms
         foreach (Room room in rooms) {

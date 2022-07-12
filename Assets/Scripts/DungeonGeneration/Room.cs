@@ -42,7 +42,7 @@ public class Room : IEquatable<Room> {
         rooms.AddRange(North);
         rooms.AddRange(South);
         rooms.AddRange(East);
-        rooms.AddRange(South);
+        rooms.AddRange(West);
         return rooms;
     }
 
@@ -53,7 +53,7 @@ public class Room : IEquatable<Room> {
             Height == other.Height) {
                 return true;
         }
-        return true;
+        return false;
     }
 
     public override bool Equals(object obj) {
