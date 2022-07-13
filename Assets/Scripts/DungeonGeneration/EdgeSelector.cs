@@ -90,7 +90,6 @@ public class EdgeSelector {
     
     public static List<Edge> GetEdges(List<Room> rooms ) {
         EdgeSelector edgeSelector = new EdgeSelector(rooms);
-        Debug.Log(edgeSelector.graph.Edges.Count);
         return edgeSelector.graph.Edges;
     }
 
@@ -142,7 +141,6 @@ public class EdgeSelector {
             }
         }
         sortedEdges.Sort();
-        Debug.Log($"Number of edges: {sortedEdges.Count}");
     }
 
     Vertex GetVertexOfRoom(Room room)

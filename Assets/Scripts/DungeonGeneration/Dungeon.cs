@@ -15,14 +15,18 @@ public class Dungeon : MonoBehaviour {
     [SerializeField] int width;
     [SerializeField] int height;
 
+    [SerializeField] int numberOfRoomSplits;
+
+    [Header("Automaton Generation Options")]
     [Header("Use Values Between 0 and 1")]
     [SerializeField] MinMaxFloat ShrinkPercentage;
-
-    //[SerializeField] int deathLimit;
-    //[SerializeField] int birthLimit;
-    //[Range(0,1)]
-    //[SerializeField] float initialChance;
     [SerializeField] int numberOfSteps;
+    [SerializeField] int deathLimit;
+    [SerializeField] int birthLimit;
+    [Range(0,1)]
+    [SerializeField] float initialChance;
+    [SerializeField] int distanceFromRoomBoundaries;
+    [SerializeField] int distanceFromPathBoundaries;
 
     System.Random random;
     List<Room> rooms;
@@ -41,9 +45,9 @@ public class Dungeon : MonoBehaviour {
         Debug.Log("Generating Map");
         tilemap.ClearAllTiles();
 
-        Room startRoom = new Room(-width / 2, -height / 2, width, height);
+        Room startRoom = new Room(0, 0, width, height);
 
-        rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps);
+        rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfRoomSplits);
 
         //Shrinks down rooms
         foreach (Room room in rooms) {
@@ -69,84 +73,51 @@ public class Dungeon : MonoBehaviour {
 
         edges = EdgeSelector.GetEdges(rooms);
 
-        //Draw Rooms
-        foreach (Room room in rooms) {
 
-            wallTile.color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble(), 1);
-            for (int i = room.XPosition; i < room.XPosition + room.Width; i++) {
-                for (int j = room.YPosition; j < room.YPosition + room.Height; j++) {
+
+
+        GenerationOptions options = new GenerationOptions {
+            Seed = seed,
+            Width = width,
+            Height = height,
+            DeathLimit = deathLimit,
+            BirthLimit = birthLimit,
+            NumberOfSteps = numberOfSteps,
+            InitialChance01 = initialChance,
+            DistanceFromRoomBoundaries = distanceFromRoomBoundaries,
+            DistanceFromPathBoundaries = distanceFromPathBoundaries
+        };
+
+        bool[,] generatedMap = Automaton.GenerateMap(options, rooms, edges);
+
+
+        for (int i = 0; i < generatedMap.GetLength(0); i++) {
+            for (int j = 0; j < generatedMap.GetLength(1); j++) {
+                if (generatedMap[i, j]) {
+                    tilemap.SetTile(new Vector3Int(i, j), floorTile);
+                }
+                else {
                     tilemap.SetTile(new Vector3Int(i, j), wallTile);
                 }
             }
         }
 
-        foreach(Edge edge in edges) {
-            wallTile.color = Color.red;
+        // //Draw Rooms
+        // foreach (Room room in rooms) {
 
-
-            int currentX = (int)edge.From.Room.Center.x;
-            int currentY = (int)edge.From.Room.Center.y;
-            int endX = (int) edge.To.Room.Center.x;
-            int endY = (int) edge.To.Room.Center.y;
-
-            int xIncrement = currentX < endX ? 1 : -1;
-            int yIncrement = currentY < endY ? 1 : -1;
-            
-
-
-            if(random.NextDouble() > .5) {
-                
-                while(currentX != endX) {
-                    currentX += xIncrement;
-                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);    
-                }
-                while(currentY != endY) {
-                    currentY += yIncrement;
-                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);
-                }
-                
-
-            }
-            else {
-                while (currentY != endY) {
-                    currentY += yIncrement;
-                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);
-                }
-                while (currentX != endX) {
-                    currentX += xIncrement;
-                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);
-                }
-
-            }         
-        }
-
-
-
-
-
-        // GenerationOptions options = new GenerationOptions {
-        //     Seed = seed,
-        //     Width = width,
-        //     Height = height,
-        //     DeathLimit = deathLimit,
-        //     BirthLimit = birthLimit,
-        //     NumberOfSteps = NumberOfSteps,
-        //     InitialChance01 = initialChance
-        // };
-
-        // bool[,] generatedMap = Generator.GenerateMap(options);
-
-
-        // for (int i = 0; i < generatedMap.GetLength(0); i++) {
-        //     for (int j = 0; j < generatedMap.GetLength(1); j++) {
-        //         if (generatedMap[i, j]) {
-        //             tilemap.SetTile(new Vector3Int(i, j), floorTile);
-        //         }
-        //         else {
+        //     wallTile.color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble(), 1);
+        //     for (int i = room.XPosition; i < room.XPosition + room.Width; i++) {
+        //         for (int j = room.YPosition; j < room.YPosition + room.Height; j++) {
         //             tilemap.SetTile(new Vector3Int(i, j), wallTile);
         //         }
         //     }
         // }
+
+       
+
+
+
+
     }
 
     void OnDrawGizmos() {
@@ -162,7 +133,7 @@ public class Dungeon : MonoBehaviour {
                     
                 }
 
-                Gizmos.color = Color.clear;
+                Gizmos.color = Color.blue;
                 Gizmos.DrawLine(new Vector2(room.OriginalXPosition, room.OriginalYPosition), new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition));
                 Gizmos.DrawLine(new Vector2(room.OriginalXPosition, room.OriginalYPosition), new Vector2(room.OriginalXPosition, room.OriginalYPosition + room.OriginalHeight));
                 Gizmos.DrawLine(new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition + room.OriginalHeight), new Vector2(room.OriginalXPosition, room.OriginalYPosition + room.OriginalHeight));
