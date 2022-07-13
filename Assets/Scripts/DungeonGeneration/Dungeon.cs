@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Plankton;
+
 using System.Linq;
 using System;
 
@@ -27,7 +27,6 @@ public class Dungeon : MonoBehaviour {
     System.Random random;
     List<Room> rooms;
     List<Edge> edges;
-    PlanktonMesh planktonMesh;
 
     [ContextMenu("GenerateMap")]
     void GenerateMap() {
@@ -44,7 +43,7 @@ public class Dungeon : MonoBehaviour {
 
         Room startRoom = new Room(-width / 2, -height / 2, width, height);
 
-        rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps, out planktonMesh);
+        rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfSteps);
 
         //Shrinks down rooms
         foreach (Room room in rooms) {
@@ -79,6 +78,46 @@ public class Dungeon : MonoBehaviour {
                     tilemap.SetTile(new Vector3Int(i, j), wallTile);
                 }
             }
+        }
+
+        foreach(Edge edge in edges) {
+            wallTile.color = Color.red;
+
+
+            int currentX = (int)edge.From.Room.Center.x;
+            int currentY = (int)edge.From.Room.Center.y;
+            int endX = (int) edge.To.Room.Center.x;
+            int endY = (int) edge.To.Room.Center.y;
+
+            int xIncrement = currentX < endX ? 1 : -1;
+            int yIncrement = currentY < endY ? 1 : -1;
+            
+
+
+            if(random.NextDouble() > .5) {
+                
+                while(currentX != endX) {
+                    currentX += xIncrement;
+                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);    
+                }
+                while(currentY != endY) {
+                    currentY += yIncrement;
+                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);
+                }
+                
+
+            }
+            else {
+                while (currentY != endY) {
+                    currentY += yIncrement;
+                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);
+                }
+                while (currentX != endX) {
+                    currentX += xIncrement;
+                    tilemap.SetTile(new Vector3Int(currentX, currentY), wallTile);
+                }
+
+            }         
         }
 
 
@@ -118,12 +157,12 @@ public class Dungeon : MonoBehaviour {
                 List<Room> adjacentRooms = room.GetAdjacentRooms();
                 foreach(Room adjacentRoom in adjacentRooms) {
 
-                    Gizmos.color = Color.blue;  
+                    Gizmos.color = Color.white;  
                     Gizmos.DrawLine(room.Center, adjacentRoom.Center);
                     
                 }
 
-                Gizmos.color = Color.white;
+                Gizmos.color = Color.clear;
                 Gizmos.DrawLine(new Vector2(room.OriginalXPosition, room.OriginalYPosition), new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition));
                 Gizmos.DrawLine(new Vector2(room.OriginalXPosition, room.OriginalYPosition), new Vector2(room.OriginalXPosition, room.OriginalYPosition + room.OriginalHeight));
                 Gizmos.DrawLine(new Vector2(room.OriginalXPosition + room.OriginalWidth, room.OriginalYPosition + room.OriginalHeight), new Vector2(room.OriginalXPosition, room.OriginalYPosition + room.OriginalHeight));
@@ -142,59 +181,6 @@ public class Dungeon : MonoBehaviour {
         }
 
 
-
-
-        // if (planktonMesh == null) return;
-
-        // Gizmos.color = Color.white;
-        // for (int i = 0; i < planktonMesh.Faces.Count; i++) {
-
-        //     Vector3 oldPoint = Vector3.zero;
-        //     Vector3 newPoint = Vector3.zero;
-        //     int[] vertexIndexs = planktonMesh.Faces.GetFaceVertices(i);
-        //     //Debug.Log("I: " + i);
-        //     for (int j = 0; j < vertexIndexs.Length + 1; j++) {
-        //        // Debug.Log($"X: {planktonMesh.Vertices[j].X} + Y: {planktonMesh.Vertices[j].Y}");
-                
-        //         oldPoint = newPoint;
-
-        //         PlanktonVertex vertex = planktonMesh.Vertices[vertexIndexs[j % vertexIndexs.Length]];
-
-        //         newPoint = new Vector3(vertex.X, vertex.Y);
-        //         if (j != 0) {
-        //         //    Debug.Log($"From: {oldPoint} To: {newPoint}");
-        //             Gizmos.DrawLine(oldPoint, newPoint);
-
-        //         }
-        //     }
-
-        // }
-
-        // Gizmos.color = Color.red;
-
-        // Vector3 currentFace;
-        // Vector3 adjacentFace;
-        // for(int i = 0; i < planktonMesh.Faces.Count; i++) {
-        //     PlanktonXYZ xyz =  planktonMesh.Faces.GetFaceCenter(i);
-        //     currentFace = new Vector3(xyz.X, xyz.Y, 0);
-
-        //     int[] halfEdgeIndexs = planktonMesh.Faces.GetHalfedges(i);
-        //    // Debug.Log(halfEdgeIndexs.Length);
-        //     for(int j = 0; j < halfEdgeIndexs.Length; j++) {
-        //        // Debug.Log(halfEdgeIndexs[j]);
-        //         int pairHalfEdge = planktonMesh.Halfedges.GetPairHalfedge(halfEdgeIndexs[j]);
-        //        // Debug.Log(pairHalfEdge);
-        //         int adjacentFaceIndex = planktonMesh.Halfedges[pairHalfEdge].AdjacentFace;
-        //       //  Debug.Log(adjacentFaceIndex);
-        //         if(adjacentFaceIndex != -1) {
-        //             xyz = planktonMesh.Faces.GetFaceCenter(adjacentFaceIndex);
-        //             adjacentFace = new Vector3(xyz.X, xyz.Y, 0);
-        //             Gizmos.DrawLine(currentFace, adjacentFace);
-        //         }
-        //     }
-
-       
-        // }
 
 
 

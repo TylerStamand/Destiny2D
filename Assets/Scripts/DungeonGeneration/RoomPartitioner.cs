@@ -1,25 +1,21 @@
 using System;
 using System.Collections.Generic;
-using Plankton;
 using UnityEngine;
 using System.Linq;
 
 using Random = System.Random;
 public class RoomPartitioner {
 
-    public static List<Room> PartitionRooms(Room room, int seed,  int numberOfSteps, out PlanktonMesh mesh) {
+    public static List<Room> PartitionRooms(Room room, int seed,  int numberOfSteps) {
         RoomPartitioner partitioner = new RoomPartitioner(seed, room, true);
         
-        partitioner.Partition(ref partitioner.head, partitioner.splitHorizontal, numberOfSteps, 0);
+        partitioner.Partition(ref partitioner.head, partitioner.splitHorizontal, numberOfSteps);
         partitioner.FindAdjacency(ref partitioner.head);
-        mesh = partitioner.mesh;
-        mesh.Compact();
         return partitioner.rooms;
         
     } 
 
     RoomNode head;
-    PlanktonMesh mesh;
     Random random;
 
     float lowerRatio;
@@ -42,31 +38,15 @@ public class RoomPartitioner {
         splitHorizontal = initialSplitHorizontal;
         rooms = new List<Room>();
 
-        mesh = new PlanktonMesh();
-
-        PlanktonXYZ[] vertices;
-        int[] vertIndexes;
-
-        vertices = new PlanktonXYZ[] {new PlanktonXYZ(room.XPosition, room.YPosition ,0), new PlanktonXYZ(room.XPosition + room.Width, room.YPosition, 0),
-            new PlanktonXYZ(room.XPosition + room.Width, room.YPosition + room.Height, 0), new PlanktonXYZ(room.XPosition, room.YPosition + room.Height, 0)};
-
-        vertIndexes = mesh.Vertices.AddVertices(vertices);
-
-
-        int faceIndex = mesh.Faces.AddFace(vertIndexes);
+      
        
     }
 
 
-    void Partition(ref RoomNode head, bool splitHorizontal, int numberOfSteps, int faceIndex) {
+    void Partition(ref RoomNode head, bool splitHorizontal, int numberOfSteps) {
 
         Room leftRoom;
         Room rightRoom;
-
-        int leftFaceIndex;
-        int rightFaceIndex;
-
-        int[] vertices = mesh.Faces.GetFaceVertices(faceIndex);
 
         if (numberOfSteps <= 0) {
 
@@ -91,23 +71,6 @@ public class RoomPartitioner {
             int rightRoomHeight = roomToSplit.Height - leftRoomHeight;
             rightRoom = new Room(roomToSplit.XPosition, roomToSplit.YPosition + leftRoomHeight, roomToSplit.Width, rightRoomHeight);
 
-
-
-            PlanktonXYZ rightVertex = new PlanktonXYZ(roomToSplit.XPosition + roomToSplit.Width, roomToSplit.YPosition + leftRoomHeight, 0);
-            PlanktonXYZ leftVertex = new PlanktonXYZ(roomToSplit.XPosition, roomToSplit.YPosition + leftRoomHeight, 0);
-
-
-            int rightVertexIndex = mesh.Vertices.Add(rightVertex);
-            int leftVertexIndex = mesh.Vertices.Add(leftVertex);
-
-
-
-            mesh.Faces.RemoveFace(faceIndex);
-            //Bottom Face
-            leftFaceIndex = mesh.Faces.AddFace(vertices[0], vertices[1], rightVertexIndex, leftVertexIndex);
-            //Top Face
-            rightFaceIndex = mesh.Faces.AddFace(leftVertexIndex, rightVertexIndex, vertices[2], vertices[3]);
-
         }
         else {
             //Left Room
@@ -117,23 +80,6 @@ public class RoomPartitioner {
             //Right Room
             int rightRoomWidth = roomToSplit.Width - leftRoomWidth;
             rightRoom = new Room(roomToSplit.XPosition + leftRoomWidth, roomToSplit.YPosition, rightRoomWidth, roomToSplit.Height);
-
-
-
-            PlanktonXYZ topVertex = new PlanktonXYZ(roomToSplit.XPosition + leftRoomWidth, roomToSplit.YPosition + roomToSplit.Height, 0);
-            PlanktonXYZ bottomVertex = new PlanktonXYZ(roomToSplit.XPosition + leftRoomWidth, roomToSplit.YPosition, 0);
-
-
-            int topVertexIndex = mesh.Vertices.Add(topVertex);
-            int bottomVertexIndex = mesh.Vertices.Add(bottomVertex);
-
-
-
-            mesh.Faces.RemoveFace(faceIndex);
-            //Left Face
-            leftFaceIndex = mesh.Faces.AddFace(vertices[0], bottomVertexIndex, topVertexIndex, vertices[3]);
-            //Right Face
-            rightFaceIndex = mesh.Faces.AddFace(bottomVertexIndex, vertices[1], vertices[2], topVertexIndex);
 
 
         }
@@ -150,8 +96,8 @@ public class RoomPartitioner {
         rightNode.Head = head;
         head.Right = rightNode;
 
-        Partition(ref head.Left, !splitHorizontal, numberOfSteps, leftFaceIndex);
-        Partition(ref head.Right, !splitHorizontal, numberOfSteps, rightFaceIndex);
+        Partition(ref head.Left, !splitHorizontal, numberOfSteps);
+        Partition(ref head.Right, !splitHorizontal, numberOfSteps);
 
 
         return;
