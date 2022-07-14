@@ -54,7 +54,7 @@ public class Automaton {
         this.width = options.Width;
         this.height = options.Height;
     
-        cellMap = new CellState[width + 1, height + 1];
+        cellMap = new CellState[width, height];
         
 
     }
@@ -82,8 +82,8 @@ public class Automaton {
             if(yEnd > room.OriginalYPosition + room.OriginalHeight || yStart > height) 
                 yEnd = room.OriginalYPosition + room.OriginalHeight;
 
-            for(int x = xStart; x < room.XPosition + room.Width+ distanceFromRoomBoundaries; x++) {
-                for (int y = yStart; y < room.YPosition + room.Height+ distanceFromRoomBoundaries; y++) {
+            for(int x = xStart; x < room.XPosition + room.Width+ distanceFromRoomBoundaries && x < width; x++) {
+                for (int y = yStart; y < room.YPosition + room.Height+ distanceFromRoomBoundaries && y < width; y++) {
                     if(random.NextDouble() > initialChance) {
                         cellMap[x,y] = CellState.Alive;
                     }
@@ -101,22 +101,22 @@ public class Automaton {
             int y;
             
             y = room.OriginalYPosition;
-            for(x = room.OriginalXPosition; x < room.OriginalXPosition + room.Width; x++) {
+            for(x = room.OriginalXPosition; x < room.OriginalXPosition + room.OriginalWidth; x++) {
                 cellMap[x,y] = CellState.AlwaysDead;
             }
-            y = room.OriginalYPosition + room.OriginalHeight;
-            for (x = room.OriginalXPosition; x < room.OriginalXPosition + room.Width; x++) {
+            y = room.OriginalYPosition + room.OriginalHeight - 1;
+            for (x = room.OriginalXPosition; x < room.OriginalXPosition + room.OriginalWidth; x++) {
                 cellMap[x, y] = CellState.AlwaysDead;
             }
 
             x = room.OriginalXPosition;
-            for (y = room.OriginalYPosition; y < room.OriginalYPosition + room.Height; y++) {
+            for (y = room.OriginalYPosition; y < room.OriginalYPosition + room.OriginalHeight; y++) {
                 cellMap[x, y] = CellState.AlwaysDead;
             }
 
 
-            x = room.OriginalXPosition + room.OriginalWidth;
-            for (y = room.OriginalYPosition; y < room.OriginalYPosition + room.Height; y++) {
+            x = room.OriginalXPosition + room.OriginalWidth - 1;
+            for (y = room.OriginalYPosition; y < room.OriginalYPosition + room.OriginalHeight; y++) {
                 cellMap[x, y] = CellState.AlwaysDead;
             }
         }
@@ -142,23 +142,26 @@ public class Automaton {
                 while (currentX != endX) {
                     currentX += xIncrement;
                     for(int i = -distanceFromPathBoundaries; i < distanceFromPathBoundaries; i++ ) {
-                        if(i == 0) {
+                        if (cellMap[currentX, currentY] == CellState.AlwaysAlive) continue;
+                        if (i == 0) {
                             cellMap[currentX, currentY] = CellState.AlwaysAlive;
                         }
                         else {
-                            cellMap[currentX, currentY + i] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead ;  
+                            if(currentY + i < height && currentY + i > 0)
+                                cellMap[currentX, currentY + i] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead ;  
                         } 
                     }
                 }
                 while (currentY != endY) {
                     currentY += yIncrement;
                     for (int i = -distanceFromPathBoundaries; i < distanceFromPathBoundaries; i++) {
-
+                        if (cellMap[currentX, currentY] == CellState.AlwaysAlive) continue;
                         if (i == 0) {
                             cellMap[currentX, currentY] = CellState.AlwaysAlive;
                         }
                         else {
-                            cellMap[currentX + i, currentY] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead;
+                            if(currentX + i < width && currentX + i > 0)
+                                cellMap[currentX + i, currentY] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead;
 
                         }
 
@@ -172,11 +175,13 @@ public class Automaton {
                 while (currentY != endY) {
                     currentY += yIncrement;
                     for (int i = -distanceFromPathBoundaries; i < distanceFromPathBoundaries; i++) {
+                        if (cellMap[currentX, currentY] == CellState.AlwaysAlive) continue;
                         if (i == 0) {
                             cellMap[currentX, currentY] = CellState.AlwaysAlive;
                         }
                         else {
-                            cellMap[currentX + i, currentY] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead;
+                            if (currentX + i < width && currentX + i > 0)
+                                cellMap[currentX + i, currentY] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead;
                         }
 
                     }
@@ -185,11 +190,13 @@ public class Automaton {
                 while (currentX != endX) {
                     currentX += xIncrement;
                     for (int i = -distanceFromPathBoundaries; i < distanceFromPathBoundaries; i++) {
+                        if (cellMap[currentX, currentY] == CellState.AlwaysAlive) continue;
                         if (i == 0) {
                             cellMap[currentX, currentY] = CellState.AlwaysAlive;
                         }
                         else {
-                            cellMap[currentX, currentY + i] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead;
+                            if (currentY + i < height && currentY + i > 0)
+                                cellMap[currentX, currentY + i] = random.NextDouble() > initialChance ? CellState.Alive : CellState.Dead;
                         }
                     }
                 }
@@ -210,8 +217,19 @@ public class Automaton {
                 }
             }
         }
-        
-      
+
+
+        //Set outer border of board to always dead
+       
+        for (int x = 0; x < width; x++) {
+            cellMap[x, 0] = CellState.AlwaysDead;
+            cellMap[x, height-1] = CellState.AlwaysDead;
+        }
+          
+        for (int y = 0; y < height; y++) {
+            cellMap[0, y] = CellState.AlwaysDead;
+            cellMap[width-1, y] = CellState.AlwaysDead;
+        }
     
     }
 

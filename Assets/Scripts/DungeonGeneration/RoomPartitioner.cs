@@ -30,8 +30,8 @@ public class RoomPartitioner {
     RoomPartitioner(int seed, Room room, bool initialSplitHorizontal) {
        
         random = new Random(seed);
-        lowerRatio = .20f;
-        upperRatio = .80f;
+        lowerRatio = .30f;
+        upperRatio = .70f;
         ratioDifference = upperRatio - lowerRatio; 
         head = new RoomNode(room);
         this.initialSplitHorizontal = initialSplitHorizontal;
