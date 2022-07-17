@@ -7,18 +7,25 @@ using System.Linq;
 using System;
 
 
+//Place Treasure rooms with monsters
+
 public class Dungeon : MonoBehaviour {
-    [SerializeField] Tilemap tilemap;
+    [SerializeField] Tilemap floorTileMap;
+    [SerializeField] Tilemap wallTileMap;
     [SerializeField] Tile floorTile;
     [SerializeField] Tile wallTile;
+    [SerializeField] Tile SpawnTile;
+    [SerializeField] Tile LeaveTile;
+
     [SerializeField] int seed;
     [SerializeField] int width;
     [SerializeField] int height;
-
     [SerializeField] int numberOfRoomSplits;
+    [Range(0,1)]
+    [SerializeField] float finishingRoomPercentile;
 
-    [Header("Automaton Generation Options")]
     [Header("Use Values Between 0 and 1")]
+    [Header("Automaton Generation Options")]
     [SerializeField] MinMaxFloat ShrinkPercentage;
     [SerializeField] int numberOfSteps;
     [SerializeField] int deathLimit;
@@ -43,8 +50,8 @@ public class Dungeon : MonoBehaviour {
         }
 
         Debug.Log("Generating Map");
-        tilemap.ClearAllTiles();
-
+        wallTileMap.ClearAllTiles();
+        floorTileMap.ClearAllTiles();
         Room startRoom = new Room(0, 0, width, height);
 
         rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfRoomSplits);
@@ -93,31 +100,36 @@ public class Dungeon : MonoBehaviour {
 
         for (int i = 0; i < generatedMap.GetLength(0); i++) {
             for (int j = 0; j < generatedMap.GetLength(1); j++) {
-                if (generatedMap[i, j]) {
-                    tilemap.SetTile(new Vector3Int(i, j), floorTile);
+                if (!generatedMap[i, j]) {
+                    wallTileMap.SetTile(new Vector3Int(i, j), wallTile);
                 }
-                else {
-                    tilemap.SetTile(new Vector3Int(i, j), wallTile);
-                }
+                floorTileMap.SetTile(new Vector3Int(i, j), floorTile);
+                
             }
         }
 
-        // //Draw Rooms
-        // foreach (Room room in rooms) {
 
-        //     wallTile.color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble(), 1);
-        //     for (int i = room.XPosition; i < room.XPosition + room.Width; i++) {
-        //         for (int j = room.YPosition; j < room.YPosition + room.Height; j++) {
-        //             tilemap.SetTile(new Vector3Int(i, j), wallTile);
-        //         }
-        //     }
-        // }
-
-       
+        SetStartEndRooms();
+        
 
 
 
+    }
 
+    void SetStartEndRooms() {
+        int startingRoomIndex = random.Next(rooms.Count - 1);
+        Room startingRoom = rooms[startingRoomIndex];
+
+        List<Room> prospectEndRooms = rooms;
+        prospectEndRooms.RemoveAt(startingRoomIndex);
+
+        prospectEndRooms.OrderBy(room => startingRoom.Center.sqrMagnitude - room.Center.sqrMagnitude);
+
+        int finishingRoomIndex = random.Next((int)(rooms.Count * finishingRoomPercentile), rooms.Count - 1);
+        Room finishingRoom = rooms[finishingRoomIndex];
+
+        floorTileMap.SetTile((Vector3Int)startingRoom.Center, SpawnTile);
+        floorTileMap.SetTile((Vector3Int)finishingRoom.Center, LeaveTile);
     }
 
     void OnDrawGizmos() {
@@ -129,7 +141,7 @@ public class Dungeon : MonoBehaviour {
                 foreach(Room adjacentRoom in adjacentRooms) {
 
                     Gizmos.color = Color.white;  
-                    Gizmos.DrawLine(room.Center, adjacentRoom.Center);
+                    Gizmos.DrawLine(((Vector3Int)room.Center), (Vector3Int)adjacentRoom.Center);
                     
                 }
 
@@ -147,7 +159,7 @@ public class Dungeon : MonoBehaviour {
         if(edges != null) {
             Gizmos.color = Color.red;
             foreach(Edge edge in edges) {
-                Gizmos.DrawLine(edge.From.Room.Center, edge.To.Room.Center);
+                Gizmos.DrawLine((Vector3Int)edge.From.Room.Center, (Vector3Int)edge.To.Room.Center);
             }
         }
 

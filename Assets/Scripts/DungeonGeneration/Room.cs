@@ -13,7 +13,7 @@ public class Room : IEquatable<Room> {
     public int Height;
 
     public int Area => Width * Height;
-    public Vector2 Center => new Vector2(XPosition + Width/2, YPosition + Height/2 );
+    public Vector2Int Center => new Vector2Int(XPosition + Width/2, YPosition + Height/2 );
     public Room(int xPosition, int yPosition, int width, int height) {
         XPosition = xPosition;
         YPosition = yPosition;
@@ -46,6 +46,8 @@ public class Room : IEquatable<Room> {
         return rooms;
     }
 
+    
+
     public bool Equals(Room other) {
         if(XPosition == other.XPosition &&
             YPosition == other.YPosition &&
@@ -60,3 +62,4 @@ public class Room : IEquatable<Room> {
         return Equals(obj as Room);
     }
 }
+
