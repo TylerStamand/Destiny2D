@@ -34,6 +34,10 @@ public class GameManager : NetworkBehaviour {
 #endif
 
 
+
+    Dungeon currentDungeon;
+    List<ConnectedPlayer> connectedPlayers = new List<ConnectedPlayer>();
+
     void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -146,17 +150,19 @@ public class GameManager : NetworkBehaviour {
 
         Debug.Log("GameManager Spawn");
 
-        NetworkManager.SceneManager.LoadScene("Test", LoadSceneMode.Single);
-        NetworkManager.SceneManager.OnLoadComplete += SpawnPlayers;
+        NetworkManager.SceneManager.LoadScene("Dungeon", LoadSceneMode.Single);
+        NetworkManager.SceneManager.OnLoadComplete += InitializeDungeon;
         
 
 
         NetworkManager.SceneManager.OnSceneEvent += SceneEvent;
-        // if (IsServer && IsClient) {
-        //     PlayerConnected(NetworkObject.OwnerClientId);
-        // }
 
-        // NetworkManager.OnClientConnectedCallback += PlayerConnected;
+
+        if (IsServer && IsClient) {
+            PlayerConnected(NetworkObject.OwnerClientId);
+        }
+
+        NetworkManager.OnClientConnectedCallback += PlayerConnected;
 
 
         
@@ -172,35 +178,60 @@ public class GameManager : NetworkBehaviour {
         }
     }
 
-    void SpawnPlayers(ulong clientID, string sceneName, LoadSceneMode loadSceneMode) {
+    void InitializeDungeon(ulong clientID, string sceneName, LoadSceneMode loadSceneMode) {
         if(!IsServer) return;
-        Debug.Log("Spawn Players");
-        PlayerConnected(clientID);
-        NetworkManager.SceneManager.OnLoadComplete -= SpawnPlayers;
+        currentDungeon = FindObjectOfType<Dungeon>();
+        currentDungeon.OnStairsEntered += SetUpDungeon;
+        SetUpDungeon();
     }
 
-    void PlayerConnected(ulong clientID) {
-        Debug.Log("Player Connected");
-        GameObject playerUnitInstance = Instantiate(PlayerUnit, SpawnManager.Instance.GetSpawnLocation().transform.position, Quaternion.identity);
-        NetworkObject playerUnitNetObj = playerUnitInstance.GetComponent<NetworkObject>();
 
-        //Might need to set destroy it with scene depending
+    void SetUpDungeon() {
+        currentDungeon.GenerateMap();
+        List<Vector2> spawnPositions = currentDungeon.GetSpawnPositions();
+        List<PlayerControllerServer> players = FindObjectsOfType<PlayerControllerServer>().ToList();
+        foreach(PlayerControllerServer player in players) {
+            Destroy(player.gameObject); 
+        }
+        for(int i = 0; i < connectedPlayers.Count; i++) {
+            
+            SpawnPlayer(connectedPlayers[i].GetComponent<NetworkObject>().OwnerClientId, spawnPositions[i]);
+
+        }
+        
+    }
+
+
+
+    void SpawnPlayer(ulong clientID, Vector2 spawnPosition) {
+        if(!IsServer) return;
+        GameObject playerUnitInstance = Instantiate(PlayerUnit, spawnPosition, Quaternion.identity);
+        NetworkObject playerUnitNetObj = playerUnitInstance.GetComponent<NetworkObject>();
         playerUnitNetObj.SpawnAsPlayerObject(clientID);
 
-        NetworkObject playerNetObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID);
-        // ConnectedPlayer connectedPlayer = playerNetObj.GetComponent<ConnectedPlayer>();
-        // connectedPlayer.ClientID.Value = clientId;
-        // connectedPlayer.PlayerUnitObjectNetID.Value = playerUnitNetObj.NetworkObjectId;
-
-
-        string playerID = PlayerPrefs.GetString("PlayerID");
-
         //sessionManager.SetupConnectingPlayerSessionData(clientID, playerID);
+        string playerID = PlayerPrefs.GetString("PlayerID");
         PlayerSaveData saveData = SaveSystem.LoadPlayerData(playerID);
 
         if (saveData != null) {
             playerUnitInstance.GetComponent<PlayerControllerServer>().SetSaveDataServer(saveData);
         }
+    }
+
+    void PlayerConnected(ulong clientID) {
+        Debug.Log("Player Connected");
+     
+        //Might need to set destroy it with scene depending
+
+        NetworkObject playerNetObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientID);
+        
+        ConnectedPlayer connectedPlayer = playerNetObj.GetComponent<ConnectedPlayer>();
+        connectedPlayers.Add(connectedPlayer);
+        // connectedPlayer.ClientID.Value = clientId;
+        // connectedPlayer.PlayerUnitObjectNetID.Value = playerUnitNetObj.NetworkObjectId;
+
+
+
 
         if(!playerNetObj.IsLocalPlayer)
             StartCoroutine(FixNetList(playerNetObj));

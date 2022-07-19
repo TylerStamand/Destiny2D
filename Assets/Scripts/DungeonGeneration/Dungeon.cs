@@ -12,6 +12,7 @@ using System;
 public class Dungeon : MonoBehaviour {
     [SerializeField] Tilemap floorTileMap;
     [SerializeField] Tilemap wallTileMap;
+    [SerializeField] Tilemap nextFloorTileMap;
     [SerializeField] Tile floorTile;
     [SerializeField] Tile wallTile;
     [SerializeField] Tile SpawnTile;
@@ -35,14 +36,27 @@ public class Dungeon : MonoBehaviour {
     [SerializeField] int distanceFromRoomBoundaries;
     [SerializeField] int distanceFromPathBoundaries;
 
+    public Action OnStairsEntered;
+
+
     System.Random random;
     List<Room> rooms;
     List<Edge> edges;
 
-    [ContextMenu("GenerateMap")]
-    void GenerateMap() {
+    Room spawnRoom;
+   
 
-        random = new System.Random(seed);
+
+
+
+    void Awake() {
+        nextFloorTileMap.GetComponent<TriggerEventExposer>().OnTriggerEnter += (Collider2D collider) => OnStairsEntered?.Invoke();
+    }
+
+    [ContextMenu("GenerateMap")]
+    public void GenerateMap() {
+
+        random = new System.Random(DateTime.Now.Second);
 
         if (ShrinkPercentage.MaxValue > 1 || ShrinkPercentage.MinValue > 1 || ShrinkPercentage.MinValue < 0 || ShrinkPercentage.MaxValue < 0) {
             Debug.LogError("Shrink percentage out of bounds");
@@ -52,6 +66,7 @@ public class Dungeon : MonoBehaviour {
         Debug.Log("Generating Map");
         wallTileMap.ClearAllTiles();
         floorTileMap.ClearAllTiles();
+        nextFloorTileMap.ClearAllTiles();
         Room startRoom = new Room(0, 0, width, height);
 
         rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfRoomSplits);
@@ -109,6 +124,7 @@ public class Dungeon : MonoBehaviour {
         }
 
 
+
         SetStartEndRooms();
         
 
@@ -116,20 +132,37 @@ public class Dungeon : MonoBehaviour {
 
     }
 
+    public List<Vector2> GetSpawnPositions() {
+        if(spawnRoom == null) {
+            return null;
+        }
+
+        List<Vector2> spawnPositions = new List<Vector2>();
+        Vector2 spawnRoomCenter = spawnRoom.Center;
+        spawnPositions.Add(new Vector2(spawnRoomCenter.x + 1, spawnRoomCenter.y));
+        spawnPositions.Add(new Vector2(spawnRoomCenter.x - 1, spawnRoomCenter.y));
+        spawnPositions.Add(new Vector2(spawnRoomCenter.x, spawnRoomCenter.y + 1));
+        spawnPositions.Add(new Vector2(spawnRoomCenter.x, spawnRoomCenter.y - 1));
+        return spawnPositions;
+    }
+
     void SetStartEndRooms() {
         int startingRoomIndex = random.Next(rooms.Count - 1);
-        Room startingRoom = rooms[startingRoomIndex];
+        spawnRoom = rooms[startingRoomIndex];
 
         List<Room> prospectEndRooms = rooms;
         prospectEndRooms.RemoveAt(startingRoomIndex);
 
-        prospectEndRooms.OrderBy(room => startingRoom.Center.sqrMagnitude - room.Center.sqrMagnitude);
+        prospectEndRooms.OrderBy(room => spawnRoom.Center.sqrMagnitude - room.Center.sqrMagnitude);
 
         int finishingRoomIndex = random.Next((int)(rooms.Count * finishingRoomPercentile), rooms.Count - 1);
         Room finishingRoom = rooms[finishingRoomIndex];
 
-        floorTileMap.SetTile((Vector3Int)startingRoom.Center, SpawnTile);
-        floorTileMap.SetTile((Vector3Int)finishingRoom.Center, LeaveTile);
+        //For Debugging purposes
+        floorTileMap.SetTile((Vector3Int)spawnRoom.Center, SpawnTile);
+        
+        nextFloorTileMap.SetTile((Vector3Int)finishingRoom.Center, LeaveTile);
+
     }
 
     void OnDrawGizmos() {
