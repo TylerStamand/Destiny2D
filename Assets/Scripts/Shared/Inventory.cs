@@ -28,24 +28,16 @@ public class Inventory : NetworkBehaviour {
 
 
     void Awake() {
-       // itemInfoList = new NetworkList<ItemInfo>();
         WeaponInfo = new NetworkVariable<ItemInfo>();
         items = new List<Item>(new Item[InventorySize]);
         itemInfoList = new NetworkList<ItemInfo>();
 
-        Debug.Log("Initializing Info List");
+       
         for (int i = 0; i < InventorySize; i++) {
             itemInfoList.Add(new ItemInfo());
         }
 
     }
-
-    public override void OnNetworkSpawn() {
-        if(IsServer) {
-        }
-
-    }
-
 
 
     public NetworkList<ItemInfo> GetItemInfoList() {

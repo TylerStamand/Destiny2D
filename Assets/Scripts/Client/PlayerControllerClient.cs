@@ -53,9 +53,12 @@ public class PlayerControllerClient : NetworkBehaviour {
         if (IsLocalPlayer) {
             rigidbody.gravityScale = 0;
             ChangeDisplay(ClientDisplay.HUD);
+            Instantiate(ResourceManager.Instance.CameraFollowerPrefab, transform);
+
         }
 
     }
+
 
     void Update() {
 
@@ -106,6 +109,10 @@ public class PlayerControllerClient : NetworkBehaviour {
         animator.SetFloat("Y", playerControllerServer.AnimatorMovement.Value.y);
     }
 
+    public override void OnDestroy() {
+        Destroy(displayObject);
+    }
+
 
     /// <summary>
     /// Change the client UI
@@ -140,6 +147,7 @@ public class PlayerControllerClient : NetworkBehaviour {
         }
 
     }
+
 
 
     [ClientRpc]

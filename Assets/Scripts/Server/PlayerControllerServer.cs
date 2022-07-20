@@ -1,9 +1,6 @@
 using System;
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.SceneManagement;
-using System.IO;
-
 
 [DefaultExecutionOrder(0)]
 public class PlayerControllerServer : NetworkBehaviour, IDamageable {

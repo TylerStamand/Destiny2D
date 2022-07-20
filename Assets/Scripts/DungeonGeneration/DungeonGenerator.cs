@@ -9,7 +9,7 @@ using System;
 
 //Place Treasure rooms with monsters
 
-public class Dungeon : MonoBehaviour {
+public class DungeonGenerator : MonoBehaviour {
     [SerializeField] Tilemap floorTileMap;
     [SerializeField] Tilemap wallTileMap;
     [SerializeField] Tilemap nextFloorTileMap;
@@ -54,9 +54,9 @@ public class Dungeon : MonoBehaviour {
     }
 
     [ContextMenu("GenerateMap")]
-    public void GenerateMap() {
+    public void GenerateMap(int seed) {
 
-        random = new System.Random(DateTime.Now.Second);
+        random = new System.Random(seed);
 
         if (ShrinkPercentage.MaxValue > 1 || ShrinkPercentage.MinValue > 1 || ShrinkPercentage.MinValue < 0 || ShrinkPercentage.MaxValue < 0) {
             Debug.LogError("Shrink percentage out of bounds");
