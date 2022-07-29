@@ -38,9 +38,9 @@ public class DungeonGenerator : MonoBehaviour {
 
     public Action OnStairsEntered;
 
+    public List<Room> Rooms {get; private set;}
 
     System.Random random;
-    List<Room> rooms;
     List<Edge> edges;
 
     Room spawnRoom;
@@ -50,7 +50,7 @@ public class DungeonGenerator : MonoBehaviour {
 
 
     void Awake() {
-        nextFloorTileMap.GetComponent<TriggerEventExposer>().OnTriggerEnter += (Collider2D collider) => OnStairsEntered?.Invoke();
+        nextFloorTileMap.GetComponent<TriggerEventExposer>().OnTriggerEnter += (Collider2D collider, GameObject src) => OnStairsEntered?.Invoke();
     }
 
     [ContextMenu("GenerateMap")]
@@ -69,10 +69,10 @@ public class DungeonGenerator : MonoBehaviour {
         nextFloorTileMap.ClearAllTiles();
         Room startRoom = new Room(0, 0, width, height);
 
-        rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfRoomSplits);
+        Rooms = RoomPartitioner.PartitionRooms(startRoom, seed, numberOfRoomSplits);
 
         //Shrinks down rooms
-        foreach (Room room in rooms) {
+        foreach (Room room in Rooms) {
             //float widthShrinkPercent = (float)random.NextDouble() * (ShrinkPercentage.MaxValue - ShrinkPercentage.MinValue) + ShrinkPercentage.MinValue;
             float leftShrinkPercent = (float)random.NextDouble() * (ShrinkPercentage.MaxValue - ShrinkPercentage.MinValue) + ShrinkPercentage.MinValue;
             float rightShrinkPercent = (float)random.NextDouble() * (ShrinkPercentage.MaxValue - ShrinkPercentage.MinValue) + ShrinkPercentage.MinValue;
@@ -93,7 +93,7 @@ public class DungeonGenerator : MonoBehaviour {
             room.Height -= topShrink + bottomShrink;
         }
 
-        edges = EdgeSelector.GetEdges(rooms);
+        edges = EdgeSelector.GetEdges(Rooms);
 
 
 
@@ -110,7 +110,7 @@ public class DungeonGenerator : MonoBehaviour {
             DistanceFromPathBoundaries = distanceFromPathBoundaries
         };
 
-        bool[,] generatedMap = Automaton.GenerateMap(options, rooms, edges);
+        bool[,] generatedMap = Automaton.GenerateMap(options, Rooms, edges);
 
 
         for (int i = 0; i < generatedMap.GetLength(0); i++) {
@@ -147,16 +147,16 @@ public class DungeonGenerator : MonoBehaviour {
     }
 
     void SetStartEndRooms() {
-        int startingRoomIndex = random.Next(rooms.Count - 1);
-        spawnRoom = rooms[startingRoomIndex];
+        int startingRoomIndex = random.Next(Rooms.Count - 1);
+        spawnRoom = Rooms[startingRoomIndex];
 
-        List<Room> prospectEndRooms = rooms;
-        prospectEndRooms.RemoveAt(startingRoomIndex);
+        List<Room> prospectEndRooms = new List<Room>();
+        prospectEndRooms = Rooms.Where(room => room != spawnRoom).ToList();
 
         prospectEndRooms.OrderBy(room => spawnRoom.Center.sqrMagnitude - room.Center.sqrMagnitude);
 
-        int finishingRoomIndex = random.Next((int)(rooms.Count * finishingRoomPercentile), rooms.Count - 1);
-        Room finishingRoom = rooms[finishingRoomIndex];
+        int finishingRoomIndex = random.Next((int)(Rooms.Count * finishingRoomPercentile), Rooms.Count - 1);
+        Room finishingRoom = Rooms[finishingRoomIndex];
 
         //For Debugging purposes
         floorTileMap.SetTile((Vector3Int)spawnRoom.Center, SpawnTile);
@@ -168,8 +168,8 @@ public class DungeonGenerator : MonoBehaviour {
     void OnDrawGizmos() {
 
 
-        if(rooms != null) {
-            foreach(Room room in rooms) {
+        if(Rooms != null) {
+            foreach(Room room in Rooms) {
                 List<Room> adjacentRooms = room.GetAdjacentRooms();
                 foreach(Room adjacentRoom in adjacentRooms) {
 

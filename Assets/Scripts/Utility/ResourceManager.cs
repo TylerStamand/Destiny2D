@@ -10,6 +10,7 @@ public class ResourceManager {
     public DropServer DropPrefab {get; private set;}
     public NetworkObject NetworkParentPrefab {get; private set;}
     public CameraFollower CameraFollowerPrefab {get; private set;}
+    public EnemySpawnManager EnemySpawnManagerPrefab {get; private set;}
 
     static private ResourceManager instance;
     public static ResourceManager Instance {
@@ -34,6 +35,7 @@ public class ResourceManager {
         DropPrefab = Resources.Load<DropServer>("Prefabs/Drop");
         NetworkParentPrefab = Resources.Load<NetworkObject>("Prefabs/NetworkParent");
         CameraFollowerPrefab = Resources.Load<CameraFollower>("Prefabs/CameraFollower");
+        EnemySpawnManagerPrefab = Resources.Load<EnemySpawnManager>("Prefabs/EnemySpawnManager");
 
         List<ItemData> itemDataList = Resources.LoadAll<ItemData>("Items").ToList();
     

@@ -27,6 +27,7 @@ public class DungeonManager : NetworkBehaviour {
 
         currentDungeonSeed = DateTime.Now.Second;
         currentDungeon.GenerateMap(currentDungeonSeed);
+        EnemySpawnManager.Instantiate(currentDungeon.Rooms);
 
     }
 
