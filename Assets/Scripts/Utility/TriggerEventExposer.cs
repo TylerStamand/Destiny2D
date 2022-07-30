@@ -10,10 +10,16 @@ public class TriggerEventExposer : MonoBehaviour
     // public Action<Collider2D> OnTrigger;
     
     //Make this custom
-    public Action<Collider2D, GameObject> OnTriggerEnter;
+    public delegate void TriggerEvent(Collider2D collider2D, GameObject srcGameObject);
+    public TriggerEvent OnTriggerEnter;
+    public TriggerEvent OnTriggerExit;
     
-    void OnTriggerEnter2D(Collider2D collider2D) {
+    protected virtual void OnTriggerEnter2D(Collider2D collider2D) {
         OnTriggerEnter?.Invoke(collider2D, gameObject);
+    }
+
+    protected virtual void OnTriggerExit2D(Collider2D collider2D) {
+        OnTriggerExit?.Invoke(collider2D, gameObject);
     }
     
 }

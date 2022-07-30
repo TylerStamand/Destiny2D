@@ -23,9 +23,12 @@ public class Enemy : NetworkBehaviour, IDamageable {
     [Header("Animation")]
     [SerializeField] float damageAnimationSpeed = .1f;
 
+    public Action<Enemy> OnDie;
+
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
    
+
 
     protected virtual void Awake() {
         animator = GetComponent<Animator>();
@@ -63,6 +66,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
     void Die() {
         DropItems();
         NetworkObject.Despawn();
+        OnDie?.Invoke(this);
     }
 
 

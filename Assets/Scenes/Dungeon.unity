@@ -132,7 +132,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 277550954}
-  - component: {fileID: 277550953}
   - component: {fileID: 277550952}
   - component: {fileID: 277550955}
   m_Layer: 0
@@ -158,18 +157,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &277550953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 277550951}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb7c0d70760ecd74d8883cfdd8d1c203, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &277550954
 Transform:
   m_ObjectHideFlags: 0

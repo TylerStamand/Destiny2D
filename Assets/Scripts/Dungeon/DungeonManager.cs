@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 public class DungeonManager : NetworkBehaviour {
 
     DungeonGenerator currentDungeon;
+    EnemySpawnManager currentEnemySpawnManager;
     int currentDungeonSeed;
     int playersLoadedIntoDungeon;
 
@@ -27,12 +28,14 @@ public class DungeonManager : NetworkBehaviour {
 
         currentDungeonSeed = DateTime.Now.Second;
         currentDungeon.GenerateMap(currentDungeonSeed);
-        EnemySpawnManager.Instantiate(currentDungeon.Rooms);
+        currentEnemySpawnManager = EnemySpawnManager.Instantiate(currentDungeon.Rooms);
 
     }
 
     void SwitchDungeon() {
         if(!IsServer) return;
+
+        currentEnemySpawnManager.NetworkObject.Despawn();
 
         currentDungeonSeed = DateTime.Now.Second;
         currentDungeon.GenerateMap(currentDungeonSeed);
@@ -49,6 +52,8 @@ public class DungeonManager : NetworkBehaviour {
             LoadPlayerIntoDungeon(connectedPlayers[i].GetComponent<NetworkObject>().OwnerClientId);
 
         }
+
+        currentEnemySpawnManager = EnemySpawnManager.Instantiate(currentDungeon.Rooms);
 
     }
 

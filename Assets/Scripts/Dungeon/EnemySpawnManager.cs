@@ -5,55 +5,93 @@ using System;
 
 public class EnemySpawnManager : NetworkBehaviour {
 
-    [SerializeField] RoomTrigger roomTriggerPrefab;
+    [SerializeField] Enemy defaultEnemyPrefab;
 
-    static EnemySpawnManager currentSpawnManager;
-    public static void Instantiate(List<Room> roomList) {
+    static float spawnProbability = 0.005f; 
+    
+    //Theres probably a more intelligent way of setting the limit than a hard value
+    static int maxEnemies = 8;
+
+    public static EnemySpawnManager Instantiate(List<Room> roomList) {
         
-        currentSpawnManager = Instantiate(ResourceManager.Instance.EnemySpawnManagerPrefab).GetComponent<EnemySpawnManager>();
+        
+        EnemySpawnManager currentSpawnManager = Instantiate(ResourceManager.Instance.EnemySpawnManagerPrefab).GetComponent<EnemySpawnManager>();
         currentSpawnManager.GetComponent<NetworkObject>().Spawn();
         currentSpawnManager.Initialize(roomList);
+        return currentSpawnManager;
     }
     
+    Dictionary<Room, EnemyRoom> RoomToEnemyRoomMap;
 
-    List<Room> rooms;
-    List<GameObject> roomTriggers;
+    List<EnemyRoom> enemyRooms;
+    List<EnemyRoom> currentPlayerRooms;
 
-    Room currentPlayerRoom;
-    
+    List<Enemy> spawnedEnemies;
+
     void Initialize(List<Room> rooms) {
-        this.rooms = rooms;
+        currentPlayerRooms = new List<EnemyRoom>();
+        enemyRooms = new List<EnemyRoom>();
+        RoomToEnemyRoomMap = new Dictionary<Room, EnemyRoom>();
+        spawnedEnemies = new List<Enemy>();
 
-        int i = 0;
         foreach(Room room in rooms) {
-            RoomTrigger roomTrigger = Instantiate(roomTriggerPrefab);
-            roomTrigger.name = $"roomTrigger: {i++}";
-            //Rooms sometimes off center due to rounding
-            roomTrigger.transform.position = ((Vector3Int)room.Center);
-            roomTrigger.transform.localScale = new Vector3(room.Width, room.Height, 0);
-
-            roomTrigger.OnTriggerEnter += HandleRoomEntered;
-            roomTrigger.room = room;
-
+            EnemyRoom enemyRoom = new EnemyRoom(room);
+            RoomToEnemyRoomMap.Add(room, enemyRoom);
+            enemyRoom.OnPlayerCountChange += HandlePlayerCountChange;
+            enemyRooms.Add(enemyRoom);
+            
         }
     }
 
-    void HandleRoomEntered(Collider2D obj, GameObject src) {
-        currentPlayerRoom = src.GetComponent<RoomTrigger>().room;
-        Debug.Log($"Current Room is now {currentPlayerRoom}");  
+    public override void OnNetworkSpawn() {
+        if(!IsServer) {
+            enabled = false;
+        }
+    }
+
+    //Done in fixed update so that the checks per second are consistent 
+    void FixedUpdate() {
+        spawnedEnemies.RemoveAll(e => e == null);
+        foreach(EnemyRoom enemyRoom in currentPlayerRooms) {
+            Room room = enemyRoom.Room;
+            foreach(Room adjRoom in room.GetAdjacentRooms()) {
+                EnemyRoom adjEnemyRoom = RoomToEnemyRoomMap[adjRoom];
+
+                if(adjEnemyRoom.EnemiesInRoom < adjEnemyRoom.EnemyCap && adjEnemyRoom.PlayersInRoom == 0 && spawnedEnemies.Count < maxEnemies) {
+                    if(UnityEngine.Random.value <= spawnProbability)
+                        SpawnEnemy(adjRoom);
+                }
+            }
+        }
+    }
+
+    void HandlePlayerCountChange(int playerCount, EnemyRoom room) {
+        if(playerCount == 0) {
+            currentPlayerRooms.Remove(room);
+        }
+        else {
+            if(!currentPlayerRooms.Contains(room)) {
+                currentPlayerRooms.Add(room);
+            }
+        }
+    }
+
+    Enemy SpawnEnemy(Room room) {
+        int xPosition = UnityEngine.Random.Range(room.XPosition, room.XPosition + room.Width);
+        int yPosition = UnityEngine.Random.Range(room.YPosition, room.YPosition + room.Height);
+        Vector2 spawnPosition = new Vector2(xPosition, yPosition);
+        //Get current dungeon information for enemy spawn list, for now spawn default
+        Enemy enemy = Instantiate(defaultEnemyPrefab, spawnPosition, Quaternion.identity);
+        enemy.NetworkObject.Spawn();
+        enemy.OnDie += (Enemy enemyToRemove) => {spawnedEnemies.Remove(enemyToRemove);};
+        Debug.Log($"Spawned an enemy at {xPosition}, {yPosition}");
+        spawnedEnemies.Add(enemy);
+        return enemy;
     }
 
 
 
 
-    //Relies on DungeonManagerClass
-    //Needs Instantiated from Dungeon Manager
-    //Needs initialized somehow
-
-    //Spawn Enemies in surrounding rooms, amount of enemies are determined by room area
-    //Need way of checking room im in
-    //Could use box triggers
-    //Should not be spawning in player view
     //Despawning when too far
 
 
