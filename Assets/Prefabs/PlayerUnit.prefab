@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: -4829901794372278007}
   - component: {fileID: 6759024285813516604}
   - component: {fileID: -4267017854784433636}
-  m_Layer: 6
+  m_Layer: 11
   m_Name: PlayerUnit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 1
   m_SleepingMode: 1
@@ -260,6 +260,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 150
+  unitCollisionDistance: 1
+  contactFilter:
+    useTriggers: 0
+    useLayerMask: 1
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 2112
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
   InventoryUI: {fileID: 2712004918303161845, guid: b119acbfb21c0f24cb2751d56cf0e7be, type: 3}
   HUDUI: {fileID: 2236797742909022621, guid: 650579dff82be364fa23840ca3a99454, type: 3}
 --- !u!114 &-4829901794372278007

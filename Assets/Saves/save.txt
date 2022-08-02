@@ -3,7 +3,7 @@
   "$values": [
     {
       "$type": "PlayerSaveData, Assembly-CSharp",
-      "PlayerID": "1",
+      "PlayerID": "0",
       "Items": {
         "$type": "System.Collections.Generic.List`1[[Item, Assembly-CSharp]], mscorlib",
         "$values": [
@@ -44,14 +44,7 @@
           null
         ]
       },
-      "Weapon": {
-        "$type": "WeaponItem, Assembly-CSharp",
-        "ItemName": "Melee Weapon",
-        "Damage": 2.17424726,
-        "CoolDown": 1.0,
-        "ProjectileSpeed": 0.0,
-        "ItemID": "1a8bb9a0-1f5c-4863-873d-c66ede3c7a69"
-      }
+      "Weapon": null
     }
   ]
 }

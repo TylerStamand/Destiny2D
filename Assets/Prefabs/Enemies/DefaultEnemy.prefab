@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 968894130}
   - component: {fileID: -6788253702900818467}
   - component: {fileID: -3318316029045534646}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DefaultEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3233376406552053040
 SpriteRenderer:
@@ -193,13 +193,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SyncPositionX: 1
   SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncPositionZ: 0
+  SyncRotAngleX: 0
+  SyncRotAngleY: 0
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -219,6 +219,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Health>k__BackingField:
     m_InternalValue: 1
+  unitCollisionDistance: 2
+  layersToStopFrom:
+    serializedVersion: 2
+    m_Bits: 2112
   Drops:
   - ChanceToDrop: 1
     Item: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}
@@ -233,7 +237,21 @@ MonoBehaviour:
   damageAnimationSpeed: 0.1
   moveSpeed: 1.12
   alertRadius: 2.97
-  stopDistance: 1.57
+  stopDistance: 1.2
+  contactFilter:
+    useTriggers: 0
+    useLayerMask: 1
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 2112
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
   weaponData: {fileID: 11400000, guid: 42681efcc441385419f59e4ec01a0fac, type: 2}
 --- !u!50 &-3318316029045534646
 Rigidbody2D:

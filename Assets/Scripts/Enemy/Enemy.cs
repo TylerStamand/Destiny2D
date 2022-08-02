@@ -17,7 +17,8 @@ public struct DropData {
 public class Enemy : NetworkBehaviour, IDamageable {
 
     [field: SerializeField] public NetworkVariable<float> Health { get; private set; } = new NetworkVariable<float>();
-    
+    [SerializeField] float unitCollisionDistance;    
+    [SerializeField] LayerMask layersToStopFrom;
     [SerializeField] List<DropData> Drops;
 
     [Header("Animation")]
@@ -28,11 +29,10 @@ public class Enemy : NetworkBehaviour, IDamageable {
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
    
-
-
     protected virtual void Awake() {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        
     }
 
     public override void OnNetworkSpawn() {
@@ -40,6 +40,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
 
     }
 
+   
     [ServerRpc(RequireOwnership = false)]
     public void TakeDamageServerRpc(float damage) {
 

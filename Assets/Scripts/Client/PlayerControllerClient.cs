@@ -11,11 +11,16 @@ using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
 public class PlayerControllerClient : NetworkBehaviour {
 
     [SerializeField] float moveSpeed;
+    [SerializeField] float unitCollisionDistance;
+    [SerializeField] ContactFilter2D contactFilter;
     [SerializeField] GameObject InventoryUI;
     [SerializeField] GameObject HUDUI;
 
     new Rigidbody2D rigidbody;
+    new Collider2D collider;
     Animator animator;
+    PlayerControllerServer playerControllerServer;
+    WeaponHolder weaponHolder;
 
     
     ulong weaponID;
@@ -24,8 +29,6 @@ public class PlayerControllerClient : NetworkBehaviour {
     Vector2 moveInput;
 
 
-    PlayerControllerServer playerControllerServer;
-    WeaponHolder weaponHolder;
 
     GameObject displayObject;
     ClientDisplay currentDisplay;
@@ -36,9 +39,12 @@ public class PlayerControllerClient : NetworkBehaviour {
     void Awake() {
         playerControllerServer = GetComponent<PlayerControllerServer>();
         rigidbody = GetComponent<Rigidbody2D>();
+        collider = GetComponent<Collider2D>();
         animator = GetComponent<Animator>();
         weaponHolder = GetComponent<WeaponHolder>();
         direction = new Vector2(0, -1);
+
+       
 
     }
 
@@ -62,6 +68,8 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     void Update() {
 
+        
+
         if (IsLocalPlayer) {
 
             if (Input.GetKeyDown(KeyCode.Space)) {
@@ -76,6 +84,8 @@ public class PlayerControllerClient : NetworkBehaviour {
                     ChangeDisplay(ClientDisplay.Inventory);
                 }
             }
+
+            
         }
     }
 
@@ -95,8 +105,21 @@ public class PlayerControllerClient : NetworkBehaviour {
             //normalized to prevent moving quicker diagonally
             Vector2 movement = new Vector2(horizontal, vertical).normalized;
 
-            movement.x *= moveSpeed * Time.deltaTime;
-            movement.y *= moveSpeed * Time.deltaTime;
+            RaycastHit2D[] results = new RaycastHit2D[1];
+            
+          
+            int numOfHits = collider.Cast(movement, contactFilter, results, moveSpeed * Time.deltaTime * Time.deltaTime);
+            
+            if(numOfHits > 0) {
+                movement = Vector2.zero;
+            }
+            else {
+                movement.x *= moveSpeed * Time.deltaTime;
+                movement.y *= moveSpeed * Time.deltaTime;
+
+            }
+
+            
 
             rigidbody.velocity = transform.right * movement.x + transform.up * movement.y;
 
