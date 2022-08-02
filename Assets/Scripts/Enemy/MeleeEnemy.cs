@@ -16,7 +16,6 @@ public class MeleeEnemy : Enemy {
 
     WeaponHolder weaponHolder;
     new Collider2D collider;
-
     PlayerControllerServer target;
 
     protected override void Awake() {
@@ -65,6 +64,8 @@ public class MeleeEnemy : Enemy {
         }
     }
 
+   
+
     void Move() {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, alertRadius, LayerMask.GetMask(new string[] { "Player" }));
         if (colliders.Count() > 0) {
@@ -81,7 +82,7 @@ public class MeleeEnemy : Enemy {
                 int numOfHits = collider.Cast(differenceInPosition.normalized, contactFilter, results, moveSpeed * Time.deltaTime);
 
                 if(numOfHits == 0) {
-                    transform.position += (Vector3)differenceInPosition; 
+                    rigidbody.MovePosition(transform.position + (Vector3)differenceInPosition); 
                 }
 
             }
@@ -93,6 +94,8 @@ public class MeleeEnemy : Enemy {
             target = null;
         }
     }
+
+
 
     void OnDrawGizmosSelected() {
         Gizmos.color = Color.red;

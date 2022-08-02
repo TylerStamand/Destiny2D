@@ -35,6 +35,7 @@ public class PlayerControllerClient : NetworkBehaviour {
 
     bool InMenu = false;
     bool initialized = false;
+    bool isColliding;
 
     void Awake() {
         playerControllerServer = GetComponent<PlayerControllerServer>();
@@ -112,6 +113,7 @@ public class PlayerControllerClient : NetworkBehaviour {
             
             if(numOfHits > 0) {
                 movement = Vector2.zero;
+                Debug.Log(results[0].collider.gameObject.name);
             }
             else {
                 movement.x *= moveSpeed * Time.deltaTime;
@@ -120,16 +122,27 @@ public class PlayerControllerClient : NetworkBehaviour {
             }
 
             
-
+        
             rigidbody.velocity = transform.right * movement.x + transform.up * movement.y;
 
 
         }
 
+        
 
         //Until blend tree bug for network animator is fixed, this needs to run on all clients       
         animator.SetFloat("X", playerControllerServer.AnimatorMovement.Value.x);
         animator.SetFloat("Y", playerControllerServer.AnimatorMovement.Value.y);
+    }
+
+
+    void OnCollisionEnter2D(Collision collision) {
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Unit") || collision.gameObject.layer == LayerMask.NameToLayer("Player")) {
+            Vector2 dir = collision.contacts[0].point - transform.position;
+            dir = -dir.normalized;
+
+            rigidbody.AddForce(dir);
+        }
     }
 
     public override void OnDestroy() {

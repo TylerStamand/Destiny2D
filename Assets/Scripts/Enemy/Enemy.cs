@@ -26,18 +26,29 @@ public class Enemy : NetworkBehaviour, IDamageable {
 
     public Action<Enemy> OnDie;
 
+    protected new Rigidbody2D rigidbody;
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
    
     protected virtual void Awake() {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
+        rigidbody = GetComponent<Rigidbody2D>();
+
     }
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
 
+    }
+
+    void OnCollisionEnter2D(Collision collision) {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Unit") || collision.gameObject.layer == LayerMask.NameToLayer("Player")) {
+            Vector2 dir = collision.contacts[0].point - transform.position;
+            dir = -dir.normalized;
+
+            rigidbody.AddForce(dir);
+        }
     }
 
    
