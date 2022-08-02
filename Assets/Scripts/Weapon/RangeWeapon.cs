@@ -29,8 +29,8 @@ public class RangeWeapon : Weapon
         }
     }
 
-    public override void InitializeWeaponServer(WeaponStats weaponStats) {
-        base.InitializeWeaponServer(weaponStats);
+    public override void InitializeWeaponServer(WeaponStats weaponStats, bool playerWeapon) {
+        base.InitializeWeaponServer(weaponStats, playerWeapon);
         projectileSpeed.Value = weaponStats.ProjectileSpeed;
     }
 

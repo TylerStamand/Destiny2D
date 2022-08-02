@@ -95,20 +95,15 @@ public class GameManager : NetworkBehaviour {
 
     void OnGUI() {
 
-        // if (IsSpawned) {
-        //     GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        //     if (GUILayout.Button("Spawn Enemy")) {
-        //         Vector3 spawn = SpawnManager.Instance.GetSpawnLocation().transform.position;
-        //         Enemy enemy = Instantiate(defaultEnemyPrefab, spawn, Quaternion.identity);
-        //         enemy.NetworkObject.Spawn();
-        //     }
-        //     if (GUILayout.Button("Spawn Item")) {
-        //         DropServer spawnWeaponDrop = Instantiate(ResourceManager.Instance.DropPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        //         spawnWeaponDrop.SetItem(weaponDrop.CreateItem());
-        //         spawnWeaponDrop.GetComponent<NetworkObject>().Spawn();
-        //     }
-        //     GUILayout.EndArea();
-        // }
+        if (IsSpawned) {
+            GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+            if (GUILayout.Button("Spawn Item")) {
+                DropServer spawnWeaponDrop = Instantiate(ResourceManager.Instance.DropPrefab, NetworkManager.LocalClient.PlayerObject.transform.position, Quaternion.identity);
+                spawnWeaponDrop.SetItem(weaponDrop.CreateItem());
+                spawnWeaponDrop.GetComponent<NetworkObject>().Spawn();
+            }
+            GUILayout.EndArea();
+        }
 
 
     }

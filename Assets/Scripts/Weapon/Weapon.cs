@@ -11,6 +11,8 @@ public abstract class Weapon : NetworkBehaviour
     
     public ulong ParentNetID;
 
+    protected bool playerWeapon;
+
     bool initialized = false;
 
     void OnValidate() {
@@ -20,12 +22,13 @@ public abstract class Weapon : NetworkBehaviour
         }
     }
 
-    public virtual void InitializeWeaponServer(WeaponStats weaponStats) {
+    public virtual void InitializeWeaponServer(WeaponStats weaponStats, bool playerWeapon) {
         if(!IsServer) return;
         
         Damage.Value = weaponStats.Damage;
         coolDown.Value = weaponStats.CoolDown;
         initialized = true;
+        this.playerWeapon = playerWeapon;
     }
 
 

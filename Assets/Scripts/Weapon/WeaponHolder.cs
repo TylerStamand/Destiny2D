@@ -17,6 +17,8 @@ public class WeaponHolder : NetworkBehaviour
 
     ulong clientID;
 
+    bool isPlayerWeaponHolder;
+
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
 
@@ -78,6 +80,7 @@ public class WeaponHolder : NetworkBehaviour
     
         weaponSlot.transform.SetParent(this.transform);
 
+        isPlayerWeaponHolder = GetComponentInParent<PlayerControllerServer>() != null;
 
         Initialized = true;
         OnInitializedServer?.Invoke();
@@ -123,7 +126,8 @@ public class WeaponHolder : NetworkBehaviour
         
         weapon.NetworkObject.SpawnWithOwnership(clientID);
 
-        weapon.InitializeWeaponServer(weaponStats);
+
+        weapon.InitializeWeaponServer(weaponStats, isPlayerWeaponHolder);
 
 
         if(weaponSlot != null) {

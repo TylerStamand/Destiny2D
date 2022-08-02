@@ -33,6 +33,15 @@ public class MeleeWeapon : Weapon {
 
             IDamageable damageable = collider.gameObject.GetComponent<IDamageable>();
             if (damageable != null) {
+
+                //Keeps Enemies from hitting each other
+                if(!playerWeapon && collider.GetComponent<Enemy>() != null)
+                    return;
+
+                //Keeps Players from hitting each other
+                if(playerWeapon && collider.GetComponent<PlayerControllerServer>() != null)
+                    return;
+                
                 damageable.TakeDamageServerRpc(Damage.Value);
             }
         }
