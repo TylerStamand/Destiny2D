@@ -136,9 +136,9 @@ public class PlayerControllerClient : NetworkBehaviour {
     }
 
 
-    void OnCollisionEnter2D(Collision collision) {
+    void OnCollisionEnter2D(Collision2D collision) {
         if(collision.gameObject.layer == LayerMask.NameToLayer("Unit") || collision.gameObject.layer == LayerMask.NameToLayer("Player")) {
-            Vector2 dir = collision.contacts[0].point - transform.position;
+            Vector2 dir = collision.contacts[0].point - (Vector2)transform.position;
             dir = -dir.normalized;
 
             rigidbody.AddForce(dir);
