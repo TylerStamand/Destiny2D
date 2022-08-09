@@ -5,11 +5,14 @@ using Unity.Netcode;
 using UnityEditor;
 using System;
 using Unity.Collections;
+using Destiny2D;
 
+namespace Destiny2D {
 
+    public enum Direction {
+        Up, Down, Left, Right
+    }
 
-public enum Direction {
-    Up, Down, Left, Right
 }
 
 [Serializable]

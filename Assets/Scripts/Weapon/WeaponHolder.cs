@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Unity.Netcode;
 using System;
+using Destiny2D;
 
 public class WeaponHolder : NetworkBehaviour
 {

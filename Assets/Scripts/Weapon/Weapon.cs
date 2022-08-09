@@ -1,7 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;   
+using Unity.Netcode;
+using Destiny2D;
 
 public abstract class Weapon : NetworkBehaviour
 {

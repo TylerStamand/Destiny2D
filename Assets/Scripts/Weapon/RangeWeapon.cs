@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using DG.Tweening;
+using Destiny2D;
 
 public class RangeWeapon : Weapon
 {

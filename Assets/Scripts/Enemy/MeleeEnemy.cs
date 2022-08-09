@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine;
-using Unity.Netcode;
-using UnityEditor;
 
 [RequireComponent(typeof(WeaponHolder))]
 public class MeleeEnemy : Enemy {
