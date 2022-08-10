@@ -34,8 +34,11 @@ MonoBehaviour:
   Agent: {fileID: 0}
   Started: 0
   GUID: 70de6d3195812cc47bd5d788cfae4b57
-  Position: {x: -0.00001001358, y: 339.90002}
-  Children: []
+  Position: {x: -0.0000038146973, y: 355.05002}
+  Children:
+  - {fileID: 8910522397764954367}
+  - {fileID: 4570385342756358020}
+  - {fileID: -3556310566667231976}
 --- !u!114 &-3556310566667231976
 MonoBehaviour:
   m_ObjectHideFlags: 0
