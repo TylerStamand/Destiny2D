@@ -7,24 +7,25 @@ public class MoveToPlayer : ActionNode
     GameObject target;
     protected override void OnStart() {
         target = DataContext.GetValue("Player") as GameObject;
-        // Debug.Log("Keys");
-        // foreach(string key in DataContext.data.Keys) {
-        //     Debug.Log(key + " " + DataContext.data[key]);
-        // }
-        if(target != null) {
-            Debug.Log("Moving to " + target.name);
-        }
+       
     }
 
     protected override void OnStop() {
     }
 
     protected override State OnUpdate() {
+
         if(target == null) {
             return State.Failure;
         }
-        
-        if (Vector2.Distance(target.transform.position, Agent.transform.position) >= Agent.StopDistance) {
+
+        float distance = Vector2.Distance(target.transform.position, Agent.transform.position);
+        if(distance > Agent.AlertRadius)
+        {
+            return State.Failure;
+        }
+    
+        if ( distance > Agent.StopDistance) {
             Vector2 positionToMoveTowards = Vector2.MoveTowards(Agent.transform.position, target.transform.position, Agent.MoveSpeed * Time.deltaTime);
             Vector2 differenceInPosition = new Vector2(positionToMoveTowards.x - Agent.transform.position.x, positionToMoveTowards.y - Agent.transform.position.y);
 

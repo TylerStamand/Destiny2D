@@ -11,7 +11,6 @@ public class DataContext {
     public void SetValue(string name, object value) {
         if(data.ContainsKey(name)) {
             if(data[name] != value) {
-                Debug.Log($"Changing {data[name]} to {value}" );
             }
             data[name] = value;
         }
@@ -24,7 +23,6 @@ public class DataContext {
         if(data.ContainsKey(name)) {
             return data[name];
         }
-        Debug.Log("context does not contain value");
         return null;
     }
 }
@@ -35,8 +33,8 @@ public class BehaviourTree : ScriptableObject
     public Node RootNode;
     public Node.State TreeState = Node.State.Running;
     public List<Node> nodes = new List<Node>();
-    
-    DataContext dataContext = new DataContext();
+
+    DataContext dataContext;
 
     public Node.State Update() {
         if(RootNode.CurrentState == Node.State.Running ) {
@@ -156,9 +154,10 @@ public class BehaviourTree : ScriptableObject
         BehaviourTree tree = Instantiate(this);
         tree.RootNode = tree.RootNode.Clone();
         tree.nodes = new List<Node>();
+        tree.dataContext = new DataContext();
         Traverse(tree.RootNode, (n) => {
             n.Agent = enemy;
-            n.DataContext = dataContext;
+            n.DataContext = tree.dataContext;
             tree.nodes.Add(n);
         });
         return tree;
