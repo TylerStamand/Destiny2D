@@ -7,8 +7,8 @@ using DG.Tweening;
 [DefaultExecutionOrder(1)]
 public class DropClient : NetworkBehaviour {
 
-    static float idleDeltaY = 1.3f;
-    static float speed = .7f;
+    static float idleDeltaY = 1;
+    static float loopTime = .5f;
 
     SpriteRenderer spriteRenderer;
     Transform spriteTransform;
@@ -59,7 +59,7 @@ public class DropClient : NetworkBehaviour {
     }
 
     private void StartIdleAnimation() {
-        spriteTransform.DOLocalMoveY(spriteTransform.position.y + idleDeltaY, speed).SetLoops(-1, LoopType.Yoyo);
+        spriteTransform.DOLocalMoveY(spriteTransform.localPosition.y + idleDeltaY, loopTime).SetLoops(-1, LoopType.Yoyo);
     }
 
 }
