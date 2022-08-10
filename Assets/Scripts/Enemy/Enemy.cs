@@ -14,27 +14,58 @@ public struct DropData {
     public MinMaxInt AmountPossible;
 } 
 
-public class Enemy : NetworkBehaviour, IDamageable {
-
+public abstract class Enemy : NetworkBehaviour, IDamageable {
+   
     [field: SerializeField] public NetworkVariable<float> Health { get; private set; } = new NetworkVariable<float>();
+    
     [SerializeField] float unitCollisionDistance;    
     [SerializeField] LayerMask layersToStopFrom;
     [SerializeField] List<DropData> Drops;
+    [SerializeField] protected BehaviourTree behaviourTree;
 
     [Header("Animation")]
     [SerializeField] float damageAnimationSpeed = .1f;
 
+    public float MoveSpeed = 1;
+    public float AlertRadius = 1;
+    public float StopDistance = 2;
+    public float MaxAttackRange = 4;
+    public ContactFilter2D ContactFilter;
+    public Collider2D Collider {get; protected set;}
+    public Rigidbody2D Rigidbody {get; protected set;}
+    public WeaponHolder WeaponHolder {get; protected set;}
+
     public Action<Enemy> OnDie;
 
-    protected new Rigidbody2D rigidbody;
     protected Animator animator;
     protected SpriteRenderer spriteRenderer;
    
     protected virtual void Awake() {
+        Collider = GetComponent<Collider2D>();
+        Rigidbody = GetComponent<Rigidbody2D>();
+        WeaponHolder = GetComponent<WeaponHolder>();
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        rigidbody = GetComponent<Rigidbody2D>();
+        behaviourTree = behaviourTree.Clone(this);
+    }
 
+    protected virtual void Update() {
+        if(IsServer) {
+            behaviourTree.Update();
+        }
+
+        if (IsClient) {
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, AlertRadius, LayerMask.GetMask(new string[] { "Player" }));
+            if (colliders.Length > 0) {
+                GameObject target = colliders[0].gameObject;
+                if ((target.transform.position.x - transform.position.x) >= 0) {
+                    spriteRenderer.flipX = false;
+                }
+                else {
+                    spriteRenderer.flipX = true;
+                }
+            }
+        }
     }
 
     public override void OnNetworkSpawn() {
@@ -47,7 +78,7 @@ public class Enemy : NetworkBehaviour, IDamageable {
             Vector2 dir = collision.contacts[0].point - (Vector2)transform.position;
             dir = -dir.normalized;
 
-            rigidbody.AddForce(dir);
+            Rigidbody.AddForce(dir);
         }
     }
 
@@ -107,6 +138,5 @@ public class Enemy : NetworkBehaviour, IDamageable {
        
 
     }
-
 
 }

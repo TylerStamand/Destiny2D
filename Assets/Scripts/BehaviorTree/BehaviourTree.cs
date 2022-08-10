@@ -3,12 +3,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+
+public class DataContext {
+    public Dictionary<string, object> data = new Dictionary<string, object>();
+    
+
+    public void SetValue(string name, object value) {
+        if(data.ContainsKey(name)) {
+            if(data[name] != value) {
+                Debug.Log($"Changing {data[name]} to {value}" );
+            }
+            data[name] = value;
+        }
+        else {
+            data.Add(name, value);
+        }
+    }
+
+    public object GetValue(string name) {
+        if(data.ContainsKey(name)) {
+            return data[name];
+        }
+        Debug.Log("context does not contain value");
+        return null;
+    }
+}
+
 [CreateAssetMenu()]
 public class BehaviourTree : ScriptableObject
 {
     public Node RootNode;
     public Node.State TreeState = Node.State.Running;
     public List<Node> nodes = new List<Node>();
+    
+    DataContext dataContext = new DataContext();
 
     public Node.State Update() {
         if(RootNode.CurrentState == Node.State.Running ) {
@@ -16,6 +44,7 @@ public class BehaviourTree : ScriptableObject
         }
         return TreeState;
     }
+  
 
     public Node CreateNode(System.Type type) {
         Node node = ScriptableObject.CreateInstance(type) as Node;
@@ -123,11 +152,13 @@ public class BehaviourTree : ScriptableObject
         }
     }
 
-    public BehaviourTree Clone() {
+    public BehaviourTree Clone(Enemy enemy) {
         BehaviourTree tree = Instantiate(this);
         tree.RootNode = tree.RootNode.Clone();
         tree.nodes = new List<Node>();
         Traverse(tree.RootNode, (n) => {
+            n.Agent = enemy;
+            n.DataContext = dataContext;
             tree.nodes.Add(n);
         });
         return tree;

@@ -11,6 +11,8 @@ public abstract class Node : ScriptableObject
     }
 
     [HideInInspector] public State CurrentState = State.Running;
+    [HideInInspector] public Enemy Agent;
+    [HideInInspector] public DataContext DataContext = new DataContext();
     [HideInInspector] public bool Started = false;
     [HideInInspector] public string GUID;
     [HideInInspector] public Vector2 Position;

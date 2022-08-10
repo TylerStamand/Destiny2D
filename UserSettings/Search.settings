@@ -1,6 +1,6 @@
 trackSelection = true
 fetchPreview = true
-wantsMore = false
+defaultFlags = 0
 keepOpen = false
 queryFolder = "Assets"
 onBoardingDoNotAskAgain = true
@@ -13,6 +13,9 @@ scopes = {
 	"last_search.2D5C1488" = "weapons "
 	"OpenInspectorPreview.2D5C1488" = "0"
 	"currentGroup.2D5C1488" = "menu"
+	"last_search.8C24D059" = "enemy "
+	"OpenInspectorPreview.8C24D059" = "0"
+	"currentGroup.8C24D059" = "all"
 }
 providers = {
 	adb = {
@@ -55,6 +58,8 @@ providers = {
 		priority = 50
 		defaultAction = null
 	}
+}
+objectSelectors = {
 }
 recentSearches = [
 	"ran"

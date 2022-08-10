@@ -7,7 +7,8 @@ public class BehaviourTreeRunner : MonoBehaviour
     public BehaviourTree tree;
 
     void Awake() {
-        tree = tree.Clone();
+        Enemy enemy = GetComponent<Enemy>();
+        tree = tree.Clone(enemy);
     }
     
     void Update() {

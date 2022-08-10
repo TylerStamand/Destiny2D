@@ -110,8 +110,6 @@ public class NodeView : UnityEditor.Experimental.GraphView.Node {
             RemoveFromClassList("failure");
             RemoveFromClassList("success");
 
-            Debug.Log("Updating state class");
-            
             switch(Node.CurrentState) {
                 case Node.State.Running:
                     if(Node.Started) {
