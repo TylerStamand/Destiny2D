@@ -22,9 +22,11 @@ public class Projectile : MonoBehaviour
             if(isPlayerClient) {
                 damageable.TakeDamageServerRpc(damage);
             }
+            Destroy(gameObject);
         }
 
-        Destroy(gameObject);
+        if(collider.gameObject.layer == LayerMask.NameToLayer("Terrain"))
+            Destroy(gameObject);
     }
 
     public void Initialize(float speed, float damage, ulong parentNetID, bool isPlayerClient) {

@@ -194,7 +194,7 @@ GameObject:
   m_Component:
   - component: {fileID: 361391202}
   - component: {fileID: 361391201}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -242,7 +242,7 @@ GameObject:
   - component: {fileID: 423640409}
   - component: {fileID: 423640411}
   - component: {fileID: 423640410}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FloorTiles
   m_TagString: Finish
   m_Icon: {fileID: 0}
@@ -25396,7 +25396,7 @@ GameObject:
   - component: {fileID: 1046122664}
   - component: {fileID: 1046122666}
   - component: {fileID: 1046122667}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: StairTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25611,7 +25611,7 @@ GameObject:
   - component: {fileID: 1257141530}
   - component: {fileID: 1257141529}
   - component: {fileID: 1257141531}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: WallTiles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
