@@ -14,7 +14,7 @@
 ### Dungeon Generation
 
 
-  Used binary partitioning and Cellular Automaton algorithms to create the rooms.
+  Used binary partitioning and cellular automaton algorithms to create the rooms.
   Created a graph representation of the rooms through nodes and edges. Then used MST algorithm to create a set of hallways that connects all rooms.
 
   Relevannt Directories:
