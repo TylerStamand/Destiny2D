@@ -14,16 +14,16 @@ public class Inventory : NetworkBehaviour {
     public event Action<ItemInfo> OnItemAdded;
     public event Action<WeaponItem> OnWeaponChange;
 
-    NetworkList<ItemInfo> itemInfoList {get; set;}
+    NetworkList<ItemInfo> itemInfoList { get; set; }
 
-    Dictionary<string, Item> itemLookup {get; set;} = new Dictionary<string, Item>();
+    Dictionary<string, Item> itemLookup { get; set; } = new Dictionary<string, Item>();
 
     List<Item> items;
 
-    public WeaponItem CurrentWeapon {get; private set;}
-    
-    public NetworkVariable<ItemInfo> WeaponInfo {get; private set;}
-    
+    public WeaponItem CurrentWeapon { get; private set; }
+
+    public NetworkVariable<ItemInfo> WeaponInfo { get; private set; }
+
     public bool IsFull => itemLookup.Count == InventorySize;
 
 
@@ -32,18 +32,23 @@ public class Inventory : NetworkBehaviour {
         items = new List<Item>(new Item[InventorySize]);
         itemInfoList = new NetworkList<ItemInfo>();
 
-       
+        Debug.Log(itemInfoList.Count);
+
+
+    }
+
+    public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
         for (int i = 0; i < InventorySize; i++) {
             itemInfoList.Add(new ItemInfo());
         }
-
     }
 
 
     public NetworkList<ItemInfo> GetItemInfoList() {
-       
+
         Debug.Log("Getting Item Info List");
-       
+
         return itemInfoList;
     }
 
@@ -56,7 +61,7 @@ public class Inventory : NetworkBehaviour {
     /// <param name="itemID"></param>
     /// <returns></returns>
     public Item GetItemServer(string itemID) {
-        if(!IsServer) return null;
+        if (!IsServer) return null;
         return itemLookup[itemID];
     }
 
@@ -66,8 +71,8 @@ public class Inventory : NetworkBehaviour {
     /// </summary>
     /// <returns></returns>
     public List<Item> GetItemListServer() {
-        
-        if(!IsServer) return null;
+
+        if (!IsServer) return null;
         return items;
     }
 
@@ -79,10 +84,10 @@ public class Inventory : NetworkBehaviour {
 
     public void SetInventoryServer(List<Item> items, WeaponItem weaponItem = null) {
         Debug.Log("Items when setting " + items.Count);
-        if(!IsServer) return;
-        for(int i = 0; i < InventorySize; i++) {
+        if (!IsServer) return;
+        for (int i = 0; i < InventorySize; i++) {
             Item item = items[i];
-            if(item == null) {
+            if (item == null) {
                 this.items[i] = null;
                 itemInfoList[i] = new ItemInfo();
                 continue;
@@ -93,7 +98,7 @@ public class Inventory : NetworkBehaviour {
             itemLookup.Add(item.ItemID, item);
         }
 
-        if(weaponItem != null) {
+        if (weaponItem != null) {
             SetWeaponServer(weaponItem);
         }
     }
@@ -104,25 +109,25 @@ public class Inventory : NetworkBehaviour {
     /// </summary>
     /// <param name="item"></param>
     public void AddItemServer(Item item) {
-        if(!IsServer) return;
+        if (!IsServer) return;
 
-        if(item == null) {
+        if (item == null) {
             Debug.LogWarning("Item to add to inventory is null");
             return;
         }
 
-        if(IsFull) {
+        if (IsFull) {
             Debug.Log("There is no space in the inventory");
             return;
         }
 
 
-        
+
         itemLookup.TryAdd(item.ItemID, item);
 
-        
-        for(int i = 0; i < InventorySize; i++) {
-            if(items[i] == null) {
+
+        for (int i = 0; i < InventorySize; i++) {
+            if (items[i] == null) {
                 items[i] = item;
                 itemInfoList[i] = item.GetItemInfo();
                 Debug.Log("Item Added Successfully");
@@ -144,13 +149,13 @@ public class Inventory : NetworkBehaviour {
     /// </summary>
     /// <param name="item"></param>
     public void RemoveItemServer(string itemID) {
-        if(!IsServer) return;
+        if (!IsServer) return;
 
 
         Debug.Log("Removing Item Server");
         Item itemToRemove = itemLookup[itemID];
 
-        int indexOfItemToRemove = items.IndexOf(itemToRemove); 
+        int indexOfItemToRemove = items.IndexOf(itemToRemove);
 
         itemLookup.Remove(itemID);
         items[indexOfItemToRemove] = null;
@@ -164,27 +169,27 @@ public class Inventory : NetworkBehaviour {
     public void SetWeaponServerRpc(string itemID) {
         Debug.Log("Setting Weapon");
         Item item = itemLookup[itemID];
-      
-        if(item == null) {
+
+        if (item == null) {
             Debug.LogWarning("Trying to set weapon but item was not found in inventory");
         }
 
         WeaponItem newWeapon;
-        if(item is WeaponItem) {
-            newWeapon = (WeaponItem)item;  
+        if (item is WeaponItem) {
+            newWeapon = (WeaponItem)item;
         }
         else {
             Debug.LogWarning("Item is not a weapon");
             return;
         }
 
-        if(CurrentWeapon != null) {
+        if (CurrentWeapon != null) {
             AddItemServer(CurrentWeapon);
         }
 
         //Removes item from item list but does not drop it from the lookup
         Item itemToRemove = itemLookup[itemID];
-        if(items.IndexOf(itemToRemove) != -1) {
+        if (items.IndexOf(itemToRemove) != -1) {
             items[items.IndexOf(itemToRemove)] = null;
             itemInfoList[items.IndexOf(itemToRemove)] = new ItemInfo();
         }
@@ -200,14 +205,14 @@ public class Inventory : NetworkBehaviour {
 
     [ServerRpc]
     public void SetItemOrderServerRpc(ForceNetworkSerializeByMemcpy<FixedString64Bytes>[] itemInfoOrderIDs) {
-        
+
         Debug.Log("Setting Item Order");
-        for(int i = 0; i < InventorySize; i++) {
-            if(i >= itemInfoOrderIDs.Count()) {
+        for (int i = 0; i < InventorySize; i++) {
+            if (i >= itemInfoOrderIDs.Count()) {
                 items[i] = null;
                 itemInfoList[i] = new ItemInfo();
             }
-            else if(String.IsNullOrEmpty(itemInfoOrderIDs[i].Value.ToString())) {
+            else if (String.IsNullOrEmpty(itemInfoOrderIDs[i].Value.ToString())) {
                 items[i] = null;
                 itemInfoList[i] = new ItemInfo();
             }
